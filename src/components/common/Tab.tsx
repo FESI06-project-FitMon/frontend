@@ -24,14 +24,21 @@ export default function Tab({
   return (
     <div className={` ${className}`}>
       <div className="w-full flex items-center justify-between">
-        <div className="flex border-b-[2px] border-dark-400 w-full ">
+      <div
+          className={`flex w-full ${
+            'sm:border-b-[2px] sm:border-dark-400 sm:justify-start' 
+          } justify-center`} //모바일에선 검정선 안보이고, 가운데 정렬렬
+        >
           <div className="flex">
             {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item.id)}
+                //모바일 글씨 크기 14px, 넓이 100
                 className={`
-                  pb-[15px] text-[1.125rem] font-bold min-w-[140px] border-b-[2px] z-20 
+                  pb-[15px] text-sm sm:text-lg lg:text-lg font-bold 
+                  min-w-[100px] sm:min-w-[140px] 
+                  border-b-[2px] z-20 
                   ${
                     currentTab === item.id
                       ? 'text-primary border-primary -mb-[2px]'
