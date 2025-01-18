@@ -25,7 +25,7 @@ export default function Tab({
     <div className={` ${className}`}>
       <div className="w-full flex items-center justify-between">
         <div
-          className={`flex w-full lg:px-0 ${'md:border-b-[2px] md:border-dark-400 md:justify-start '
+          className={`flex w-full lg:px-0 ${'md:border-b-[2px] sm:border-dark-400 md:justify-start '
             } justify-center`} //모바일에선 검정선 안보이고, 가운데 정렬렬
         >
           <div className="flex">
