@@ -22,7 +22,7 @@ export default function GuestbookCard({
   return (
     <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
       {/* 이미지 영역 */}
-      <div className="relative min-w-[343px] md:w-[696px] lg:w-[300px] h-[200px] rounded-[20px] overflow-hidden">
+      <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
         <Image
           src="/assets/image/default_img.png"
           alt="모임 이미지"
@@ -31,7 +31,7 @@ export default function GuestbookCard({
         />
       </div>
 
-      <div className="flex-1 min-w-[343px] md:w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
+      <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
         <div className="flex justify-between items-start mb-4">
           <Heart rating={guestbook.rating} />
           {showActions && onEdit && onDelete && (
@@ -73,3 +73,4 @@ export default function GuestbookCard({
     </div>
   );
 }
+
