@@ -24,7 +24,7 @@ export default function Popover({ items, type }: PopoverProps) {
     return style;
   };
   return (
-    <div className="relative flex flex-col items-center justify-center">
+    <div className="relative flex flex-col items-end lg:items-center justify-center">
       {type === 'user' ? (
         <div
           onClick={() => setShowPopover(!showPopover)}
