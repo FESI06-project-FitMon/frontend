@@ -61,7 +61,7 @@ export default function MyPage() {
   }
 
   return (
-    <div className="w-full mx-auto px-4 sm:px-6 xl:px-0 pt-[30px] sm:pt-[50px] lg:pt-20" style={{ maxWidth: '1200px' }}>
+    <div className="w-full mx-auto px-4 md:px-6 xl:px-0 pt-[30px] md:pt-[50px] xl:pt-20" style={{ maxWidth: '1200px' }}>
       <Profile />
 
       <div className="mt-14">
@@ -71,7 +71,7 @@ export default function MyPage() {
           onTabChange={handleTabChange}
         />
 
-        <div className="mt-[37px]">
+        <div className="mt-6 lg:mt-[37px]">
           {currentTab === 'gathering' && (
             <JoinGathering
               onGatheringClick={handleGatheringClick}

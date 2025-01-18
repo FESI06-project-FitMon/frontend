@@ -80,13 +80,13 @@ export default function Navigation() {
 
   return (
     <header className=" top-0 left-0 w-full bg-dark-100 shadow-lg z-40 border-b-[1px] border-b-dark-300">
-      <div className="max-w-screen-xl mx-auto px-6 xl:px-8 ">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-20">
           {/* 로고 영역 */}
           <h1 className="flex flex-row items-center flex-shrink-0 mr-8 ">
             {' '}
             {/* 오른쪽 여백 추가 */}
-            <div className="flex sm:hidden">
+            <div className="flex md:hidden">
               <Image
                 alt="list button"
                 onClick={handleListButtonClick}
@@ -95,13 +95,13 @@ export default function Navigation() {
                 height="20"
               />
             </div>
-            <Link href="/" className="text-primary font-bold text-2xl pl-[24px] sm:pl-0">
+            <Link href="/" className="text-primary font-bold text-2xl pl-[24px] md:pl-0">
               FitMon
             </Link>
           </h1>
 
           {/* 메인 네비게이션 */}
-          <nav className="hidden sm:flex flex-1 items-center">
+          <nav className="hidden md:flex flex-1 items-center">
             <div className="flex items-center space-x-8">
               <Link
                 href="/"
