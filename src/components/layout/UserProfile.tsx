@@ -34,7 +34,7 @@ export default function UserProfile({ nickname }: { nickname: string }) {
             <Popover items={popoverItems} type="user" />
           </button>
         </div>
-        <div className="hidden md:flex items-center text-gray-300 text-sm">
+        <div className="hidden sm:flex items-center text-gray-300 text-sm">
           {nickname}
         </div>
       </div>

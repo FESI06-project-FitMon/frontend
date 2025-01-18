@@ -61,7 +61,7 @@ export default function MyPage() {
   }
 
   return (
-    <div className="w-full mx-auto pt-[80px]" style={{ maxWidth: '1200px' }}>
+    <div className="w-full mx-auto px-4 sm:px-6 xl:px-0 pt-[30px] sm:pt-[50px] lg:pt-20" style={{ maxWidth: '1200px' }}>
       <Profile />
 
       <div className="mt-14">
