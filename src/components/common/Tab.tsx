@@ -44,9 +44,7 @@ export default function Tab({
             ))}
           </div>
           {rightElement && (
-            <div className="w-full flex items-center px-4 ml-auto">
-              {rightElement}
-            </div>
+            <div className="flex items-center px-4 ml-auto">{rightElement}</div>
           )}
         </div>
       </div>

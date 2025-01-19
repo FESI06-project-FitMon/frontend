@@ -1,10 +1,13 @@
 import BarChart from '@/components/chart/BarChart';
 import Button from '@/components/common/Button';
 import Popover from '@/components/common/Popover';
+import Modal from '@/components/dialog/Modal';
 import SubTag from '@/components/tag/SubTag';
+
 import { GatheringChallegeProps } from '@/types';
 import Image from 'next/image';
 import { useState } from 'react';
+import ChallengeCertificationModal from './ChallengeCertificationModal';
 
 export default function GatheringChallenge({
   challenges,
@@ -111,6 +114,10 @@ export default function GatheringChallenge({
 }
 
 function Challenge({ challenge }: { challenge: ChallengeProps }) {
+  const [openModal, setOpenModal] = useState(false);
+  const handleGatheringButtonClick = () => {
+    setOpenModal(true);
+  };
   const button = () => {
     if (!challenge.participantStatus) {
       return (
@@ -124,11 +131,21 @@ function Challenge({ challenge }: { challenge: ChallengeProps }) {
 
     if (!challenge.verificationStatus) {
       return (
-        <Button
-          style="custom"
-          name="인증하기"
-          className="w-40 h-10 font-semibold text-base"
-        />
+        <>
+          <Button
+            style="custom"
+            name="인증하기"
+            className="w-40 h-10 font-semibold text-base"
+            handleButtonClick={() => handleGatheringButtonClick()}
+          />
+          <>
+            {openModal && (
+              <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
+                <ChallengeCertificationModal />
+              </Modal>
+            )}
+          </>
+        </>
       );
     }
 

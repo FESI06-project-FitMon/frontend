@@ -15,7 +15,7 @@ export default function DatePickerCalendar({
   selectedDate,
   setSelectedDate,
   className,
-  width,
+  width = '245px',
   height,
   minDate,
   maxDate,

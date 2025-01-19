@@ -4,15 +4,40 @@ import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
 import { GatheringStateType } from '@/types';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function GatheringState({
   state,
 }: {
   state: GatheringStateType;
 }) {
+  const gatheringId = 1;
+  const [heart, setHeart] = useState<boolean>(false);
+  useEffect(() => {
+    setHeart(
+      localStorage.getItem('zzims') &&
+        JSON.parse(localStorage.getItem('zzims')!).includes(gatheringId),
+    );
+  }, [gatheringId]);
+
   if (!state) {
     return <div>{'Loading..'}</div>;
   }
+
+  const handleGatheringButtonClick = () => {};
+  const handleZzimButtonClick = () => {
+    setHeart(!heart);
+    const zzims = localStorage.getItem('zzims');
+    let zzimArray: Array<number> = zzims ? JSON.parse(zzims) : [];
+    // 이미 로컬스토리지에 있다면,
+    if (zzimArray.indexOf(gatheringId) !== -1) {
+      zzimArray = zzimArray.filter((zzim: number) => zzim !== gatheringId);
+      localStorage.setItem('zzims', JSON.stringify(zzimArray));
+      return;
+    }
+    localStorage.setItem('zzims', JSON.stringify([...zzimArray, gatheringId]));
+  };
+  const handleShareButtonClick = () => {};
 
   return (
     <div
@@ -88,13 +113,20 @@ export default function GatheringState({
             style="custom"
             height="100%"
             name="참여하기"
+            handleButtonClick={() => handleGatheringButtonClick()}
           />
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
-              src="/assets/image/heart-zzim.svg"
+              src={
+                heart
+                  ? '/assets/image/heart-fill.svg'
+                  : '/assets/image/heart-zzim.svg'
+              }
               width={28}
               height={28}
               alt="heart-zzim"
+              onClick={() => handleZzimButtonClick()}
+              className="hover:cursor-pointer"
             />
             <p className="text-sm mt-1">{'찜하기'}</p>
           </div>
@@ -104,6 +136,8 @@ export default function GatheringState({
               width={28}
               height={28}
               alt="share"
+              onClick={() => handleShareButtonClick()}
+              className="hover:cursor-pointer"
             />
             <p className="text-sm mt-1">{'공유하기'}</p>
           </div>

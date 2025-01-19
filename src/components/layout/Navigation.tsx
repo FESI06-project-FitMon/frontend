@@ -116,8 +116,8 @@ export default function Navigation() {
                 찜한 모임
               </Link>
               <Link
-                href="/all"
-                className={`${isActive('/all')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
+                href="/guestBooks"
+                className={`${isActive('/guestBooks')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
               >
                 모든 방명록
               </Link>
