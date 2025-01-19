@@ -91,7 +91,7 @@ export default function GatheringChallenge({
 
         <div className="flex flex-col mt-[31px] mb-[27px] gap-6">
           {currentInquiryState === 'list' ? (
-            challenges ? (
+            challenges && challenges.length > 0 ? (
               challenges?.map((challenge, index) => (
                 <Challenge
                   key={index}
@@ -100,7 +100,9 @@ export default function GatheringChallenge({
               ))
             ) : (
               <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                {'챌린지가 없습니다.'}
+                {currentTag === 'inProgress'
+                  ? '진행중인 챌린지가 없습니다.'
+                  : '마감된 챌린지가 없습니다.'}
               </div>
             )
           ) : (

@@ -25,7 +25,9 @@ export default function GatheringGuestbook({
             <Guestbook key={index} guestbook={guestbook} />
           ))
         ) : (
-          <div>존재하지 않습니다</div>
+          <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
+            방명록이 존재하지 않습니다
+          </div>
         )}
       </div>
 
@@ -35,6 +37,7 @@ export default function GatheringGuestbook({
           page={page}
           setPage={setPage}
           totalNumber={gatheringGuestbookCount}
+          countPerPage={4}
         />
       </div>
     </div>
