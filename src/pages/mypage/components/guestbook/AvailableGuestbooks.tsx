@@ -3,7 +3,6 @@ import Null from "@/components/common/Null";
 import { GatheringItem, GatheringStateType } from "@/types";
 import Image from 'next/image';
 
-// components/guestbook/AvailableGuestbooks.tsx
 interface AvailableGuestbooksProps {
   gatherings: GatheringItem[];
   gatheringStates: { [key: number]: GatheringStateType };
@@ -15,9 +14,11 @@ export default function AvailableGuestbooks({
   gatheringStates,
   onWriteClick
 }: AvailableGuestbooksProps) {
+
   if (gatherings.length === 0) {
     return <Null message="작성 가능한 방명록이 없습니다." />;
   }
+
 
   return (
     <div className="space-y-6">

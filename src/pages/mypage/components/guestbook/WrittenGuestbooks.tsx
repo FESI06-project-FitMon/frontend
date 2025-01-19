@@ -4,6 +4,7 @@ import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { GatheringItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
 import useToastStore from '@/stores/useToastStore';
+import useGuestbookStore from '@/stores/useGuestbookStore';
 
 interface WrittenGuestbooksProps {
   guestbooks: GuestbookItem[];
@@ -20,8 +21,10 @@ export default function WrittenGuestbooks({
     showDeleteAlert: false,
     selectedGuestbook: null as GuestbookItem | null,
   });
-  const showToast = useToastStore((state) => state.show);
   
+  const showToast = useToastStore((state) => state.show);
+  const { deleteGuestbook } = useGuestbookStore();
+
   const updateState = (updates: Partial<typeof state>) => {
     setState((prev) => ({ ...prev, ...updates }));
   };
@@ -34,10 +37,19 @@ export default function WrittenGuestbooks({
     updateState({ selectedGuestbook: guestbook, showDeleteAlert: true });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
+    if (state.selectedGuestbook) {
+      try {
+        await deleteGuestbook(
+          state.selectedGuestbook.gatheringId,
+          state.selectedGuestbook.reviewId
+        );
+        showToast('삭제가 완료되었습니다.', 'check');
+      } catch {
+        showToast('삭제에 실패했습니다.', 'error');
+      }
+    }
     setState((prev) => ({ ...prev, showDeleteAlert: false, selectedGuestbook: null }));
-    showToast('삭제가 완료되었습니다.', 'check');
-    // TODO: API 호출 로직 추가
   };
 
   const handleDeleteCancel = () => {
@@ -65,7 +77,6 @@ export default function WrittenGuestbooks({
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
       />
-
     </div>
   );
 }

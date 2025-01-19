@@ -7,8 +7,8 @@ import UserProfile from './UserProfile';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import getMe from '@/pages/login/components/getMe';
-import Loading from '../dialog/Loading';
 import Alert from '../dialog/Alert';
+import Loading from '../dialog/Loading';
 
 export default function Navigation() {
   const router = useRouter();
@@ -19,26 +19,18 @@ export default function Navigation() {
       : 'text-gray-300';
   };
 
-  const {
-    isLogin,
-    nickname,
-    setIsLogin,
-    setMemberId,
-    setNickname,
-    setEmail,
-    setProfileImageUrl,
-  } = useMemberStore();
+  const { isLogin, user, setIsLogin, setUser } = useMemberStore();
   const { toggleListExpanded } = useLayoutStore();
 
   const handleListButtonClick = () => {
     toggleListExpanded();
   };
 
-  const [alertMessage, setAlertMessage] = useState('');
+  // 에러 발생 시 Alert 표시 및 닫기
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
 
   // 현재 로그인 정보 가져오는 useQuery
-  const { isLoading, isError, data, error } = useQuery({
+  const { isLoading, isError, data } = useQuery({
     queryKey: ['me'],
     queryFn: getMe,
     enabled: isLogin,
@@ -48,43 +40,43 @@ export default function Navigation() {
   useEffect(() => {
     const localIsLogin = localStorage.getItem('isLogin') === 'true';
     setIsLogin(localIsLogin);
-    if (localIsLogin && data) {
-      setMemberId(data.memberId);
-      setNickname(data.nickName);
-      setEmail(data.email);
-      setProfileImageUrl(data.profileImageUrl);
+  }, []);
+
+  // useQuery 성공 시 사용자 정보 업데이트
+  useEffect(() => {
+    if (data) {
+      setUser(data);
     }
-  }, [
-    data,
-    isLogin,
-    setEmail,
-    setIsLogin,
-    setMemberId,
-    setNickname,
-    setProfileImageUrl,
-  ]);
+  }, [data]);
+
+  // 에러 발생 시 로그아웃 처리
+  useEffect(() => {
+    if (isError) {
+      localStorage.setItem('isLogin', 'false');
+      setIsLogin(false); // 에러가 발생하면 로그인 상태 초기화
+      setShowConfirmAlert(true);
+    }
+  }, [isError]);
 
   // 에러 발생
   if (isError) {
-    localStorage.removeItem('isLogin');
-    setIsLogin(false); // 에러가 발생하면 로그인 상태 초기화
-    console.error('Navigation Error', error);
-    setAlertMessage(
-      '사용자 정보를 가져오는 중 오류가 발생했습니다. 다시 로그인해주세요.',
+    return (
+      <Alert
+        isOpen={showConfirmAlert}
+        type="confirm"
+        message="오류가 발생했습니다. 다시 로그인해주세요."
+        onConfirm={() => {
+          setShowConfirmAlert(false);
+          router.push('/login');
+        }}
+      />
     );
-    setShowConfirmAlert(true);
   }
 
   // 로딩 중
   if (isLoading) {
     return <Loading />;
   }
-
-  // 로그인 정보 없을 때 로그인 페이지로 이동
-  const handleConfirm = () => {
-    setShowConfirmAlert(false);
-    router.push('/login');
-  };
 
   return (
     <header className=" top-0 left-0 w-full bg-dark-100 shadow-lg z-40 border-b-[1px] border-b-dark-300">
@@ -134,18 +126,7 @@ export default function Navigation() {
 
           {/* 사용자 프로필 영역 */}
           {isLogin ? (
-            <>
-              <UserProfile nickname={nickname} />
-              <button
-                onClick={() => {
-                  localStorage.removeItem('isLogin');
-                  useMemberStore.getState().setIsLogin(false);
-                  router.push('/');
-                }}
-              >
-                {'로그아웃'}
-              </button>
-            </>
+            <UserProfile nickname={user.nickName} />
           ) : (
             <button
               onClick={() => router.push('/login')}
@@ -156,12 +137,6 @@ export default function Navigation() {
           )}
         </div>
       </div>
-      <Alert
-        isOpen={showConfirmAlert}
-        type="confirm"
-        message={alertMessage}
-        onConfirm={handleConfirm}
-      />
     </header>
   );
 }
