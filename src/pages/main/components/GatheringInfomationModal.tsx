@@ -164,7 +164,9 @@ export default function GatheringInfomationModal({
                 updateFormData('description', e.target.value)
               }
               value={formData.description}
-              className="h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words"
+              rows={2}
+              className="outline-dark-500 bg-dark-400 mb-[7px]"
+              maxLength={50} // 최대 글자 수 제한
             />
           </div>
         </div>
