@@ -3,6 +3,11 @@ import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
 import useGatheringStore from '@/stores/useGatheringStore';
+import {
+  addGatheringId,
+  gatheringIdInLikes,
+  removeGatheringId,
+} from '@/utils/likesgathering';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -12,36 +17,35 @@ export default function GatheringState({
   gatheringId: number;
 }) {
   const [heart, setHeart] = useState<boolean>(false);
-  const { fetchGatheringStatus, gatheringStatus } = useGatheringStore();
+  const { fetchGatheringStatus, gatheringStatus, participantGathering } =
+    useGatheringStore();
+
+  // 초기 상태 세팅
   useEffect(() => {
     fetchGatheringStatus(gatheringId);
-  }, []);
-
-  useEffect(() => {
-    setHeart(
-      localStorage.getItem('zzims') &&
-        JSON.parse(localStorage.getItem('zzims')!).includes(gatheringId),
-    );
+    setHeart(gatheringIdInLikes(gatheringId));
   }, [gatheringId]);
+
+  // 참여하기 버튼 클릭 핸들러
+  const handleGatheringButtonClick = () => {
+    participantGathering(gatheringId);
+  };
+
+  // 찜 버튼 클릭 핸들러
+  const handleZzimButtonClick = () => {
+    setHeart(!heart);
+
+    if (gatheringIdInLikes(gatheringId)) {
+      removeGatheringId(gatheringId);
+      return;
+    }
+    addGatheringId(gatheringId);
+  };
+  const handleShareButtonClick = () => {};
 
   if (!gatheringStatus) {
     return <div>{'Loading..'}</div>;
   }
-
-  const handleGatheringButtonClick = () => {};
-  const handleZzimButtonClick = () => {
-    setHeart(!heart);
-    const zzims = localStorage.getItem('zzims');
-    let zzimArray: Array<number> = zzims ? JSON.parse(zzims) : [];
-    // 이미 로컬스토리지에 있다면,
-    if (zzimArray.indexOf(gatheringId) !== -1) {
-      zzimArray = zzimArray.filter((zzim: number) => zzim !== gatheringId);
-      localStorage.setItem('zzims', JSON.stringify(zzimArray));
-      return;
-    }
-    localStorage.setItem('zzims', JSON.stringify([...zzimArray, gatheringId]));
-  };
-  const handleShareButtonClick = () => {};
 
   return (
     <div
