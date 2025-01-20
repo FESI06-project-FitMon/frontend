@@ -3,6 +3,7 @@ import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
 import useGatheringStore from '@/stores/useGatheringStore';
+import useToastStore from '@/stores/useToastStore';
 import {
   addGatheringId,
   gatheringIdInLikes,
@@ -16,6 +17,7 @@ export default function GatheringState({
 }: {
   gatheringId: number;
 }) {
+  const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
   const { fetchGatheringStatus, gatheringStatus, participantGathering } =
     useGatheringStore();
@@ -28,7 +30,13 @@ export default function GatheringState({
 
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = () => {
-    participantGathering(gatheringId);
+    try {
+      participantGathering(gatheringId);
+      showToast('참여하기 완료되었습니다.', 'check');
+    } catch (error) {
+      console.log(error);
+      showToast('이미 참여한 모임입니다', 'error');
+    }
   };
 
   // 찜 버튼 클릭 핸들러
@@ -39,6 +47,7 @@ export default function GatheringState({
       removeGatheringId(gatheringId);
       return;
     }
+
     addGatheringId(gatheringId);
   };
   const handleShareButtonClick = () => {};

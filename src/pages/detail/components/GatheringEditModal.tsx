@@ -5,11 +5,10 @@ import NumberSelect from '@/components/common/NumberSelect';
 import Select from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
-import { GatheringItem } from '@/types';
 import Image from 'next/image';
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
-import { GatheringDetail } from '../[gatheringId].page';
-import useGatheringStore from '@/stores/useGatheringStore';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
+
+import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
 
 export default function GatheringEditModal({
   information,

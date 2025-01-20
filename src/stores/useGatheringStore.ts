@@ -96,7 +96,7 @@ interface GatheringChallengeResponse {
   content: Array<ChallengeType>;
   hasNext: boolean;
 }
-const useGatheringStore = create<GatheringState>((set, get) => ({
+const useGatheringStore = create<GatheringState>((set) => ({
   gathering: undefined,
 
   fetchGathering: async (gatheringId: number) => {
@@ -183,17 +183,17 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         requestData: filteredData,
       });
       console.log(response);
-      set({
-        gathering: {
-          ...get().gathering,
-          ...Object.fromEntries(
-            Object.entries(gatheringUpdateRequest).filter(
-              ([key, value]) =>
-                value !== get().gathering?.[key as keyof GatheringDetail],
-            ),
-          ),
-        },
-      });
+      // set({
+      //   gathering: {
+      //     ...get().gathering,
+      //     ...Object.fromEntries(
+      //       Object.entries(gatheringUpdateRequest).filter(
+      //         ([key, value]) =>
+      //           value !== get().gathering?.[key as keyof GatheringDetail],
+      //       ),
+      //     ),
+      //   },
+      // });
     } catch (error) {
       throw error;
     }
@@ -201,21 +201,22 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
 
   createChallenge: async (challengeCreateRequest, gatheringId) => {
     try {
-      const response = await apiRequest<any>({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await apiRequest<any>({
         param: `/api/v1/gatherings/${gatheringId}/challenges`,
         method: 'post',
         requestData: challengeCreateRequest,
       });
 
-      set({
-        challenges: [
-          ...get().challenges!,
-          {
-            gatheringId,
-            ...challengeCreateRequest,
-          },
-        ],
-      });
+      // set({
+      //   challenges: [
+      //     ...get().challenges!,
+      //     {
+      //       gatheringId,
+      //       ...challengeCreateRequest,
+      //     },
+      //   ],
+      // });
     } catch (error) {
       throw error;
     }
@@ -223,6 +224,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
 
   deleteGathering: async (gatheringId) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = await apiRequest<any>({
         param: `/api/v1/gatherings/${gatheringId}`,
         method: 'delete',
@@ -235,12 +237,14 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
 
   participantGathering: async (gatheringId) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = await apiRequest<any>({
         param: `/api/v1/gatherings/${gatheringId}/participants`,
         method: 'post',
       });
       console.log('participant response', response);
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
