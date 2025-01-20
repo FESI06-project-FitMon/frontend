@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
+import useToastStore from '@/stores/useToastStore';
 
 interface TagInputProps {
   initialTags?: string[]; // 초기 태그
@@ -14,6 +15,8 @@ export default function TagInput({
 }: TagInputProps) {
   const [tags, setTags] = useState<string[]>(initialTags);
 
+  const showToast = useToastStore((state) => state.show);
+
   const handleTagDelete = (tag: string) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
@@ -23,11 +26,11 @@ export default function TagInput({
   const handleTagAdd = (newTag: string) => {
     if (!newTag.trim()) return;
     if (tags.length >= maxTags) {
-      alert(`태그는 최대 ${maxTags}개까지 추가 가능합니다.`);
+      showToast(`태그는 최대 ${maxTags}개까지 추가 가능합니다.`, 'caution');
       return;
     }
     if (tags.includes(newTag)) {
-      alert('이미 추가된 태그입니다.');
+      showToast('이미 추가된 태그입니다.', 'caution');
       return;
     }
     const updatedTags = [...tags, newTag.trim()];
@@ -41,9 +44,9 @@ export default function TagInput({
         {tags.map((tag) => (
           <div
             key={tag}
-            className="h-[30px] px-3 py-1 bg-dark-200 rounded-[10px] flex items-center gap-2"
+            className="h-[30px] px-3 py-1 bg-dark-200 rounded-[10px] flex items-center gap-2 "
           >
-            <p className="text-primary text-sm">{`#${tag}`}</p>
+            <p className="text-primary text-sm text-nowrap">{`#${tag}`}</p>
             <button onClick={() => handleTagDelete(tag)}>
               <Image
                 src="/assets/image/cancel-tag.svg"
