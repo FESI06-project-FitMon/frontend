@@ -22,6 +22,10 @@ export default function GatheringChallenge({
   const [isLoading, setIsLoading] = useState(false);
   const { fetchGatheringChallenges, challenges, hasNextPage, setHasNextPage } =
     useGatheringStore();
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
   const [page, setPage] = useState(0);
 
   const fetchNextPage = async () => {
