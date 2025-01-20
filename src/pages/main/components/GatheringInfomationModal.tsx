@@ -1,7 +1,7 @@
 import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
-import Select from '@/components/common/Select';
+import Select, { SelectItem } from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import TagInput from '@/components/common/TagInput';
+import cityData from '@/constants/city';
 
 interface FormData {
   title: string;
@@ -26,6 +27,9 @@ interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
 
+type CityData = typeof cityData;
+type CityKeys = keyof CityData;
+
 export default function GatheringInfomationModal({
   onChange,
 }: GatheringInfomationModalProps) {
@@ -38,8 +42,8 @@ export default function GatheringInfomationModal({
     description: '',
     tags: [],
     imageUrl: null,
-    mainLocation: '서울시',
-    subLocation: '동작구',
+    mainLocation: '서울특별시',
+    subLocation: '',
     totalCount: 0,
     startDate: null,
     endDate: null,
@@ -51,7 +55,6 @@ export default function GatheringInfomationModal({
   ) => {
     const updatedForm = { ...formData, [key]: value };
 
-    // 부모로 전달 시 이미지가 없으면 기본 이미지를 전송
     const transformedData = {
       ...updatedForm,
       imageUrl: updatedForm.imageUrl || DEFAULT_IMAGE_URL,
@@ -61,26 +64,26 @@ export default function GatheringInfomationModal({
     onChange(transformedData);
   };
 
-  // useImageUpload 호출 부분 수정
   const { handleImageUpload, isUploading } = useImageUpload({
-    type: 'GATHERING', // uploadFn 대신 type 지정
+    type: 'GATHERING',
     onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
     onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
     },
   });
 
-  const placeSiItems = [
-    { value: '서울시', label: '서울시' },
-    { value: '부산시', label: '부산시' },
-    { value: '대전시', label: '대전시' },
-  ];
+  // 도/시 리스트 생성
+  const placeSiItems: SelectItem[] = Object.keys(cityData).map((city) => ({
+    value: city,
+    label: city,
+  }));
 
-  const placeGuItems = [
-    { value: '동작구', label: '동작구' },
-    { value: '강서구', label: '강서구' },
-    { value: '마포구', label: '마포구' },
-  ];
+  // 선택된 도/시에 따른 구/군 리스트 생성
+  const placeGuItems: SelectItem[] =
+    cityData[formData.mainLocation as CityKeys]?.map((gu) => ({
+      value: gu.value,
+      label: gu.label,
+    })) || [];
 
   return (
     <div>
@@ -106,7 +109,6 @@ export default function GatheringInfomationModal({
               isUploading={isUploading}
             />
           </div>
-
           <div className="w-[360px]">
             <Input
               type="text"
@@ -124,7 +126,7 @@ export default function GatheringInfomationModal({
               value={formData.description}
               rows={2}
               className="outline-dark-500 bg-dark-400 mb-[7px]"
-              maxLength={50} // 최대 글자 수 제한
+              maxLength={50}
             />
           </div>
         </div>
@@ -133,10 +135,9 @@ export default function GatheringInfomationModal({
       <div>
         <h2 className="mb-[10px]">모임 태그 </h2>
         <TagInput
-          onTagsChange={(updatedTags) => updateFormData('tags', updatedTags)} // 부모 상태 업데이트
+          onTagsChange={(updatedTags) => updateFormData('tags', updatedTags)}
         />
       </div>
-
       {/* 장소 및 최대 인원 */}
       <div className="flex gap-[10px] mt-[20px]">
         <div id="place">
@@ -145,7 +146,13 @@ export default function GatheringInfomationModal({
             <Select
               items={placeSiItems}
               selectedItem={formData.mainLocation}
-              setSelectedItem={(value) => updateFormData('mainLocation', value)}
+              setSelectedItem={(value) => {
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  mainLocation: value,
+                  subLocation: '',
+                }));
+              }}
               width="175px"
               height="47px"
               className="mr-[10px] w-[175px]"
