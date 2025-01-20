@@ -27,7 +27,6 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
   method = 'get',
   requestData,
 }: ApiRequestProps<TRequest>): Promise<TResponse> {
-
   const response = await instance.request<TResponse>({
     url: param,
     method,
@@ -36,8 +35,5 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
       'Content-Type': 'application/json',
     },
   });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  return response.data;
 }
