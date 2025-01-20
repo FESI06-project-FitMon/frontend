@@ -40,11 +40,11 @@ export default function TagInput({
 
   return (
     <div>
-      <div className="h-[47px] rounded-[8px] border border-dark-500 bg-dark-400 flex items-center gap-[10px] px-5 overflow-auto">
+      <div className="h-[47px] rounded-[8px] border border-dark-500 bg-dark-400 flex items-center gap-[10px] px-5 overflow-hidden">
         {tags.map((tag) => (
           <div
             key={tag}
-            className="h-[30px] px-3 py-1 bg-dark-200 rounded-[10px] flex items-center gap-2 "
+            className="h-[30px] px-3 py-1 bg-dark-200 rounded-[10px] flex items-center gap-2"
           >
             <p className="text-primary text-sm text-nowrap">{`#${tag}`}</p>
             <button onClick={() => handleTagDelete(tag)}>
@@ -59,13 +59,14 @@ export default function TagInput({
         ))}
         <input
           type="text"
-          className="bg-transparent outline-none flex-1"
+          className="bg-transparent outline-none flex-1 min-w-[50px] flex-shrink-0"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
               handleTagAdd(e.currentTarget.value);
               e.currentTarget.value = '';
             }
           }}
+          maxLength={5}
         />
       </div>
     </div>
