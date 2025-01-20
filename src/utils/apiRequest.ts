@@ -22,7 +22,7 @@ interface ApiRequestProps<TRequest> {
  * });
  */
 
-export default async function apiRequest<TResponse, TRequest = void>({
+export default async function apiRequest<TResponse, TRequest = TResponse>({
   param,
   method = 'get',
   requestData,
