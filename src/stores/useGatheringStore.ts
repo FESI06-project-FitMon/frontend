@@ -161,7 +161,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   },
 
   // 방명록 불러오기 API
-  fetchGatheringGuestbooks: async (gatheringId, page = 0, pageSize = 10) => {
+  fetchGatheringGuestbooks: async (gatheringId, page = 0, pageSize = 4) => {
     try {
       const response = await apiRequest<GatheringGuestbookResponse>({
         param: `/api/v1/gatherings/${gatheringId}/guestbooks?page=${page}&pageSize=${pageSize}`,

@@ -14,7 +14,7 @@ export default function GatheringGuestbook({
   const [page, setPage] = useState(0);
   const { guestbooks, fetchGatheringGuestbooks } = useGatheringStore();
   useEffect(() => {
-    fetchGatheringGuestbooks(gatheringId, 0, 10);
+    fetchGatheringGuestbooks(gatheringId, page, 10);
   }, [gatheringId]);
   return (
     <div className="mt-[43px] mb-[130px] w-full">
