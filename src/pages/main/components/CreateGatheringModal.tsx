@@ -109,10 +109,10 @@ export default function CreateGathering({
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (currentStep === 2) {
       // 2단계에서 POST 요청
-      handlePostGathering();
+      await handlePostGathering();
     } else {
       setCurrentStep((prev) => Math.min(prev + 1, 3));
     }

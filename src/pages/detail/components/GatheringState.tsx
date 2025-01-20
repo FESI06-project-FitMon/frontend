@@ -20,8 +20,12 @@ export default function GatheringState({
 }) {
   const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
-  const { fetchGatheringStatus, gatheringStatus, participantGathering } =
-    useGatheringStore();
+  const {
+    fetchGatheringStatus,
+    gatheringStatus,
+    gathering,
+    participantGathering,
+  } = useGatheringStore();
 
   // 초기 상태 세팅
   useEffect(() => {
@@ -134,13 +138,24 @@ export default function GatheringState({
           </div>
         </div>
         <div className="flex mb-auto h-[56px]" id="buttons">
-          <Button
-            className="ml-[25px] w-[242px]"
-            style="custom"
-            height="100%"
-            name="참여하기"
-            handleButtonClick={() => handleGatheringButtonClick()}
-          />
+          {gathering?.participantStatus ? (
+            <Button
+              className="ml-[25px] w-[242px]"
+              style="disabled"
+              height="100%"
+              name="참여 완료"
+              handleButtonClick={() => handleGatheringButtonClick()}
+            />
+          ) : (
+            <Button
+              className="ml-[25px] w-[242px]"
+              style="custom"
+              height="100%"
+              name="참여하기"
+              handleButtonClick={() => handleGatheringButtonClick()}
+            />
+          )}
+
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
               src={

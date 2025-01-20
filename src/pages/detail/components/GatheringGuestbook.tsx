@@ -14,13 +14,13 @@ export default function GatheringGuestbook({
   const [page, setPage] = useState(0);
   const { guestbooks, fetchGatheringGuestbooks } = useGatheringStore();
   useEffect(() => {
-    fetchGatheringGuestbooks(gatheringId, 0, 10);
+    fetchGatheringGuestbooks(gatheringId, page, 10);
   }, [gatheringId]);
   return (
     <div className="mt-[43px] mb-[130px] w-full">
       {/* 방명록 리스트 */}
       <div className=" flex flex-col gap-5 mb-[33px]">
-        {guestbooks ? (
+        {guestbooks && guestbooks.length > 0 ? (
           guestbooks.map((guestbook, index) => (
             <Guestbook key={index} guestbook={guestbook} />
           ))

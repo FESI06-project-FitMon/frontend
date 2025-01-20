@@ -4,6 +4,7 @@ import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
 import TextArea from '@/components/common/TextArea';
 import useGatheringStore from '@/stores/useGatheringStore';
+import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 
@@ -35,12 +36,13 @@ export default function ChallengeAddModal({
     setChallengeDescription(e.target.value);
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      setChallengeImageUrl(URL.createObjectURL(file));
+      const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
+      setChallengeImageUrl(imageUrl);
     }
   };
 
@@ -61,7 +63,7 @@ export default function ChallengeAddModal({
       title: challengeTitle,
       description: challengeDescription,
       imageUrl: challengeImageUrl,
-      maxPeopleCount: maxPeopleCount,
+      totalCount: maxPeopleCount,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
@@ -82,10 +84,7 @@ export default function ChallengeAddModal({
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
               src={
-                challengeImageUrl &&
-                ['https', 'http', 'blob'].indexOf(
-                  challengeImageUrl.split(':')[0],
-                ) !== -1
+                challengeImageUrl
                   ? challengeImageUrl
                   : '/assets/image/fitmon.png'
               }
