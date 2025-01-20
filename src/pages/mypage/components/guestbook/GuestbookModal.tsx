@@ -75,16 +75,6 @@ export default function GuestbookModal({
     }
   };
 
-  const handleContentChange = (value: string) => {
-    console.log('Content changed:', value);
-    setContent(value);
-  };
-
-  const handleRatingChange = (value: number) => {
-    console.log('Rating changed:', value);
-    setRating(value);
-  };
-
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
@@ -114,6 +104,10 @@ export default function GuestbookModal({
             />
           </div>
         </form>
+        {/* Preparing 컴포넌트를 absolute로 배치 */}
+        <div className="absolute inset-0 z-[9999] pointer-events-none">
+          <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
+        </div>
       </div>
     </Modal>
   );
