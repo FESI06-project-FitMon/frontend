@@ -5,7 +5,9 @@ import Select from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
-import { useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useState } from 'react';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import instance from '@/utils/axios';
 
 interface FormData {
   title: string;
@@ -23,6 +25,23 @@ interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
 
+// 이미지 업로드 함수 선언
+const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await instance.request<{ imageUrl: string }>({
+    url: 'api/v1/images?type=GATHERING',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data;
+};
+
 export default function GatheringInfomationModal({
   onChange,
 }: GatheringInfomationModalProps) {
@@ -33,7 +52,7 @@ export default function GatheringInfomationModal({
     title: '',
     description: '',
     tags: [],
-    imageUrl: null, // 초기값은 null로 설정
+    imageUrl: null,
     mainLocation: '서울시',
     subLocation: '동작구',
     totalCount: 0,
@@ -57,45 +76,20 @@ export default function GatheringInfomationModal({
     onChange(transformedData);
   };
 
+  // useImageUpload 훅 사용
+  const { handleImageUpload, isUploading } = useImageUpload({
+    uploadFn: uploadImage, // 파일 내에서 정의된 uploadImage 함수 사용
+    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl), // 업로드 성공 시 formData 업데이트
+    onUploadError: (error) => {
+      console.error('이미지 업로드 실패:', error);
+    },
+  });
+
   const handleTagDelete = (tag: string) => {
     updateFormData(
       'tags',
       formData.tags.filter((t) => t !== tag),
     );
-  };
-
-  const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const input = e.currentTarget.value.trim();
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing && input) {
-      if (formData.tags.length >= 3) {
-        alert('태그는 최대 3개까지 추가 가능합니다.');
-        return;
-      }
-      if (formData.tags.includes(input)) {
-        alert('이미 추가된 태그입니다.');
-        return;
-      }
-      updateFormData('tags', [...formData.tags, input]);
-      e.currentTarget.value = '';
-    }
-  };
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      updateFormData('imageUrl', null); // 이미지가 없으면 null 유지
-      return;
-    }
-    const file = e.target.files[0];
-    updateFormData('imageUrl', URL.createObjectURL(file));
-  };
-
-  const handleImageDelete = () => {
-    updateFormData('imageUrl', null); // 이미지 삭제 시 null로 설정
-  };
-
-  const handleImageEditClick = () => {
-    const fileInput = document.getElementById('file-input') as HTMLInputElement;
-    fileInput?.click();
   };
 
   const placeSiItems = [
@@ -134,17 +128,21 @@ export default function GatheringInfomationModal({
                 id="file-input"
                 className="hidden"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={handleImageUpload} // useImageUpload의 핸들러 사용
               />
-              <Image
-                src="/assets/image/gathering_edit.svg"
-                width={45}
-                height={45}
-                alt="edit-image"
-                onClick={handleImageEditClick}
-              />
+              {isUploading ? (
+                <p className="text-sm text-dark-700">업로드 중...</p>
+              ) : (
+                <Image
+                  src="/assets/image/gathering_edit.svg"
+                  width={45}
+                  height={45}
+                  alt="edit-image"
+                  onClick={() => document.getElementById('file-input')?.click()}
+                />
+              )}
               <button
-                onClick={handleImageDelete}
+                onClick={() => updateFormData('imageUrl', null)}
                 className="text-sm text-dark-700 hover:cursor-pointer"
               >
                 이미지 삭제
@@ -195,7 +193,21 @@ export default function GatheringInfomationModal({
           <input
             type="text"
             className="absolute w-full bg-transparent top-0 h-[47px] outline-none"
-            onKeyDown={handleTagInputKeyDown}
+            onKeyDown={(e) => {
+              const input = e.currentTarget.value.trim();
+              if (e.key === 'Enter' && input && !e.nativeEvent.isComposing) {
+                if (formData.tags.length >= 3) {
+                  alert('태그는 최대 3개까지 추가 가능합니다.');
+                  return;
+                }
+                if (formData.tags.includes(input)) {
+                  alert('이미 추가된 태그입니다.');
+                  return;
+                }
+                updateFormData('tags', [...formData.tags, input]);
+                e.currentTarget.value = '';
+              }
+            }}
           />
         </div>
       </div>
