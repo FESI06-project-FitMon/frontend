@@ -44,18 +44,9 @@ export default function Select({
   };
   const currentLabel =
     items.find((item) => item.value === selectedItem)?.label || '선택하세요';
-  const itemStyle = (value: string) => {
-    let style = ` w-[${width}] h-[${height}] relative flex items-center top-full bg-dark-400 rounded-[8px] border-[1px]  px-5`;
-    if (value === selectedItem) {
-      style += ' border-[#FF7487]';
-    } else {
-      style += ' border-dark-500';
-    }
-    return style;
-  };
 
   return (
-    <div className={`${className} w-[${width}] h-[${height}] z-[100] `}>
+    <div className={`${className} w-[${width}] h-[${height}] z-[100] relative`}>
       <div
         onClick={() => handleOptionLabelClick()}
         className={`w-full h-[${height}] flex items-center justify-between bg-dark-400 rounded-[8px] border-[1px] border-dark-500 px-5  ${className}`}
@@ -73,10 +64,12 @@ export default function Select({
         />
       </div>
       {open && selectType === currentSelectType && (
-        <ul>
+        <ul className="absolute top-full w-full max-h-[200px] overflow-y-auto bg-dark-400 rounded-[8px] border border-dark-500 z-10">
           {items.map((item, index) => (
             <li
-              className={`w-[${width}] h-[${height}] ${itemStyle(item.value)}`}
+              className={`w-full px-5 py-2 cursor-pointer hover:bg-gray-700 ${
+                item.value === selectedItem ? 'text-primary' : ''
+              }`}
               key={index}
               value={item.value}
               onClick={() => handleOptionClick(item.value)}
