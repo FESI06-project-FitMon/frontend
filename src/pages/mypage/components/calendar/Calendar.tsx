@@ -126,7 +126,7 @@ export default function CalendarTab() {
             headerToolbar={false} // 기본 헤더 비활성화
             eventContent={({ event }) => (
               // 이벤트 커스터마이즈 렌더링
-              <div className="flex items-center justify-center gap-1 px-1 py-0.5 rounded text-xs" style={{ color: event.textColor }}>
+              <div className="flex items-center justify-center gap-1 px-1 py-0.5 rounded text-[0.5rem] md:text-xs" style={{ color: event.textColor }}>
                 {event.extendedProps.isHost && (
                   <Image
                     src="/assets/image/crown.svg"
