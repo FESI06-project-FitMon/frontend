@@ -79,7 +79,7 @@ export default function Navigation() {
   }
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-dark-100 shadow-lg z-40 border-b-[1px] border-b-dark-300">
+    <header className=" top-0 left-0 w-full bg-dark-100 shadow-lg z-40 border-b-[1px] border-b-dark-300">
       <div className="max-w-screen-xl mx-auto px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-20">
           {/* 로고 영역 */}
