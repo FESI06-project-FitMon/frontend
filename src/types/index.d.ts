@@ -1,12 +1,4 @@
 import { GatheringChallegeProps, CreateGatheringForm } from './index.d';
-
-export interface PageResponse<T> {
-  content: T[];
-  currentPage: number;
-  totalElements: number;
-  totalPages: number;
-}
-
 export interface TabItem {
   id: string;
   label: string;
@@ -122,7 +114,7 @@ export interface CreateChallenge {
   title: string;
   description: string;
   imageUrl: string | null;
-  // maxPeopleCount: number;
+  maxPeopleCount: number;
   startDate: Date | null;
   endDate: Date | null;
 }
@@ -141,4 +133,11 @@ export interface CreateGatheringForm {
   minCount: number;
   tags: string[];
   challenges: CreateChallenge[];
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  currentPage: number;
+  totalElements: number;
+  totalPages: number;
 }

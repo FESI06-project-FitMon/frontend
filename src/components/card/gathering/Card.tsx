@@ -30,7 +30,7 @@ export default function Card({ data }: CardProps) {
 
   return (
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
-      <div className="relative w-[220px] h-[220px]">
+      <div className="relative min-w-[220px] h-[220px]">
         <div className="absolute bottom-2.5 left-2.5 z-10">
           <StatusTag status={status} />
         </div>
@@ -39,7 +39,7 @@ export default function Card({ data }: CardProps) {
         </div>
         <Image src={imageUrl} fill alt="모임 사진" className="rounded-xl" />
       </div>
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5 w-full">
         <span className="text-primary font-normal">
           {subType} | {mainLocation} {subLocation}
         </span>
@@ -54,7 +54,7 @@ export default function Card({ data }: CardProps) {
             );
           })}
         </div>
-        <div className="flex justify-between pt-2">
+        <div className="flex justify-between  pt-2">
           <div className="flex justify-start items-center  gap-3">
             <RingChart total={totalCount} value={participantCount} />
             <span className="font-semibold">

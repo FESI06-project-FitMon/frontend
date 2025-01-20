@@ -5,7 +5,9 @@ import Select from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
-import { useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useState } from 'react';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import instance from '@/utils/axios';
 
 interface FormData {
   title: string;
@@ -23,9 +25,29 @@ interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
 
+// 이미지 업로드 함수 선언
+const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await instance.request<{ imageUrl: string }>({
+    url: 'api/v1/images?type=GATHERING',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data;
+};
+
 export default function GatheringInfomationModal({
   onChange,
 }: GatheringInfomationModalProps) {
+  const DEFAULT_IMAGE_URL =
+    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -37,6 +59,38 @@ export default function GatheringInfomationModal({
     startDate: null,
     endDate: null,
   });
+
+  const updateFormData = <K extends keyof FormData>(
+    key: K,
+    value: FormData[K],
+  ) => {
+    const updatedForm = { ...formData, [key]: value };
+
+    // 부모로 전달 시 이미지가 없으면 기본 이미지를 전송
+    const transformedData = {
+      ...updatedForm,
+      imageUrl: updatedForm.imageUrl || DEFAULT_IMAGE_URL,
+    };
+
+    setFormData(updatedForm);
+    onChange(transformedData);
+  };
+
+  // useImageUpload 훅 사용
+  const { handleImageUpload, isUploading } = useImageUpload({
+    uploadFn: uploadImage, // 파일 내에서 정의된 uploadImage 함수 사용
+    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl), // 업로드 성공 시 formData 업데이트
+    onUploadError: (error) => {
+      console.error('이미지 업로드 실패:', error);
+    },
+  });
+
+  const handleTagDelete = (tag: string) => {
+    updateFormData(
+      'tags',
+      formData.tags.filter((t) => t !== tag),
+    );
+  };
 
   const placeSiItems = [
     { value: '서울시', label: '서울시' },
@@ -50,64 +104,6 @@ export default function GatheringInfomationModal({
     { value: '마포구', label: '마포구' },
   ];
 
-  const findLabelByValue = (
-    items: Array<{ value: string; label: string }>,
-    value: string,
-  ): string => items.find((item) => item.value === value)?.label || '';
-
-  const updateFormData = <K extends keyof FormData>(
-    key: K,
-    value: FormData[K],
-  ) => {
-    const updatedForm = { ...formData, [key]: value };
-
-    // 부모로 전달 시 `mainLocation`과 `subLocation`을 `label`로 변환
-    const transformedData = {
-      ...updatedForm,
-      mainLocation: findLabelByValue(placeSiItems, updatedForm.mainLocation),
-      subLocation: findLabelByValue(placeGuItems, updatedForm.subLocation),
-    };
-
-    setFormData(updatedForm);
-    onChange(transformedData);
-  };
-
-  const handleTagDelete = (tag: string) => {
-    updateFormData(
-      'tags',
-      formData.tags.filter((t) => t !== tag),
-    );
-  };
-
-  const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const input = e.currentTarget.value.trim();
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing && input) {
-      if (formData.tags.length >= 3) {
-        alert('태그는 최대 3개까지 추가 가능합니다.');
-        return;
-      }
-      if (formData.tags.includes(input)) {
-        alert('이미 추가된 태그입니다.');
-        return;
-      }
-      updateFormData('tags', [...formData.tags, input]);
-      e.currentTarget.value = '';
-    }
-  };
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    updateFormData('imageUrl', URL.createObjectURL(file));
-  };
-
-  const handleImageDelete = () => updateFormData('imageUrl', null);
-
-  const handleImageEditClick = () => {
-    const fileInput = document.getElementById('file-input') as HTMLInputElement;
-    fileInput?.click();
-  };
-
   return (
     <div>
       {/* 모임 정보 */}
@@ -117,10 +113,11 @@ export default function GatheringInfomationModal({
           <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
             {formData.imageUrl && (
               <>
-                <img
+                <Image
                   src={formData.imageUrl}
                   alt="이미지 미리보기"
                   className="rounded-[10px] w-full h-full object-cover"
+                  fill
                 />
                 <div className="absolute w-full h-full bg-black/70 rounded-[10px] z-10" />
               </>
@@ -131,17 +128,21 @@ export default function GatheringInfomationModal({
                 id="file-input"
                 className="hidden"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={handleImageUpload}
               />
-              <Image
-                src="/assets/image/gathering_edit.svg"
-                width={45}
-                height={45}
-                alt="edit-image"
-                onClick={handleImageEditClick}
-              />
+              {isUploading ? (
+                <p className="text-sm text-dark-700">업로드 중...</p>
+              ) : (
+                <Image
+                  src="/assets/image/gathering_edit.svg"
+                  width={45}
+                  height={45}
+                  alt="edit-image"
+                  onClick={() => document.getElementById('file-input')?.click()}
+                />
+              )}
               <button
-                onClick={handleImageDelete}
+                onClick={() => updateFormData('imageUrl', null)}
                 className="text-sm text-dark-700 hover:cursor-pointer"
               >
                 이미지 삭제
@@ -192,8 +193,21 @@ export default function GatheringInfomationModal({
           <input
             type="text"
             className="absolute w-full bg-transparent top-0 h-[47px] outline-none"
-            placeholder="태그를 입력 후 Enter를 눌러주세요."
-            onKeyDown={handleTagInputKeyDown}
+            onKeyDown={(e) => {
+              const input = e.currentTarget.value.trim();
+              if (e.key === 'Enter' && input && !e.nativeEvent.isComposing) {
+                if (formData.tags.length >= 3) {
+                  alert('태그는 최대 3개까지 추가 가능합니다.');
+                  return;
+                }
+                if (formData.tags.includes(input)) {
+                  alert('이미 추가된 태그입니다.');
+                  return;
+                }
+                updateFormData('tags', [...formData.tags, input]);
+                e.currentTarget.value = '';
+              }
+            }}
           />
         </div>
       </div>

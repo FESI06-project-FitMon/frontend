@@ -31,7 +31,7 @@ const initialState: CreateGatheringForm = {
       title: '',
       description: '',
       imageUrl: null,
-      // maxPeopleCount: 0,
+      maxPeopleCount: 0,
       startDate: null,
       endDate: null,
     },
