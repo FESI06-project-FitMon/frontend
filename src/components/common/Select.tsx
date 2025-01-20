@@ -11,10 +11,11 @@ interface SelectProps {
   currentSelectType: SelectType | null;
 }
 
-interface SelectItem {
+export interface SelectItem {
   value: string;
   label: string;
 }
+
 export default function Select({
   items,
   selectedItem,
@@ -41,8 +42,8 @@ export default function Select({
     setSelectType(currentSelectType);
     setOpen(true);
   };
-  const currentLabel = items.filter((item) => item.value === selectedItem)[0]
-    .label;
+  const currentLabel =
+    items.find((item) => item.value === selectedItem)?.label || '선택하세요';
   const itemStyle = (value: string) => {
     let style = ` w-[${width}] h-[${height}] relative flex items-center top-full bg-dark-400 rounded-[8px] border-[1px]  px-5`;
     if (value === selectedItem) {
