@@ -7,7 +7,6 @@ import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import instance from '@/utils/axios';
 
 interface FormData {
   title: string;
@@ -25,22 +24,6 @@ interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
 
-// 이미지 업로드 함수 선언
-const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await instance.request<{ imageUrl: string }>({
-    url: 'api/v1/images?type=GATHERING',
-    method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return response.data;
-};
 
 export default function GatheringInfomationModal({
   onChange,
@@ -76,13 +59,13 @@ export default function GatheringInfomationModal({
     onChange(transformedData);
   };
 
-  // useImageUpload 훅 사용
+  // useImageUpload 호출 부분 수정
   const { handleImageUpload, isUploading } = useImageUpload({
-    uploadFn: uploadImage, // 파일 내에서 정의된 uploadImage 함수 사용
-    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl), // 업로드 성공 시 formData 업데이트
+    type: 'GATHERING', // uploadFn 대신 type 지정
+    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
     onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
-    },
+    }
   });
 
   const handleTagDelete = (tag: string) => {
