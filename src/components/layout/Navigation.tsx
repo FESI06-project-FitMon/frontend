@@ -110,8 +110,8 @@ export default function Navigation() {
                 모임 찾기
               </Link>
               <Link
-                href="/interested-gatherings"
-                className={`${isActive('/interested-gatherings')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
+                href="/likes"
+                className={`${isActive('/likes')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
               >
                 찜한 모임
               </Link>
