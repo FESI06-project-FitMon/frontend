@@ -5,6 +5,7 @@ import Loading from '@/components/dialog/Loading';
 import ChallengeCard from './ChallengeCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import Null from '@/components/common/Null';
 
 export default function ListChallenge() {
   const { data, isLoading } = useQuery<MainChallenge[]>({
@@ -41,12 +42,15 @@ export default function ListChallenge() {
         },
       }}
     >
-      {data &&
-        data.map((challenge) => (
+      {data?.length === 0 ? (
+        <Null message="챌린지 정보가 없습니다." />
+      ) : (
+        data?.map((challenge) => (
           <SwiperSlide key={challenge.challengeId}>
             <ChallengeCard data={challenge} />
           </SwiperSlide>
-        ))}
+        ))
+      )}
     </Swiper>
   );
 }

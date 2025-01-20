@@ -18,15 +18,16 @@ import {
 import { GatheringList } from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import CreateGathering from './main/components/CreateGatheringModal';
+import useMemberStore from '@/stores/useMemberStore';
+import Alert from '@/components/dialog/Alert';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const pageSize = 6; // 한 페이지당 불러올 데이터 수
   const apiEndpoint = '/api/v1/gatherings';
 
-  // QueryClient 생성
   const queryClient = new QueryClient();
 
-  // 쿼리 파라미터 설정
   const queryParams = {
     sortBy: 'deadline',
     sortDirection: 'ASC',
@@ -34,7 +35,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     pageSize: String(pageSize),
   };
 
-  // InfiniteQuery를 미리 가져오기
   await queryClient.prefetchInfiniteQuery({
     queryKey: ['gatheringList', '전체', '전체'],
     queryFn: async ({ pageParam = 0 }) => {
@@ -55,24 +55,37 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default function Home() {
-  const [mainType, setMainType] = useState<MainType>('전체'); // 메인 타입 상태
-  const [subType, setSubType] = useState('전체'); // 서브 타입 상태
-
+  const [mainType, setMainType] = useState<MainType>('전체');
+  const [subType, setSubType] = useState('전체');
   const [showModal, setShowModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const { isLogin } = useMemberStore();
+  const router = useRouter();
+
+  const handleCreateButton = () => {
+    if (isLogin) {
+      setShowModal(true);
+    } else {
+      setShowAlert(true);
+    }
+  };
+
+  const handleAlertConfirm = () => {
+    setShowAlert(false);
+    router.push('/login');
+  };
 
   return (
     <div className="max-w-screen-xl mx-auto px-8 pt-20">
-      {/* 페이지 제목 */}
       <h2 className="text-[1.75rem] font-semibold pb-[30px]">
         지금 핫한 챌린지 🔥
       </h2>
 
-      {/* 핫한 챌린지 리스트 */}
       <div className="overflow-hidden">
         <ListChallenge />
       </div>
 
-      {/* 메인 타입 탭 */}
       <div className="mt-20">
         <Tab
           items={LISTPAGE_MAINTYPE}
@@ -87,7 +100,7 @@ export default function Home() {
                 style="custom"
                 name="모임 만들기"
                 className="text-base my-2 h-10 w-32"
-                handleButtonClick={() => setShowModal(!showModal)}
+                handleButtonClick={handleCreateButton}
               />
             </div>
           }
@@ -98,7 +111,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* 서브 타입 태그 */}
       <div className="mt-7">
         {mainType !== '전체' && (
           <SubTag
@@ -109,12 +121,22 @@ export default function Home() {
         )}
       </div>
 
-      {/* 모임 카드 리스트 */}
       <div className="mt-7 pb-20">
         <HydrationBoundary>
           <Cardlist mainType={mainType} subType={subType} />
         </HydrationBoundary>
       </div>
+
+      {/* 알럿 컴포넌트 */}
+      {showAlert && (
+        <Alert
+          isOpen={showAlert}
+          type="confirm"
+          message="로그인이 필요합니다."
+          onConfirm={handleAlertConfirm}
+          onCancel={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 }

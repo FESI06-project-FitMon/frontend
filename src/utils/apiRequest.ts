@@ -1,4 +1,5 @@
 import instance from './axios';
+
 interface ApiRequestProps<TRequest> {
   param: string;
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put';
@@ -26,13 +27,15 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
   method = 'get',
   requestData,
 }: ApiRequestProps<TRequest>): Promise<TResponse> {
-  try {
-    const response = await instance.request<TResponse>({
-      url: param,
-      method,
-      data: requestData ?? null, // requestData가 없을 경우 null 전달
-    });
 
+  const response = await instance.request<TResponse>({
+    url: param,
+    method,
+    data: requestData ?? null, // requestData가 없을 경우 null 전송
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
     return response.data;
   } catch (error) {
     throw error;

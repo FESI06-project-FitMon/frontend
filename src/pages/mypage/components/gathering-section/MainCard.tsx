@@ -49,11 +49,11 @@ export default function MainCard({
       {/* 이미지 영역 */}
       <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
         <Image
-          src={
-            gathering.gatheringImage === 'null' || !gathering.gatheringImage
-              ? '/assets/image/default_img.png'
-              : gathering.gatheringImage
-          }
+        src={
+          gathering.gatheringImage === 'null' || !gathering.gatheringImage
+            ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+            : gathering.gatheringImage
+        }
           alt={gathering.gatheringTitle || '기본 이미지'}
           width={300}
           height={200}
@@ -72,16 +72,12 @@ export default function MainCard({
       {/* 정보 영역 */}
       <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px] ">
         <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
-          {gathering.gatheringSubType} | {gathering.gatheringSi}{' '}
-          {gathering.gatheringGu}
+
+          {gathering.gatheringSubType} | {gathering.gatheringSi} {gathering.gatheringGu}
         </h3>
-        <h2 className="text-sm md:text-xl font-bold mb-3.5">
-          {gathering.gatheringTitle}
-        </h2>
+        <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.gatheringTitle}</h2>
         <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
-          <h4>
-            {gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}
-          </h4>
+          <h4>{gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}</h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
               src="/assets/image/person.svg"
@@ -99,13 +95,12 @@ export default function MainCard({
         </div>
         <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
           <Button
-            name={gathering.captainStatus ? '모임 취소하기' : '참여 취소하기'}
-            style={gathering.captainStatus ? 'custom' : 'cancel'}
-            className={
-              gathering.captainStatus
-                ? 'w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base '
-                : 'w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base text-primary font-semibold'
-            }
+
+            name={gathering.captainStatus ? "모임 취소하기" : "참여 취소하기"}
+            style={gathering.captainStatus ? "custom" : "cancel"}
+            className={gathering.captainStatus
+              ? "w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base "
+              : "w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base text-primary font-semibold"}
             handleButtonClick={handleCancelClick}
           />
         </div>

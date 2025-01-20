@@ -84,7 +84,7 @@ export default function ChallengeSection({
                     <Image
                       src={
                         challenge.imageUrl === 'null' || !challenge.imageUrl
-                          ? '/assets/image/default_challenge.png'
+                          ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
                           : challenge.imageUrl
                       }
                       alt={challenge.title}
