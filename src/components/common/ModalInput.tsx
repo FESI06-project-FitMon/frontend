@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Toast from '@/components/dialog/Toast';
 
 interface ModalInputProps {
   type: 'title' | 'description'; // 입력 타입 (타이틀 또는 설명)
