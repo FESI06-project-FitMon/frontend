@@ -29,8 +29,8 @@ export default function GatheringInformation({
       },
     },
     {
-      id: 'delete',
-      label: '삭제하기',
+      id: 'cancel',
+      label: '취소하기',
       onClick: () => {
         setShowSelectAlert(true);
       },
@@ -80,7 +80,7 @@ export default function GatheringInformation({
                 <Alert
                   isOpen={showSelectAlert}
                   type="select"
-                  message="모임을 삭제하시겠습니까?"
+                  message="모임을 취소하시겠습니까?"
                   onConfirm={handleDeleteConfirmButtonClick}
                   onCancel={handleDeleteCancelButtonClick}
                 />

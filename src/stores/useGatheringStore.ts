@@ -89,6 +89,7 @@ interface GatheringState {
     gatheringId: number,
   ) => void;
   deleteGathering: (gatheringId: number) => void;
+  participantGathering: (gatheringId: number) => void;
 }
 
 interface GatheringChallengeResponse {
@@ -227,6 +228,18 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         method: 'delete',
       });
       console.log('delete response', response);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  participantGathering: async (gatheringId) => {
+    try {
+      const response = await apiRequest<any>({
+        param: `/api/v1/gatherings/${gatheringId}/participants`,
+        method: 'post',
+      });
+      console.log('participant response', response);
     } catch (error) {
       throw error;
     }
