@@ -24,10 +24,19 @@ export default function GuestbookCard({
       {/* 이미지 영역 */}
       <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
         <Image
-          src="/assets/image/default_img.png"
-          alt="모임 이미지"
-          layout="fill" 
+          src={
+            gathering?.gatheringImage === 'null' || !gathering?.gatheringImage
+              ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+              : gathering.gatheringImage
+          }
+          alt={gathering?.gatheringTitle || '모임 이미지'}
+          layout="fill"
           className="object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+          }}
         />
       </div>
 

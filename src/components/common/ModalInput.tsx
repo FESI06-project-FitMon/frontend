@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Toast from '@/components/dialog/Toast';
 
 interface ModalInputProps {
   type: 'title' | 'description'; // 입력 타입 (타이틀 또는 설명)
@@ -23,23 +22,19 @@ const ModalInput: React.FC<ModalInputProps> = ({
   onValidationFail,
 }) => {
   const [error, setError] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const newValue = e.target.value;
     setError(false); // 입력 중 에러 제거
-    setShowToast(false); // 이전 Toast 제거
     onChange(newValue); // 변경된 값을 전달
   };
 
   const validateInput = () => {
     if (!value.trim()) {
       setError(true);
-      setShowToast(true); // Toast 표시
       if (onValidationFail) {
         onValidationFail(); // 명시적으로 호출
       }
-      setTimeout(() => setShowToast(false), 3000); // 3초 후 자동으로 숨김
       return false;
     }
     setError(false);
@@ -73,12 +68,6 @@ const ModalInput: React.FC<ModalInputProps> = ({
           onBlur={validateInput}
         />
       )}
-      <Toast
-        isOpen={showToast}
-        setIsOpen={setShowToast}
-        type="error"
-        message="빈 칸으로 완료할 수 없습니다."
-      />
     </div>
   );
 };

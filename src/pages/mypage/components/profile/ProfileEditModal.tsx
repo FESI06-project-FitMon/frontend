@@ -78,7 +78,7 @@ export default function ProfileEditModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateNickname(editedNickname)) {
-      showToast('닉네임은 2글자 이상, 10글자 이하로 입력해주세요.', 'error');
+      showToast('닉네임은 2글자에서 10글자 이내로 입력해주세요.', 'error');
       setIsDisabled(true);
       return;
     }
@@ -96,9 +96,9 @@ export default function ProfileEditModal({
       title="회원 정보를 입력해주세요."
       onClose={onClose}
     >
-      <div className="w-[500px] h-[254px]">
+      <div className="w-full md:w-[500px] h-auto">
         <form onSubmit={handleSubmit} className="h-full flex flex-col">
-          <div className="flex items-center gap-[10px] mt-[30px]">
+          <div className="flex flex-col md:flex-row items-center gap-[10px] mt-[30px]">
             <div className="relative h-[130px]">
               <Image
                 src={
@@ -146,7 +146,7 @@ export default function ProfileEditModal({
                 </button>
               </div>
             </div>
-            <div className="flex-1 h-[130px] flex flex-col justify-end">
+            <div className="w-full md:flex-1 md:h-[130px] flex flex-col justify-end"> 
               <label className="text-base mb-[10px] font-normal block">
                 닉네임
               </label>
@@ -166,6 +166,7 @@ export default function ProfileEditModal({
               type="submit"
               name="확인"
               style="default"
+              className="h-[52px]"
             />
           </div>
         </form>
