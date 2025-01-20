@@ -126,7 +126,7 @@ export default function LoginForm() {
     >
       <FormField
         label="이메일"
-        type="email"
+        type="text"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
