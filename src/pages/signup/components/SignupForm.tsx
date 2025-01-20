@@ -111,7 +111,7 @@ export default function SignupForm() {
   return (
     <form
       onSubmit={handleSignupSubmit}
-      className="flex flex-col w-full px-6 gap-6"
+      className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
       <FormField
         label="닉네임"
@@ -158,7 +158,7 @@ export default function SignupForm() {
         errorMessage="비밀번호가 일치하지 않습니다."
       />
       <Button type="submit" name="회원가입" className="h-16 mt-3" />
-      <div className="flex flex-row justify-end mt-3">
+      <div className="flex flex-row justify-center md:justify-end -mt-2 md:mt-3">
         <p className="mr-4 text-[1rem]">{'이미 회원이신가요?'}</p>
         <p
           onClick={() => router.push('/login')}
