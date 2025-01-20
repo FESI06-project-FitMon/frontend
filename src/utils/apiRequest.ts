@@ -31,7 +31,6 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
     url: param,
     method,
     data: requestData ?? null, // requestData가 없을 경우 null 전송
-    withCredentials: true,
   });
 
   return response.data;

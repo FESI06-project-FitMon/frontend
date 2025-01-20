@@ -3,19 +3,28 @@ import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
 import TextArea from '@/components/common/TextArea';
+import useGatheringStore from '@/stores/useGatheringStore';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 
 interface ChallengeAddModalProps {
   onClose: () => void;
+  gatheringId: number;
 }
-export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
+export default function ChallengeAddModal({
+  onClose,
+  gatheringId,
+}: ChallengeAddModalProps) {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1); // 오늘 날짜 +1일
   const [challengeTitle, setChallengeTitle] = useState('');
   const [challengeDescription, setChallengeDescription] = useState('');
   const [challengeImageUrl, setChallengeImageUrl] = useState('');
   const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [startDate, setStartDate] = useState<Date>(tomorrow);
+  const [endDate, setEndDate] = useState<Date>(tomorrow);
+
+  const { createChallenge } = useGatheringStore();
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChallengeTitle(e.target.value);
@@ -52,11 +61,12 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
       title: challengeTitle,
       description: challengeDescription,
       imageUrl: challengeImageUrl,
-      maxPeopleCount: maxPeopleCount,
-      startDate: startDate,
-      endDate: endDate,
+      // maxPeopleCount: maxPeopleCount,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     };
     console.log(newChallenge);
+    createChallenge(newChallenge, gatheringId);
   };
 
   return (
@@ -146,6 +156,7 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
             <DatePickerCalendar
               selectedDate={startDate}
               setSelectedDate={setStartDate}
+              minDate={tomorrow}
               width="195px"
               height="47px"
             />

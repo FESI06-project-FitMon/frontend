@@ -8,41 +8,19 @@ import Modal from '@/components/dialog/Modal';
 import ChallengeAddModal from './components/ChallengeAddModal';
 import useGatheringStore from '@/stores/useGatheringStore';
 import { usePathname } from 'next/navigation';
-// import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-// import axiosInstance, { baseURL } from '@/utils/axios';
 
-// export const getServerSideProps: GetServerSideProps = async (
-//   context: GetServerSidePropsContext,
-// ) => {
-//   const { gatheringId } = context.params as { gatheringId: string };
-//   const apiEndpoint = '/api/v1/gatherings/' + gatheringId;
-//   let { cookie } = context.req.headers;
-//   cookie = cookie ? cookie : '';
-//   axiosInstance.defaults.headers.Cookie = cookie;
-
-//   try {
-//     const gathering = await axiosInstance.get<GatheringDetail>(apiEndpoint);
-
-//     return {
-//       props: { gathering },
-//     };
-//   } catch (error) {
-//     throw error;
-//   } finally {
-//     /**
-//      * "axios"에 등록한 특정 유저의 쿠키 제거
-//      * ( 브라우저에서의 요청이 아니라 서버에서의 요청이므로 다른 유저도 같은 서버를 사용하기에 쿠키가 공유되는 문제가 생김 )
-//      */
-//     axiosInstance.defaults.headers.Cookie = '';
-//   }
-// };
 export default function GatheringDetail() {
   const { fetchGathering, gathering } = useGatheringStore();
   const pathname = usePathname();
-  const gatheringId = parseInt(pathname.charAt(pathname.length - 1));
+  let gatheringId = pathname
+    ? parseInt(pathname.split('/')[pathname.split('/').length - 1])
+    : 1;
   useEffect(() => {
     fetchGathering(gatheringId);
-  }, []);
+    gatheringId = pathname
+      ? parseInt(pathname.split('/')[pathname.split('/').length - 1])
+      : 1;
+  }, [gatheringId]);
 
   const [showModal, setShowModal] = useState(false);
   const gatheringTabItems = [
@@ -94,7 +72,10 @@ export default function GatheringDetail() {
           title="챌린지 정보를 입력해주세요."
           onClose={() => setShowModal(false)}
         >
-          <ChallengeAddModal onClose={() => setShowModal(false)} />
+          <ChallengeAddModal
+            onClose={() => setShowModal(false)}
+            gatheringId={gatheringId}
+          />
         </Modal>
       )}
 

@@ -24,6 +24,26 @@ export interface GatheringDetail {
   guestBookCount: number;
 }
 
+interface GatheringUpdateRequest {
+  title: string;
+  description: string;
+  imageFile: File;
+  startDate: string;
+  endDate: string;
+  mainLocation: string;
+  subLocation: string;
+  tags: Array<string>;
+}
+
+interface ChallengeCreateRequest {
+  title: string;
+  description: string;
+  imageUrl: string;
+  // maxPeopleCount: number;
+  startDate: string;
+  endDate: string;
+}
+
 interface GatheringParticipants {
   memberId: number;
   nickName: string;
@@ -57,6 +77,14 @@ interface GatheringState {
     gatheringId: number,
     page: number,
     pageSize: number,
+  ) => void;
+  updateGathering: (
+    request: GatheringUpdateRequest,
+    gatheringId: number,
+  ) => void;
+  createChallenge: (
+    challengeCreateRequest: ChallengeCreateRequest,
+    gatheringId: number,
   ) => void;
 }
 
@@ -117,6 +145,72 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         method: 'get',
       });
       set({ challenges: response.content });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateGathering: async (gatheringUpdateRequest, gatheringId) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', gatheringUpdateRequest.imageFile);
+      console.log('파일 확인:', formData.get('file')); // 디버깅용 로그 추가
+
+      // // 파일 업로드
+      // const imageUrl = await apiRequest({
+      //   param: '/api/v1/images?type=GATHERING',
+      //   method: 'post',
+      //   requestData: formData,
+      // });
+
+      const filteredData = JSON.parse(
+        JSON.stringify({
+          ...gatheringUpdateRequest,
+          imageUrl:
+            'https://fitmon-bucket.s3.amazonaws.com/gatherings/af61233a-ed83-432c-b685-1d29a6c75de1_whale.jpg',
+        }),
+      );
+      delete filteredData.imageFile;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response = await apiRequest<any>({
+        param: '/api/v1/gatherings/' + gatheringId,
+        method: 'patch',
+        requestData: filteredData,
+      });
+
+      set({
+        gathering: {
+          ...get().gathering,
+          ...Object.fromEntries(
+            Object.entries(gatheringUpdateRequest).filter(
+              ([key, value]) =>
+                value !== get().gathering?.[key as keyof GatheringDetail],
+            ),
+          ),
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createChallenge: async (challengeCreateRequest, gatheringId) => {
+    try {
+      const response = await apiRequest<any>({
+        param: `/api/v1/gatherings/${gatheringId}/challenges`,
+        method: 'post',
+        requestData: challengeCreateRequest,
+      });
+
+      set({
+        challenges: [
+          ...get().challenges!,
+          {
+            gatheringId,
+            ...challengeCreateRequest,
+          },
+        ],
+      });
     } catch (error) {
       throw error;
     }

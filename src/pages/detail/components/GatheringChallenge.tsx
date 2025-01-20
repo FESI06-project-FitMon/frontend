@@ -96,6 +96,7 @@ export default function GatheringChallenge({
                 <Challenge
                   key={index}
                   challenge={{ ...challenge, captainStatus }}
+                  inProgress={currentTag === 'inProgress'}
                 />
               ))
             ) : (
@@ -114,12 +115,27 @@ export default function GatheringChallenge({
   );
 }
 
-function Challenge({ challenge }: { challenge: ChallengeProps }) {
+function Challenge({
+  challenge,
+  inProgress,
+}: {
+  challenge: ChallengeProps;
+  inProgress: boolean;
+}) {
   const [openModal, setOpenModal] = useState(false);
   const handleGatheringButtonClick = () => {
     setOpenModal(true);
   };
   const button = () => {
+    if (!inProgress) {
+      return (
+        <Button
+          style="disabled"
+          name="마감된 챌린지"
+          className="w-40 h-10 font-semibold text-base"
+        />
+      );
+    }
     if (!challenge.participantStatus) {
       return (
         <Button
@@ -205,9 +221,11 @@ function Challenge({ challenge }: { challenge: ChallengeProps }) {
                 </div>
                 {/* 퍼센트 */}
                 <p className="text-2xl text-primary font-bold">
-                  {(challenge.successParticipantCount /
-                    challenge.participantCount) *
-                    100}
+                  {challenge.successParticipantCount === 0
+                    ? 0
+                    : (challenge.successParticipantCount /
+                        challenge.participantCount) *
+                      100}
                   %
                 </p>
               </div>

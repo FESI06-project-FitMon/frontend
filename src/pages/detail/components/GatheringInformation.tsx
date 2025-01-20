@@ -6,6 +6,7 @@ import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
 import { GatheringDetail } from '@/stores/useGatheringStore';
+import getDatePart from '@/utils/getDatePart';
 
 export default function GatheringInformation({
   gathering,
@@ -63,7 +64,9 @@ export default function GatheringInformation({
           width={280}
           height={300}
           alt="gathering-image"
-          src="/assets/image/fitmon.png"
+          src={
+            gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
+          }
           className="rounded-[20px] mr-[50px] w-[280px] h-[300px] object-cover"
         />
         <div id="detail-information" className=" w-full">
@@ -87,7 +90,11 @@ export default function GatheringInformation({
                 onClose={() => setShowModal(false)}
                 title="모임 정보를 입력해주세요."
               >
-                <GatheringEditModal information={gathering} />
+                <GatheringEditModal
+                  information={gathering}
+                  gatheringId={gathering.gatheringId}
+                  setIsModalOpen={setShowModal}
+                />
               </Modal>
             )}
           </div>
@@ -112,7 +119,7 @@ export default function GatheringInformation({
               />
               <h1 className="font-semibold text-lg">{'모임 기간'}</h1>
               <p className="bg-dark-500 h-[12px] w-[1px] mx-[15px]"></p>{' '}
-              <p className="text-lg">{`${gathering.startDate}~${gathering.endDate}`}</p>
+              <p className="text-lg">{`${getDatePart(gathering.startDate)}~${getDatePart(gathering.endDate)}`}</p>
             </div>
             <div id="place" className="flex items-center">
               <Image

@@ -7,34 +7,43 @@ import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import { GatheringItem } from '@/types';
 import Image from 'next/image';
-import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import { GatheringDetail } from '../[gatheringId].page';
+import useGatheringStore from '@/stores/useGatheringStore';
 
 export default function GatheringEditModal({
   information,
+  gatheringId,
+  setIsModalOpen,
 }: {
   information: GatheringDetail;
+  gatheringId: number;
+  setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
+  const { updateGathering } = useGatheringStore();
   const [title, setTitle] = useState(information.title);
   const [description, setDescription] = useState(information.description);
   const [newTag, setNewTag] = useState('');
   const [tags, setTags] = useState<Array<string>>(information.tags);
-  const [imageUrl, setImageUrl] = useState(information.imageUrl);
+  const [imageUrl, setImageUrl] = useState(information.imageUrl); // 기존 이미지 URL
+  const [newImageFile, setNewImageFile] = useState<File>(
+    new File([], 'default.png', { type: 'image/png' }),
+  );
   const [selectedPlaceSi, setSelectedPlaceSi] = useState('seoul');
   const [selectedPlaceGu, setSelectedPlaceGu] = useState('dongjak');
   const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date | null>(
+  const [startDate, setStartDate] = useState<Date>(
     new Date(
-      information.startDate.split('-').map((str) => parseInt(str))[0],
-      information.startDate.split('-').map((str) => parseInt(str))[1],
-      information.startDate.split('-').map((str) => parseInt(str))[2],
+      information.startDate.split('-').map((str: string) => parseInt(str))[0],
+      information.startDate.split('-').map((str: string) => parseInt(str))[1],
+      information.startDate.split('-').map((str: string) => parseInt(str))[2],
     ),
   );
-  const [endDate, setEndDate] = useState<Date | null>(
+  const [endDate, setEndDate] = useState<Date>(
     new Date(
-      information.endDate.split('-').map((str) => parseInt(str))[0],
-      information.endDate.split('-').map((str) => parseInt(str))[1],
-      information.endDate.split('-').map((str) => parseInt(str))[2],
+      information.endDate.split('-').map((str: string) => parseInt(str))[0],
+      information.endDate.split('-').map((str: string) => parseInt(str))[1],
+      information.endDate.split('-').map((str: string) => parseInt(str))[2],
     ),
   );
   const placeSiItems = [
@@ -100,16 +109,18 @@ export default function GatheringEditModal({
     const editedInformation = {
       title: title,
       description: description,
-      imageUrl: imageUrl,
-      startDate: startDate,
-      endDate: endDate,
+      imageFile: newImageFile,
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
       mainLocation: '서울시',
       subLocation: '송파구',
       tags: tags,
     };
 
-    // TODO: API로 수정
-    console.log(editedInformation);
+    updateGathering(editedInformation, gatheringId);
+
+    // 모달을 닫는다.
+    setIsModalOpen(false);
   };
 
   const handleImageEditButtonClick = () => {
@@ -125,6 +136,7 @@ export default function GatheringEditModal({
     const file = e.target.files[0];
     if (file) {
       setImageUrl(URL.createObjectURL(file));
+      setNewImageFile(file);
     }
   };
 
