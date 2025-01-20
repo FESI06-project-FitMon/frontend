@@ -1,4 +1,3 @@
-// import Cardlist from '@/components/card/gathering/Cardlist';
 import Tab from '@/components/common/Tab';
 import SubTag from '@/components/tag/SubTag';
 import {
