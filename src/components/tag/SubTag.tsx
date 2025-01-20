@@ -23,7 +23,7 @@ export default function SubTag({
           key={tag.id}
           onClick={() => handleTagClick(tag.id)}
           className={`
-                px-6 py-2 mr-[10px] font-bold text-white rounded-[50px]
+                px-3 md:px-6 py-1 md:py-2 text-[0.81rem] md:text-base mr-[10px] font-bold text-white rounded-[50px]
                 ${currentTag === tag.id ? 'bg-primary' : 'bg-dark-500'}
               `}
         >

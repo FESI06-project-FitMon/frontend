@@ -98,8 +98,8 @@ export default function GuestbookTab() {
   );
 
   return (
-    <div className="pb-[50px]">
-      <div className="flex justify-between items-center mb-[37px]">
+    <div className="pb-[30px] md:pb-[50px] xl:pb-20">
+      <div className="flex justify-between items-center mb-6 lg:mb-[37px]">
         <SubTag
           tags={GUESTBOOK_TABS}
           currentTag={showWritten ? 'written' : 'available'}

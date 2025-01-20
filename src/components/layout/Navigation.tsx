@@ -83,7 +83,7 @@ export default function Navigation() {
       <div className="max-w-screen-xl mx-auto px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-20">
           {/* 로고 영역 */}
-          <h1 className="flex flex-row items-center flex-shrink-0 mr-8">
+          <h1 className="flex flex-row items-center flex-shrink-0 mr-8 ">
             {' '}
             {/* 오른쪽 여백 추가 */}
             <div className="flex md:hidden">
@@ -95,7 +95,7 @@ export default function Navigation() {
                 height="20"
               />
             </div>
-            <Link href="/" className="text-red-500 font-bold text-2xl">
+            <Link href="/" className="text-primary font-bold text-2xl pl-[24px] md:pl-0">
               FitMon
             </Link>
           </h1>
@@ -110,8 +110,8 @@ export default function Navigation() {
                 모임 찾기
               </Link>
               <Link
-                href="/interested-gatherings"
-                className={`${isActive('/interested-gatherings')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
+                href="/likes"
+                className={`${isActive('/likes')} hover:text-red-500 px-3 py-2 text-semibold font-medium transition-colors`}
               >
                 찜한 모임
               </Link>

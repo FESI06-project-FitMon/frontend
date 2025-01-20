@@ -5,7 +5,7 @@ interface StatusTagProps {
 
 export default function StatusTag({ status, className = '' }: StatusTagProps) {
   const baseStyles =
-    'h-8 w-[106px] rounded-full flex items-center justify-center font-semibold';
+    'w-20 h-[25px] smd:h-8 md:w-[106px] rounded-full flex items-center justify-center font-semibold text-xs md:text-base';
 
   const statusText = {
     시작전: '시작 전',
@@ -40,9 +40,9 @@ export default function StatusTag({ status, className = '' }: StatusTagProps) {
       className={`${baseStyles} ${backgroundStyles[status]} ${className} bg-opacity-55 relative`}
     >
       <div
-        className={`absolute left-4 w-[13px] h-[13px] rounded-full ${dotWrapperStyles[status]} flex items-center justify-center`}
+        className={`absolute left-4 w-[11px] h-[11px] md:w-[13px] md:h-[13px] rounded-full ${dotWrapperStyles[status]} flex items-center justify-center`}
       >
-        <div className={`w-[6px] h-[6px] rounded-full ${dotStyles[status]}`} />
+        <div className={`w-[5px] h-[5px] md:w-[6px] md:h-[6px] rounded-full ${dotStyles[status]}`} />
       </div>
       <span className="ml-2 uppercase">{statusText[status]}</span>
     </div>

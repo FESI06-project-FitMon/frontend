@@ -1,18 +1,35 @@
+import {
+  gatheringIdInLikes,
+  removeGatheringId,
+  addGatheringId,
+} from '@/utils/likesgathering';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function ZzimHeart({ valid = false }) {
+interface ZzimHeartProps {
+  gatheringId: number;
+}
+
+export default function ZzimHeart({ gatheringId }: ZzimHeartProps) {
+  const valid = gatheringIdInLikes(gatheringId); // 찜한 모임 집합 확인
+
   const [isClicked, setIsClicked] = useState(valid);
 
   const handleClick = (e: React.MouseEvent<HTMLImageElement>) => {
     e.stopPropagation(); // 이벤트 버블링 방지
     e.preventDefault(); // 부모의 기본 동작 방지 (링크 이동)
     setIsClicked(!isClicked);
+
+    if (gatheringIdInLikes(gatheringId)) {
+      removeGatheringId(gatheringId); // 찜한 모임 아이디 로컬스토리지에서 삭제
+    } else {
+      addGatheringId(gatheringId); // 찜한 모임 아이디 로컬스토리지에 추가
+    }
   };
 
   return (
     <div className="w-[38px] h-[38px] rounded-full bg-white flex items-center justify-center z-20">
-      {isClicked ? (
+      {valid ? (
         <Image
           src="/assets/image/heart-fill.svg"
           alt="heart"
