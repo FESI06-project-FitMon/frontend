@@ -5,37 +5,44 @@ import NumberSelect from '@/components/common/NumberSelect';
 import Select from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
-import { GatheringItem } from '@/types';
 import Image from 'next/image';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
+import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
+
 export default function GatheringEditModal({
   information,
+  gatheringId,
+  setIsModalOpen,
 }: {
-  information: GatheringItem;
+  information: GatheringDetail;
+  gatheringId: number;
+  setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
-  const [title, setTitle] = useState(information.gatheringTitle);
-  const [description, setDescription] = useState(
-    information.gatheringDescription,
-  );
+  const { updateGathering } = useGatheringStore();
+  const [title, setTitle] = useState(information.title);
+  const [description, setDescription] = useState(information.description);
   const [newTag, setNewTag] = useState('');
-  const [tags, setTags] = useState<Array<string>>(information.gatheringTags);
-  const [imageUrl, setImageUrl] = useState(information.gatheringImage);
+  const [tags, setTags] = useState<Array<string>>(information.tags);
+  const [imageUrl, setImageUrl] = useState(information.imageUrl); // 기존 이미지 URL
+  const [newImageFile, setNewImageFile] = useState<File>(
+    new File([], 'default.png', { type: 'image/png' }),
+  );
   const [selectedPlaceSi, setSelectedPlaceSi] = useState('seoul');
   const [selectedPlaceGu, setSelectedPlaceGu] = useState('dongjak');
   const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date | null>(
+  const [startDate, setStartDate] = useState<Date>(
     new Date(
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[0],
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[1],
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[2],
+      information.startDate.split('-').map((str: string) => parseInt(str))[0],
+      information.startDate.split('-').map((str: string) => parseInt(str))[1],
+      information.startDate.split('-').map((str: string) => parseInt(str))[2],
     ),
   );
-  const [endDate, setEndDate] = useState<Date | null>(
+  const [endDate, setEndDate] = useState<Date>(
     new Date(
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[0],
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[1],
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[2],
+      information.endDate.split('-').map((str: string) => parseInt(str))[0],
+      information.endDate.split('-').map((str: string) => parseInt(str))[1],
+      information.endDate.split('-').map((str: string) => parseInt(str))[2],
     ),
   );
   const placeSiItems = [
@@ -101,16 +108,23 @@ export default function GatheringEditModal({
     const editedInformation = {
       title: title,
       description: description,
-      imageUrl: imageUrl,
-      startDate: startDate,
-      endDate: endDate,
-      mainLocation: '서울시',
-      subLocation: '송파구',
+      imageFile: newImageFile,
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+      maxPeopleCount: maxPeopleCount,
+      mainLocation: placeSiItems.filter(
+        (item) => item.value === selectedPlaceSi,
+      )[0].label,
+      subLocation: placeGuItems.filter(
+        (item) => item.value === selectedPlaceGu,
+      )[0].label,
       tags: tags,
     };
 
-    // TODO: API로 수정
-    console.log(editedInformation);
+    updateGathering(editedInformation, gatheringId);
+
+    // 모달을 닫는다.
+    setIsModalOpen(false);
   };
 
   const handleImageEditButtonClick = () => {
@@ -126,6 +140,7 @@ export default function GatheringEditModal({
     const file = e.target.files[0];
     if (file) {
       setImageUrl(URL.createObjectURL(file));
+      setNewImageFile(file);
     }
   };
 

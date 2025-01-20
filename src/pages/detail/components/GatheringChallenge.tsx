@@ -4,21 +4,37 @@ import Popover from '@/components/common/Popover';
 import Modal from '@/components/dialog/Modal';
 import SubTag from '@/components/tag/SubTag';
 
-import { GatheringChallegeProps } from '@/types';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChallengeCertificationModal from './ChallengeCertificationModal';
+import useGatheringStore from '@/stores/useGatheringStore';
+import useToastStore from '@/stores/useToastStore';
+import { AxiosError } from 'axios';
 
 export default function GatheringChallenge({
-  challenges,
   captainStatus,
-}: GatheringChallegeProps) {
+  gatheringId,
+}: {
+  captainStatus: boolean;
+  gatheringId: number;
+}) {
   const challengeSubTagItems = [
     { id: 'inProgress', label: '진행중인 챌린지' },
     { id: 'done', label: '마감된 챌린지' },
   ];
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
+
+  const { fetchGatheringChallenges, challenges } = useGatheringStore();
+
+  useEffect(() => {
+    fetchGatheringChallenges(
+      gatheringId,
+      0,
+      10,
+      currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
+    );
+  }, [gatheringId, currentTag]);
 
   return (
     <div>
@@ -77,31 +93,19 @@ export default function GatheringChallenge({
 
         <div className="flex flex-col mt-[31px] mb-[27px] gap-6">
           {currentInquiryState === 'list' ? (
-            currentTag === 'inProgress' ? (
-              challenges.inProgressChallenges &&
-              challenges.inProgressChallenges.length > 0 ? (
-                challenges?.inProgressChallenges.map((challenge, index) => (
-                  <Challenge
-                    key={index}
-                    challenge={{ ...challenge, captainStatus }}
-                  />
-                ))
-              ) : (
-                <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                  {'진행중인 챌린지가 없습니다.'}
-                </div>
-              )
-            ) : challenges.doneChallenges &&
-              challenges.doneChallenges.length > 0 ? (
-              challenges?.doneChallenges.map((challenge, index) => (
+            challenges && challenges.length > 0 ? (
+              challenges?.map((challenge, index) => (
                 <Challenge
                   key={index}
                   challenge={{ ...challenge, captainStatus }}
+                  inProgress={currentTag === 'inProgress'}
                 />
               ))
             ) : (
               <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                {'마감된 챌린지가 없습니다.'}
+                {currentTag === 'inProgress'
+                  ? '진행중인 챌린지가 없습니다.'
+                  : '마감된 챌린지가 없습니다.'}
               </div>
             )
           ) : (
@@ -113,18 +117,51 @@ export default function GatheringChallenge({
   );
 }
 
-function Challenge({ challenge }: { challenge: ChallengeProps }) {
+function Challenge({
+  challenge,
+  inProgress,
+}: {
+  challenge: ChallengeProps;
+  inProgress: boolean;
+}) {
   const [openModal, setOpenModal] = useState(false);
+  const { participantChallenge } = useGatheringStore();
+  const showToast = useToastStore((state) => state.show);
+
   const handleGatheringButtonClick = () => {
     setOpenModal(true);
   };
+
+  const handleParticipantChallengeButtonClick = async () => {
+    try {
+      await participantChallenge(challenge.challengeId);
+      showToast('챌린지에 참가하였습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
+  };
   const button = () => {
+    if (!inProgress) {
+      return (
+        <Button
+          style="disabled"
+          name="마감된 챌린지"
+          className="w-40 h-10 font-semibold text-base"
+        />
+      );
+    }
     if (!challenge.participantStatus) {
       return (
         <Button
           style="custom"
           name="참여하기"
           className="w-40 h-10 font-semibold text-base"
+          handleButtonClick={() => {
+            handleParticipantChallengeButtonClick();
+          }}
         />
       );
     }
@@ -141,7 +178,10 @@ function Challenge({ challenge }: { challenge: ChallengeProps }) {
           <>
             {openModal && (
               <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
-                <ChallengeCertificationModal />
+                <ChallengeCertificationModal
+                  challengeId={challenge.challengeId}
+                  setOpenModal={setOpenModal}
+                />
               </Modal>
             )}
           </>
@@ -204,9 +244,11 @@ function Challenge({ challenge }: { challenge: ChallengeProps }) {
                 </div>
                 {/* 퍼센트 */}
                 <p className="text-2xl text-primary font-bold">
-                  {(challenge.successParticipantCount /
-                    challenge.participantCount) *
-                    100}
+                  {challenge.successParticipantCount === 0
+                    ? 0
+                    : (challenge.successParticipantCount /
+                        challenge.participantCount) *
+                      100}
                   %
                 </p>
               </div>

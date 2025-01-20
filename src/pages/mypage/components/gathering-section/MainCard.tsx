@@ -10,11 +10,16 @@ import useToastStore from '@/stores/useToastStore';
 interface MainCardProps {
   gathering: GatheringItem;
   state: GatheringStateType;
-  onCancelGathering?: (gatheringId: number) => void;  // 모임장용
+  onCancelGathering?: (gatheringId: number) => void; // 모임장용
   onCancelParticipation?: (gatheringId: number) => void;
 }
 
-export default function MainCard({ gathering, state, onCancelGathering, onCancelParticipation }: MainCardProps) {
+export default function MainCard({
+  gathering,
+  state,
+  onCancelGathering,
+  onCancelParticipation,
+}: MainCardProps) {
   const [showAlert, setShowAlert] = useState(false);
   const showToast = useToastStore((state) => state.show);
   // gathering 객체가 유효한지 확인
@@ -24,7 +29,6 @@ export default function MainCard({ gathering, state, onCancelGathering, onCancel
   const handleCancelClick = () => {
     setShowAlert(true);
   };
-
 
   const handleCancelConfirm = () => {
     if (gathering.captainStatus) {
@@ -68,6 +72,7 @@ export default function MainCard({ gathering, state, onCancelGathering, onCancel
       {/* 정보 영역 */}
       <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px] ">
         <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
+
           {gathering.gatheringSubType} | {gathering.gatheringSi} {gathering.gatheringGu}
         </h3>
         <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.gatheringTitle}</h2>
@@ -80,12 +85,17 @@ export default function MainCard({ gathering, state, onCancelGathering, onCancel
               width={18}
               height={18}
             />
-            <span>{state.gatheringJoinedPeopleCount}/{state.gatheringMaxPeopleCount}</span>
+            <span>
+              {state.gatheringJoinedPeopleCount}/{state.gatheringMaxPeopleCount}
+            </span>
           </div>
-          <OpenStatus gatheringJoinedPeopleCount={state.gatheringJoinedPeopleCount} />
+          <OpenStatus
+            gatheringJoinedPeopleCount={state.gatheringJoinedPeopleCount}
+          />
         </div>
         <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
           <Button
+
             name={gathering.captainStatus ? "모임 취소하기" : "참여 취소하기"}
             style={gathering.captainStatus ? "custom" : "cancel"}
             className={gathering.captainStatus
@@ -99,13 +109,14 @@ export default function MainCard({ gathering, state, onCancelGathering, onCancel
       <Alert
         isOpen={showAlert}
         type="select"
-        message={gathering.captainStatus
-          ? "모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다."
-          : "참여를 취소하시겠습니까?"}
+        message={
+          gathering.captainStatus
+            ? '모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다.'
+            : '참여를 취소하시겠습니까?'
+        }
         onConfirm={handleCancelConfirm}
         onCancel={handleCancelDeny}
       />
-
     </div>
   );
 }
