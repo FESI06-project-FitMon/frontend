@@ -59,6 +59,22 @@ export interface ChallengeType {
   startDate: string;
   endDate: string;
 }
+
+interface ChallengeProps {
+  gatheringId: number;
+  challengeId: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  participantCount: number;
+  successParticipantCount: number;
+  participantStatus: boolean;
+  verificationStatus: boolean;
+  startDate: string;
+  endDate: string;
+  captainStatus: boolean;
+}
+
 export interface GuestbookItem {
   reviewId: number;
   content: string;

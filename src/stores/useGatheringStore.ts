@@ -7,6 +7,7 @@ import instance from '@/utils/axios';
 export interface GatheringDetail {
   gatheringId: number;
   captainStatus: boolean;
+  participantStatus: boolean;
   title: string;
   description: string;
   mainType: string;
@@ -99,7 +100,13 @@ interface GatheringChallengeResponse {
   content: Array<ChallengeType>;
   hasNext: boolean;
 }
+
+interface GatheringGuestbookResponse {
+  content: Array<GuestbookItem>;
+  hasNext: boolean;
+}
 const useGatheringStore = create<GatheringState>((set, get) => ({
+  // 모임 정보 불러오기 API
   fetchGathering: async (gatheringId: number) => {
     try {
       const response = await apiRequest<GatheringDetail>({
@@ -113,6 +120,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 모임 상태 불러오기 API
   fetchGatheringStatus: async (gatheringId: number) => {
     try {
       const response = await apiRequest<GatheringStatus>({
@@ -126,6 +134,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 챌린지 불러오기 API
   fetchGatheringChallenges: async (
     gatheringId,
     page = 0,
@@ -143,18 +152,20 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 방명록 불러오기 API
   fetchGatheringGuestbooks: async (gatheringId, page = 0, pageSize = 10) => {
     try {
-      const response = await apiRequest<GatheringChallengeResponse>({
+      const response = await apiRequest<GatheringGuestbookResponse>({
         param: `/api/v1/gatherings/${gatheringId}/guestbooks?page=${page}&pageSize=${pageSize}`,
         method: 'get',
       });
-      set({ challenges: response.content });
+      set({ guestbooks: response.content });
     } catch (error) {
       throw error;
     }
   },
 
+  // 모임 수정하기 API
   updateGathering: async (gatheringUpdateRequest, gatheringId) => {
     try {
       // 수정할 이미지 업로드
@@ -192,6 +203,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         gathering: {
           gatheringId: get().gathering?.gatheringId ?? 0,
           captainStatus: get().gathering?.captainStatus ?? false,
+          participantStatus: get().gathering?.participantStatus ?? false,
           title: gatheringUpdateRequest.title,
           description: gatheringUpdateRequest.description,
           mainType: get().gathering?.mainType ?? '',
@@ -216,6 +228,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 챌린지 생성하기 API
   createChallenge: async (challengeCreateRequest, gatheringId) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -229,6 +242,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 모임 취소하기 API
   deleteGathering: async (gatheringId) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,6 +256,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
     }
   },
 
+  // 모임 참여하기 API
   participantGathering: async (gatheringId) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,12 +265,24 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         method: 'post',
       });
       console.log('participant response', response);
+      set({
+        gathering: {
+          ...get().gathering!,
+          participantStatus: true,
+        },
+        gatheringStatus: {
+          ...get().gatheringStatus!,
+          participantCount: get().gatheringStatus!.participantCount + 1,
+        },
+      });
+      return response;
     } catch (error) {
       console.error(error);
       throw error;
     }
   },
 
+  // 챌린지 참여하기 API
   participantChallenge: async (challengeId) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -263,10 +290,20 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         param: `/api/v1/challenges/${challengeId}/participants`,
         method: 'post',
       });
+
+      set({
+        challenges: get().challenges?.map((challenge) =>
+          challenge.challengeId === challengeId
+            ? { ...challenge, participantStatus: true }
+            : challenge,
+        ),
+      });
     } catch (error) {
       throw error;
     }
   },
+
+  // 챌린지 인증하기 API
   verificationChallenge: async (challengeId, imageFile) => {
     try {
       const formData = new FormData();
@@ -287,6 +324,14 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         param: `/api/v1/challenges/${challengeId}/verification`,
         method: 'post',
         requestData: { imageUrl: url.data.imageUrl },
+      });
+
+      set({
+        challenges: get().challenges?.map((challenge) =>
+          challenge.challengeId === challengeId
+            ? { ...challenge, verificationStatus: true }
+            : challenge,
+        ),
       });
     } catch (error) {
       throw error;
