@@ -132,10 +132,7 @@ export default function GatheringInfomationModal({
       {/* 모임 태그 */}
       <div>
         <h2 className="mb-[10px]">모임 태그 </h2>
-
         <TagInput
-          initialTags={formData.tags} // 초기 태그 데이터
-          maxTags={3} // 최대 태그 개수
           onTagsChange={(updatedTags) => updateFormData('tags', updatedTags)} // 부모 상태 업데이트
         />
       </div>
