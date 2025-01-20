@@ -28,9 +28,11 @@ export default function AvailableGuestbooks({
           {/* 이미지 영역 */}
           <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
             <Image
-              src={gathering.gatheringImage === "null"
-                ? '/assets/image/default_img.png'
-                : gathering.gatheringImage}
+            src={
+              gathering.gatheringImage === 'null' || !gathering.gatheringImage
+                ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+                : gathering.gatheringImage
+            }
               alt={gathering.gatheringTitle}
               width={300}
               height={200}
