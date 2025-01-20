@@ -30,13 +30,13 @@ export interface GatheringDetail {
 interface GatheringUpdateRequest {
   title: string;
   description: string;
-  imageFile: File;
+  imageUrl: string;
   startDate: string;
   endDate: string;
   mainLocation: string;
   subLocation: string;
   tags: Array<string>;
-  maxPeopleCount: number;
+  totalCount: number;
 }
 
 interface ChallengeCreateRequest {
@@ -168,35 +168,11 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   // 모임 수정하기 API
   updateGathering: async (gatheringUpdateRequest, gatheringId) => {
     try {
-      // 수정할 이미지 업로드
-      const formData = new FormData();
-      formData.append('file', gatheringUpdateRequest.imageFile);
-      console.log('파일 확인:', formData.get('file')); // 디버깅용 로그 추가
-
-      const uploadImage = await instance.request<{ imageUrl: string }>({
-        url: 'api/v1/images?type=GATHERING',
-        method: 'post',
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      const url = uploadImage.data.imageUrl;
-
-      const filteredData = JSON.parse(
-        JSON.stringify({
-          ...gatheringUpdateRequest,
-          imageUrl: url,
-        }),
-      );
-      delete filteredData.imageFile;
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await apiRequest<any>({
         param: '/api/v1/gatherings/' + gatheringId,
         method: 'patch',
-        requestData: filteredData,
+        requestData: gatheringUpdateRequest,
       });
 
       set({
@@ -208,19 +184,26 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
           description: gatheringUpdateRequest.description,
           mainType: get().gathering?.mainType ?? '',
           subType: get().gathering?.subType ?? '',
-          imageUrl: url,
+          imageUrl: gatheringUpdateRequest.imageUrl,
           startDate: gatheringUpdateRequest.startDate,
           endDate: gatheringUpdateRequest.endDate,
           mainLocation: gatheringUpdateRequest.mainLocation,
           subLocation: gatheringUpdateRequest.subLocation,
           minCount: get().gathering?.minCount ?? 0,
-          totalCount: get().gathering?.totalCount ?? 0,
+          totalCount: gatheringUpdateRequest.totalCount,
           participantCount: get().gathering?.participantCount ?? 0,
           status: get().gathering?.status ?? '',
           tags: gatheringUpdateRequest.tags,
           participants: get().gathering?.participants ?? [],
           averageRating: get().gathering?.averageRating ?? 0,
           guestBookCount: get().gathering?.guestBookCount ?? 0,
+        },
+      });
+
+      set({
+        gatheringStatus: {
+          ...get().gatheringStatus!,
+          totalCount: gatheringUpdateRequest.totalCount,
         },
       });
     } catch (error) {
