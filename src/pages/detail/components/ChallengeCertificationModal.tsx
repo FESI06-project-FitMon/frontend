@@ -41,7 +41,7 @@ export default function ChallengeCertificationModal({
 
   const handleCertificationButtonClick = async () => {
     try {
-      await verificationChallenge(challengeId, imageUrl);
+      await verificationChallenge(challengeId, challengeGatheringImagUrl);
       setOpenModal(false);
       showToast('챌린지 인증에 성공했습니다.', 'check');
     } catch (error) {

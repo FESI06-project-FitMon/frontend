@@ -43,7 +43,7 @@ interface ChallengeCreateRequest {
   title: string;
   description: string;
   imageUrl: string;
-  maxPeopleCount: number;
+  totalCount: number;
   startDate: string;
   endDate: string;
 }
