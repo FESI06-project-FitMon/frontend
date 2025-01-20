@@ -114,7 +114,7 @@ export interface CreateChallenge {
   title: string;
   description: string;
   imageUrl: string | null;
-  // maxPeopleCount: number;
+  maxPeopleCount: number;
   startDate: Date | null;
   endDate: Date | null;
 }

@@ -128,7 +128,7 @@ export default function GatheringInfomationModal({
                 id="file-input"
                 className="hidden"
                 accept="image/*"
-                onChange={handleImageUpload} // useImageUpload의 핸들러 사용
+                onChange={handleImageUpload}
               />
               {isUploading ? (
                 <p className="text-sm text-dark-700">업로드 중...</p>
