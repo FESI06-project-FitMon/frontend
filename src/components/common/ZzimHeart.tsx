@@ -28,7 +28,7 @@ export default function ZzimHeart({ gatheringId }: ZzimHeartProps) {
   };
 
   return (
-    <div className="w-[38px] h-[38px] rounded-full bg-white flex items-center justify-center z-20">
+    <div className="w-[26px] h-[26px] md:w-[38px] md:h-[38px] rounded-full bg-white flex items-center justify-center z-20">
       {valid ? (
         <Image
           src="/assets/image/heart-fill.svg"
@@ -36,7 +36,7 @@ export default function ZzimHeart({ gatheringId }: ZzimHeartProps) {
           width={22}
           height={22}
           onClick={handleClick} // 클릭 시 별점 업데이트
-          className="mt-0.5 z-30 cursor-pointer"
+          className="mt-0.5 z-30 cursor-pointer w-[15px] h-[15px] md:w-[22px] md:h-[22px]"
         />
       ) : (
         <Image
@@ -45,7 +45,7 @@ export default function ZzimHeart({ gatheringId }: ZzimHeartProps) {
           width={22}
           height={22}
           onClick={handleClick} // 클릭 시 별점 업데이트
-          className="mt-0.5 z-30 cursor-pointer"
+          className="mt-0.5 z-30 cursor-pointer w-[15px] h-[15px] md:w-[22px] md:h-[22px]"
         />
       )}
     </div>
