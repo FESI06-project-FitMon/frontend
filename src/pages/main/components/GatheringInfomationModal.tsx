@@ -5,9 +5,9 @@ import Select from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import instance from '@/utils/axios';
+import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 
 interface FormData {
   title: string;
@@ -25,22 +25,6 @@ interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
 
-// 이미지 업로드 함수 선언
-const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await instance.request<{ imageUrl: string }>({
-    url: 'api/v1/images?type=GATHERING',
-    method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return response.data;
-};
 
 export default function GatheringInfomationModal({
   onChange,
@@ -48,6 +32,7 @@ export default function GatheringInfomationModal({
   const DEFAULT_IMAGE_URL =
     'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -76,13 +61,13 @@ export default function GatheringInfomationModal({
     onChange(transformedData);
   };
 
-  // useImageUpload 훅 사용
+  // useImageUpload 호출 부분 수정
   const { handleImageUpload, isUploading } = useImageUpload({
-    uploadFn: uploadImage, // 파일 내에서 정의된 uploadImage 함수 사용
-    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl), // 업로드 성공 시 formData 업데이트
+    type: 'GATHERING', // uploadFn 대신 type 지정
+    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
     onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
-    },
+    }
   });
 
   const handleTagDelete = (tag: string) => {
@@ -111,44 +96,22 @@ export default function GatheringInfomationModal({
         <h2 className="mt-[30px] mb-[10px]">모임 정보</h2>
         <div className="flex gap-[10px]">
           <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
-            {formData.imageUrl && (
-              <>
-                <Image
-                  src={formData.imageUrl}
-                  alt="이미지 미리보기"
-                  className="rounded-[10px] w-full h-full object-cover"
-                  fill
-                />
-                <div className="absolute w-full h-full bg-black/70 rounded-[10px] z-10" />
-              </>
-            )}
-            <div className="absolute w-full h-full flex flex-col justify-center items-center gap-2 z-20 hover:cursor-pointer">
-              <input
-                type="file"
-                id="file-input"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-              {isUploading ? (
-                <p className="text-sm text-dark-700">업로드 중...</p>
-              ) : (
-                <Image
-                  src="/assets/image/gathering_edit.svg"
-                  width={45}
-                  height={45}
-                  alt="edit-image"
-                  onClick={() => document.getElementById('file-input')?.click()}
-                />
-              )}
-              <button
-                onClick={() => updateFormData('imageUrl', null)}
-                className="text-sm text-dark-700 hover:cursor-pointer"
-              >
-                이미지 삭제
-              </button>
-            </div>
+            <Image
+              src={!formData.imageUrl || formData.imageUrl === 'null'
+                ? DEFAULT_IMAGE_URL
+                : formData.imageUrl}
+              alt="이미지 미리보기"
+              className="rounded-[10px] w-full h-full object-cover"
+              fill
+            />
+            <ImageUploadOverlay
+              fileInputRef={fileInputRef}
+              onUpload={handleImageUpload}
+              onDelete={() => updateFormData('imageUrl', null)}
+              isUploading={isUploading}
+            />
           </div>
+
           <div className="w-[360px]">
             <Input
               type="text"
@@ -270,3 +233,4 @@ export default function GatheringInfomationModal({
     </div>
   );
 }
+

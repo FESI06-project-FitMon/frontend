@@ -2,14 +2,13 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import useToastStore from '@/stores/useToastStore';
+import uploadImage from '@/utils/uploadImage';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
-export type UploadFunction = (file: File) => Promise<{ imageUrl: string }>;
-
 interface UseImageUploadProps {
-  uploadFn: UploadFunction;
+  type: 'MEMBER' | 'GATHERING' | 'CHALLENGE';
   onUploadSuccess: (imageUrl: string) => void;
   onUploadError?: (error: unknown) => void;
   maxSize?: number;
@@ -23,7 +22,7 @@ interface UseImageUploadProps {
 }
 
 export const useImageUpload = ({
-  uploadFn,
+  type,
   onUploadSuccess,
   onUploadError,
   maxSize = MAX_FILE_SIZE,
@@ -41,7 +40,7 @@ export const useImageUpload = ({
   };
 
   const { mutate: uploadImageMutation } = useMutation({
-    mutationFn: uploadFn,
+    mutationFn: (file: File) => uploadImage(file, type),
     onSuccess: (data) => {
       onUploadSuccess(data.imageUrl);
       setIsUploading(false);
