@@ -112,8 +112,12 @@ export default function GatheringEditModal({
       imageFile: newImageFile,
       startDate: startDate?.toISOString(),
       endDate: endDate?.toISOString(),
-      mainLocation: '서울시',
-      subLocation: '송파구',
+      mainLocation: placeSiItems.filter(
+        (item) => item.value === selectedPlaceSi,
+      )[0].label,
+      subLocation: placeGuItems.filter(
+        (item) => item.value === selectedPlaceGu,
+      )[0].label,
       tags: tags,
     };
 

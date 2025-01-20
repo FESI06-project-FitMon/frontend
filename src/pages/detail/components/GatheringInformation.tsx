@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
-import { GatheringDetail } from '@/stores/useGatheringStore';
+import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
 import getDatePart from '@/utils/getDatePart';
 
 export default function GatheringInformation({
@@ -15,7 +15,7 @@ export default function GatheringInformation({
 }) {
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-
+  const { deleteGathering } = useGatheringStore();
   if (!gathering) {
     return <div>{'Loading..'}</div>;
   }
@@ -37,7 +37,8 @@ export default function GatheringInformation({
     },
   ];
   const handleDeleteConfirmButtonClick = () => {
-    setShowModal(true);
+    deleteGathering(gathering.gatheringId);
+    setShowSelectAlert(false);
   };
 
   const handleDeleteCancelButtonClick = () => {

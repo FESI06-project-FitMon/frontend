@@ -2,6 +2,8 @@ import GatheringDetail from '@/pages/detail/[gatheringId].page';
 import { ChallengeType, GuestbookItem } from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import { create } from 'zustand';
+import instance from '@/utils/axios';
+
 export interface GatheringDetail {
   gatheringId: number;
   captainStatus: boolean;
@@ -86,6 +88,7 @@ interface GatheringState {
     challengeCreateRequest: ChallengeCreateRequest,
     gatheringId: number,
   ) => void;
+  deleteGathering: (gatheringId: number) => void;
 }
 
 interface GatheringChallengeResponse {
@@ -157,17 +160,18 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
       console.log('파일 확인:', formData.get('file')); // 디버깅용 로그 추가
 
       // // 파일 업로드
-      // const imageUrl = await apiRequest({
-      //   param: '/api/v1/images?type=GATHERING',
-      //   method: 'post',
-      //   requestData: formData,
-      // });
-
+      const url = await instance.request<{ imageUrl: string }>({
+        url: 'api/v1/images?type=GATHERING',
+        method: 'post',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       const filteredData = JSON.parse(
         JSON.stringify({
           ...gatheringUpdateRequest,
-          imageUrl:
-            'https://fitmon-bucket.s3.amazonaws.com/gatherings/af61233a-ed83-432c-b685-1d29a6c75de1_whale.jpg',
+          imageUrl: url.data.imageUrl,
         }),
       );
       delete filteredData.imageFile;
@@ -177,7 +181,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         method: 'patch',
         requestData: filteredData,
       });
-
+      console.log(response);
       set({
         gathering: {
           ...get().gathering,
@@ -211,6 +215,18 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
           },
         ],
       });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteGathering: async (gatheringId) => {
+    try {
+      const response = await apiRequest<any>({
+        param: `/api/v1/gatherings/${gatheringId}`,
+        method: 'delete',
+      });
+      console.log('delete response', response);
     } catch (error) {
       throw error;
     }
