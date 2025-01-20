@@ -57,7 +57,7 @@ export default function Card({ data }: CardProps) {
         <div className="flex justify-between">
           <div className="flex justify-start items-center gap-3">
             <RingChart total={totalCount} value={participantCount} />
-            <span className="text-xs sm:text-base font-semibold">
+            <span className="text-xs md:text-base font-semibold">
               {participantCount}/{totalCount}
             </span>
           </div>
