@@ -93,7 +93,7 @@ interface GatheringState {
   deleteGathering: (gatheringId: number) => void;
   participantGathering: (gatheringId: number) => void;
   participantChallenge: (challengeId: number) => void;
-  verificationChallenge: (challengeId: number, imageFile: File) => void;
+  verificationChallenge: (challengeId: number, imageUrl: string) => void;
 }
 
 interface GatheringChallengeResponse {
@@ -287,28 +287,16 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   },
 
   // 챌린지 인증하기 API
-  verificationChallenge: async (challengeId, imageFile) => {
+  verificationChallenge: async (challengeId, imageUrl) => {
     try {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-
-      // // 파일 업로드
-      const url = await instance.request<{ imageUrl: string }>({
-        url: 'api/v1/images?type=CHALLENGE',
-        method: 'post',
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await apiRequest<any>({
         param: `/api/v1/challenges/${challengeId}/verification`,
         method: 'post',
-        requestData: { imageUrl: url.data.imageUrl },
+        requestData: { imageUrl: imageUrl },
       });
 
+      // 챌린지 인증 상태 변경
       set({
         challenges: get().challenges?.map((challenge) =>
           challenge.challengeId === challengeId
