@@ -80,7 +80,7 @@ export default function SignupForm() {
     },
     onError: (error: Error) => {
       if (error.message === 'Request failed with status code 400') {
-        console.log('이미 존재하는 이메일입니다.');
+        // console.log('이미 존재하는 이메일입니다.');
         setShowConfirmAlert(true);
         setAlertMessage('이미 존재하는 이메일입니다.');
       }
@@ -126,7 +126,7 @@ export default function SignupForm() {
       />
       <FormField
         label="이메일"
-        type="email"
+        type="text"
         name="email"
         value={signupForm.email}
         placeholder="이메일을 입력해주세요"
