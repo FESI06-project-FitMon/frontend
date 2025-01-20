@@ -147,8 +147,11 @@ export default function GatheringInfomationModal({
               items={placeSiItems}
               selectedItem={formData.mainLocation}
               setSelectedItem={(value) => {
-                updateFormData('mainLocation', value);
-                updateFormData('subLocation', ''); // 도 변경 시 구 초기화
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  mainLocation: value,
+                  subLocation: '',
+                }));
               }}
               width="175px"
               height="47px"
