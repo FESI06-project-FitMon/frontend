@@ -134,3 +134,10 @@ export interface CreateGatheringForm {
   tags: string[];
   challenges: CreateChallenge[];
 }
+
+export interface PageResponse<T> {
+  content: T[];
+  currentPage: number;
+  totalElements: number;
+  totalPages: number;
+}
