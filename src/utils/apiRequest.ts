@@ -1,5 +1,4 @@
 import instance from './axios';
-import axios from 'axios';
 interface ApiRequestProps<TRequest> {
   param: string;
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put';

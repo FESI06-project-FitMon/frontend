@@ -55,18 +55,18 @@ export default function ChallengeAddModal({
     setChallengeImageUrl('');
   };
 
-  const handleChallengeAddButtonClick = () => {
+  const handleChallengeAddButtonClick = async () => {
     onClose();
     const newChallenge = {
       title: challengeTitle,
       description: challengeDescription,
       imageUrl: challengeImageUrl,
-      // maxPeopleCount: maxPeopleCount,
+      maxPeopleCount: maxPeopleCount,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
     console.log(newChallenge);
-    createChallenge(newChallenge, gatheringId);
+    await createChallenge(newChallenge, gatheringId);
   };
 
   return (

@@ -8,6 +8,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import ChallengeCertificationModal from './ChallengeCertificationModal';
 import useGatheringStore from '@/stores/useGatheringStore';
+import useToastStore from '@/stores/useToastStore';
+import { AxiosError } from 'axios';
 
 export default function GatheringChallenge({
   captainStatus,
@@ -123,8 +125,23 @@ function Challenge({
   inProgress: boolean;
 }) {
   const [openModal, setOpenModal] = useState(false);
+  const { participantChallenge } = useGatheringStore();
+  const showToast = useToastStore((state) => state.show);
+
   const handleGatheringButtonClick = () => {
     setOpenModal(true);
+  };
+
+  const handleParticipantChallengeButtonClick = async () => {
+    try {
+      await participantChallenge(challenge.challengeId);
+      showToast('챌린지에 참가하였습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
   };
   const button = () => {
     if (!inProgress) {
@@ -142,6 +159,9 @@ function Challenge({
           style="custom"
           name="참여하기"
           className="w-40 h-10 font-semibold text-base"
+          handleButtonClick={() => {
+            handleParticipantChallengeButtonClick();
+          }}
         />
       );
     }
@@ -158,7 +178,10 @@ function Challenge({
           <>
             {openModal && (
               <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
-                <ChallengeCertificationModal />
+                <ChallengeCertificationModal
+                  challengeId={challenge.challengeId}
+                  setOpenModal={setOpenModal}
+                />
               </Modal>
             )}
           </>

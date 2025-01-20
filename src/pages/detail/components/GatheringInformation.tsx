@@ -7,15 +7,19 @@ import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
 import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
 import getDatePart from '@/utils/getDatePart';
+import useToastStore from '@/stores/useToastStore';
+import { AxiosError } from 'axios';
 
 export default function GatheringInformation({
   gathering,
 }: {
   gathering: GatheringDetail;
 }) {
+  const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const { deleteGathering } = useGatheringStore();
+
   if (!gathering) {
     return <div>{'Loading..'}</div>;
   }
@@ -36,14 +40,23 @@ export default function GatheringInformation({
       },
     },
   ];
-  const handleDeleteConfirmButtonClick = () => {
-    deleteGathering(gathering.gatheringId);
-    setShowSelectAlert(false);
-  };
 
+  const handleDeleteConfirmButtonClick = async () => {
+    try {
+      await deleteGathering(gathering.gatheringId);
+      setShowSelectAlert(false);
+      showToast('모임을 취소했습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
+  };
   const handleDeleteCancelButtonClick = () => {
     setShowSelectAlert(false);
   };
+
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">

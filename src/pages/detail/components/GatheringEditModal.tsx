@@ -111,6 +111,7 @@ export default function GatheringEditModal({
       imageFile: newImageFile,
       startDate: startDate?.toISOString(),
       endDate: endDate?.toISOString(),
+      maxPeopleCount: maxPeopleCount,
       mainLocation: placeSiItems.filter(
         (item) => item.value === selectedPlaceSi,
       )[0].label,

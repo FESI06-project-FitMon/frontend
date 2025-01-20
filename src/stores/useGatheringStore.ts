@@ -35,13 +35,14 @@ interface GatheringUpdateRequest {
   mainLocation: string;
   subLocation: string;
   tags: Array<string>;
+  maxPeopleCount: number;
 }
 
 interface ChallengeCreateRequest {
   title: string;
   description: string;
   imageUrl: string;
-  // maxPeopleCount: number;
+  maxPeopleCount: number;
   startDate: string;
   endDate: string;
 }
@@ -90,15 +91,15 @@ interface GatheringState {
   ) => void;
   deleteGathering: (gatheringId: number) => void;
   participantGathering: (gatheringId: number) => void;
+  participantChallenge: (challengeId: number) => void;
+  verificationChallenge: (challengeId: number, imageFile: File) => void;
 }
 
 interface GatheringChallengeResponse {
   content: Array<ChallengeType>;
   hasNext: boolean;
 }
-const useGatheringStore = create<GatheringState>((set) => ({
-  gathering: undefined,
-
+const useGatheringStore = create<GatheringState>((set, get) => ({
   fetchGathering: async (gatheringId: number) => {
     try {
       const response = await apiRequest<GatheringDetail>({
@@ -156,12 +157,12 @@ const useGatheringStore = create<GatheringState>((set) => ({
 
   updateGathering: async (gatheringUpdateRequest, gatheringId) => {
     try {
+      // 수정할 이미지 업로드
       const formData = new FormData();
       formData.append('file', gatheringUpdateRequest.imageFile);
       console.log('파일 확인:', formData.get('file')); // 디버깅용 로그 추가
 
-      // // 파일 업로드
-      const url = await instance.request<{ imageUrl: string }>({
+      const uploadImage = await instance.request<{ imageUrl: string }>({
         url: 'api/v1/images?type=GATHERING',
         method: 'post',
         data: formData,
@@ -169,31 +170,47 @@ const useGatheringStore = create<GatheringState>((set) => ({
           'Content-Type': 'multipart/form-data',
         },
       });
+
+      const url = uploadImage.data.imageUrl;
+
       const filteredData = JSON.parse(
         JSON.stringify({
           ...gatheringUpdateRequest,
-          imageUrl: url.data.imageUrl,
+          imageUrl: url,
         }),
       );
       delete filteredData.imageFile;
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response = await apiRequest<any>({
+      await apiRequest<any>({
         param: '/api/v1/gatherings/' + gatheringId,
         method: 'patch',
         requestData: filteredData,
       });
-      console.log(response);
-      // set({
-      //   gathering: {
-      //     ...get().gathering,
-      //     ...Object.fromEntries(
-      //       Object.entries(gatheringUpdateRequest).filter(
-      //         ([key, value]) =>
-      //           value !== get().gathering?.[key as keyof GatheringDetail],
-      //       ),
-      //     ),
-      //   },
-      // });
+
+      set({
+        gathering: {
+          gatheringId: get().gathering?.gatheringId ?? 0,
+          captainStatus: get().gathering?.captainStatus ?? false,
+          title: gatheringUpdateRequest.title,
+          description: gatheringUpdateRequest.description,
+          mainType: get().gathering?.mainType ?? '',
+          subType: get().gathering?.subType ?? '',
+          imageUrl: url,
+          startDate: gatheringUpdateRequest.startDate,
+          endDate: gatheringUpdateRequest.endDate,
+          mainLocation: gatheringUpdateRequest.mainLocation,
+          subLocation: gatheringUpdateRequest.subLocation,
+          minCount: get().gathering?.minCount ?? 0,
+          totalCount: get().gathering?.totalCount ?? 0,
+          participantCount: get().gathering?.participantCount ?? 0,
+          status: get().gathering?.status ?? '',
+          tags: gatheringUpdateRequest.tags,
+          participants: get().gathering?.participants ?? [],
+          averageRating: get().gathering?.averageRating ?? 0,
+          guestBookCount: get().gathering?.guestBookCount ?? 0,
+        },
+      });
     } catch (error) {
       throw error;
     }
@@ -207,16 +224,6 @@ const useGatheringStore = create<GatheringState>((set) => ({
         method: 'post',
         requestData: challengeCreateRequest,
       });
-
-      // set({
-      //   challenges: [
-      //     ...get().challenges!,
-      //     {
-      //       gatheringId,
-      //       ...challengeCreateRequest,
-      //     },
-      //   ],
-      // });
     } catch (error) {
       throw error;
     }
@@ -245,6 +252,43 @@ const useGatheringStore = create<GatheringState>((set) => ({
       console.log('participant response', response);
     } catch (error) {
       console.error(error);
+      throw error;
+    }
+  },
+
+  participantChallenge: async (challengeId) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await apiRequest<any>({
+        param: `/api/v1/challenges/${challengeId}/participants`,
+        method: 'post',
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
+  verificationChallenge: async (challengeId, imageFile) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+
+      // // 파일 업로드
+      const url = await instance.request<{ imageUrl: string }>({
+        url: 'api/v1/images?type=CHALLENGE',
+        method: 'post',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await apiRequest<any>({
+        param: `/api/v1/challenges/${challengeId}/verification`,
+        method: 'post',
+        requestData: { imageUrl: url.data.imageUrl },
+      });
+    } catch (error) {
       throw error;
     }
   },

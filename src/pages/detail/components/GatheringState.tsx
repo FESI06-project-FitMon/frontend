@@ -9,6 +9,7 @@ import {
   gatheringIdInLikes,
   removeGatheringId,
 } from '@/utils/likesgathering';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -34,8 +35,10 @@ export default function GatheringState({
       await participantGathering(gatheringId);
       showToast('참여하기 완료되었습니다.', 'check');
     } catch (error) {
-      console.log(error);
-      showToast('이미 참여한 모임입니다', 'error');
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
     }
   };
 
