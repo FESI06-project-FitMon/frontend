@@ -9,6 +9,7 @@ const uploadImage = async (
   const formData = new FormData();
   formData.append('file', file);
 
+   // FormData는 특별한 처리가 필요하므로 직접 instance 사용
   const response = await instance.request<{ imageUrl: string }>({
     url: `api/v1/images?type=${type}`,
     method: 'post',
