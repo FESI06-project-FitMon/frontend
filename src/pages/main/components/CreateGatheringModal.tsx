@@ -142,8 +142,6 @@ export default function CreateGathering({
           {currentStep === 0 && (
             <ChoiceMainTypeModal
               onSelect={(mainType, subType) => {
-                console.log('메인 타입:', mainType);
-                console.log('서브 타입:', subType);
                 updateFormData('mainType', mainType);
                 updateFormData('subType', subType);
               }}
