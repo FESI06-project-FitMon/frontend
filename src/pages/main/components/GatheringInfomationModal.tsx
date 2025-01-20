@@ -26,11 +26,14 @@ interface GatheringInfomationModalProps {
 export default function GatheringInfomationModal({
   onChange,
 }: GatheringInfomationModalProps) {
+  const DEFAULT_IMAGE_URL =
+    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
     tags: [],
-    imageUrl: null,
+    imageUrl: null, // 초기값은 null로 설정
     mainLocation: '서울시',
     subLocation: '동작구',
     totalCount: 0,
@@ -38,34 +41,16 @@ export default function GatheringInfomationModal({
     endDate: null,
   });
 
-  const placeSiItems = [
-    { value: '서울시', label: '서울시' },
-    { value: '부산시', label: '부산시' },
-    { value: '대전시', label: '대전시' },
-  ];
-
-  const placeGuItems = [
-    { value: '동작구', label: '동작구' },
-    { value: '강서구', label: '강서구' },
-    { value: '마포구', label: '마포구' },
-  ];
-
-  const findLabelByValue = (
-    items: Array<{ value: string; label: string }>,
-    value: string,
-  ): string => items.find((item) => item.value === value)?.label || '';
-
   const updateFormData = <K extends keyof FormData>(
     key: K,
     value: FormData[K],
   ) => {
     const updatedForm = { ...formData, [key]: value };
 
-    // 부모로 전달 시 `mainLocation`과 `subLocation`을 `label`로 변환
+    // 부모로 전달 시 이미지가 없으면 기본 이미지를 전송
     const transformedData = {
       ...updatedForm,
-      mainLocation: findLabelByValue(placeSiItems, updatedForm.mainLocation),
-      subLocation: findLabelByValue(placeGuItems, updatedForm.subLocation),
+      imageUrl: updatedForm.imageUrl || DEFAULT_IMAGE_URL,
     };
 
     setFormData(updatedForm);
@@ -96,17 +81,34 @@ export default function GatheringInfomationModal({
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+    if (!e.target.files || e.target.files.length === 0) {
+      updateFormData('imageUrl', null); // 이미지가 없으면 null 유지
+      return;
+    }
     const file = e.target.files[0];
     updateFormData('imageUrl', URL.createObjectURL(file));
   };
 
-  const handleImageDelete = () => updateFormData('imageUrl', null);
+  const handleImageDelete = () => {
+    updateFormData('imageUrl', null); // 이미지 삭제 시 null로 설정
+  };
 
   const handleImageEditClick = () => {
     const fileInput = document.getElementById('file-input') as HTMLInputElement;
     fileInput?.click();
   };
+
+  const placeSiItems = [
+    { value: '서울시', label: '서울시' },
+    { value: '부산시', label: '부산시' },
+    { value: '대전시', label: '대전시' },
+  ];
+
+  const placeGuItems = [
+    { value: '동작구', label: '동작구' },
+    { value: '강서구', label: '강서구' },
+    { value: '마포구', label: '마포구' },
+  ];
 
   return (
     <div>
@@ -117,10 +119,11 @@ export default function GatheringInfomationModal({
           <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
             {formData.imageUrl && (
               <>
-                <img
+                <Image
                   src={formData.imageUrl}
                   alt="이미지 미리보기"
                   className="rounded-[10px] w-full h-full object-cover"
+                  fill
                 />
                 <div className="absolute w-full h-full bg-black/70 rounded-[10px] z-10" />
               </>
@@ -192,7 +195,6 @@ export default function GatheringInfomationModal({
           <input
             type="text"
             className="absolute w-full bg-transparent top-0 h-[47px] outline-none"
-            placeholder="태그를 입력 후 Enter를 눌러주세요."
             onKeyDown={handleTagInputKeyDown}
           />
         </div>
