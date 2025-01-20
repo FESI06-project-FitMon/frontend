@@ -1,20 +1,22 @@
-import Image from 'next/image';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import uploadImage from '@/utils/uploadImage';
+import Image from 'next/image';
 
 interface ImageUploaderProps {
   imageUrl: string | null;
   onUpload: (url: string) => void;
   onDelete: () => void;
+  uploadType: 'MEMBER' | 'GATHERING' | 'CHALLENGE'; // 업로드 타입 추가
 }
 
 export default function ImageUploader({
   imageUrl,
   onUpload,
   onDelete,
+  uploadType,
 }: ImageUploaderProps) {
   const { handleImageUpload, isUploading } = useImageUpload({
-    uploadFn: uploadImage,
+    uploadFn: (file: File) => uploadImage(file, uploadType), // uploadType을 고정
     onUploadSuccess: onUpload,
     onUploadError: (error) => console.error('이미지 업로드 실패:', error),
   });
