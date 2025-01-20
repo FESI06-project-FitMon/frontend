@@ -52,19 +52,18 @@ export default function GatheringDetail() {
           items={gatheringTabItems}
           currentTab={currentTab}
           onTabChange={(newTab) => setCurrentTab(newTab)}
-          className="w-full absolute flex text-lg font-bold z-10"
+          className="w-full absolute flex text-lg font-bold z-20"
+          rightElement={
+            gathering.captainStatus && (
+              <button
+                onClick={() => handleChallengeAddButtonClick()}
+                className="text-lg hover:cursor-pointer"
+              >
+                {'+ 챌린지 추가하기'}
+              </button>
+            )
+          }
         />
-        {gathering.captainStatus && (
-          <div className="w-full absolute flex justify-between z-20">
-            <div></div>
-            <button
-              onClick={() => handleChallengeAddButtonClick()}
-              className="text-lg hover:cursor-pointer"
-            >
-              {'+ 챌린지 추가하기'}
-            </button>
-          </div>
-        )}
       </div>
       {/* 모달 */}
       {showModal && (

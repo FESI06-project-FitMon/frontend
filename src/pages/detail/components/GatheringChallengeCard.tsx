@@ -37,6 +37,8 @@ export default function GatheringChallengeCard({
     }
   };
 
+  const handleChallengeDeleteButtonClick = () => {};
+
   const button = () => {
     if (!inProgress) {
       return (
@@ -93,16 +95,20 @@ export default function GatheringChallengeCard({
   };
 
   if (!challenge) return;
-  console.log('challenge', challenge);
+
   return (
     <div className="w-full h-[250px] bg-dark-200 rounded-[10px]">
       <div className="flex">
         {/* 좌측 사진 */}
         <Image
-          className="rounded-bl-[10px] rounded-tl-[10px]"
-          src="/assets/image/fitmon.png"
+          className="rounded-bl-[10px] rounded-tl-[10px] "
+          src={
+            challenge.imageUrl
+              ? challenge.imageUrl
+              : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+          }
           alt="alt"
-          width={250}
+          width={258}
           height={250}
         />
         {/* 우측 설명 */}
@@ -116,7 +122,13 @@ export default function GatheringChallengeCard({
               {/* 모임장만 보이는 설정 버튼 */}
               {challenge.captainStatus && (
                 <Popover
-                  items={[{ id: 'delete', label: '삭제하기' }]}
+                  items={[
+                    {
+                      id: 'delete',
+                      label: '삭제하기',
+                      onClick: () => handleChallengeDeleteButtonClick(),
+                    },
+                  ]}
                   type="dot"
                 />
               )}
