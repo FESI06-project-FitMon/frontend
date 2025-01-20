@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
+import TagInput from '@/components/common/TagInput';
 
 interface FormData {
   title: string;
@@ -24,7 +25,6 @@ interface FormData {
 interface GatheringInfomationModalProps {
   onChange: (data: FormData) => void;
 }
-
 
 export default function GatheringInfomationModal({
   onChange,
@@ -67,15 +67,8 @@ export default function GatheringInfomationModal({
     onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
     onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
-    }
+    },
   });
-
-  const handleTagDelete = (tag: string) => {
-    updateFormData(
-      'tags',
-      formData.tags.filter((t) => t !== tag),
-    );
-  };
 
   const placeSiItems = [
     { value: '서울시', label: '서울시' },
@@ -97,9 +90,11 @@ export default function GatheringInfomationModal({
         <div className="flex gap-[10px]">
           <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
             <Image
-              src={!formData.imageUrl || formData.imageUrl === 'null'
-                ? DEFAULT_IMAGE_URL
-                : formData.imageUrl}
+              src={
+                !formData.imageUrl || formData.imageUrl === 'null'
+                  ? DEFAULT_IMAGE_URL
+                  : formData.imageUrl
+              }
               alt="이미지 미리보기"
               className="rounded-[10px] w-full h-full object-cover"
               fill
@@ -135,48 +130,16 @@ export default function GatheringInfomationModal({
         </div>
       </div>
       {/* 모임 태그 */}
-      <div id="tags">
-        <h2 className="mt-[20px] mb-[10px]">모임 태그</h2>
-        <div className="relative">
-          <div className="h-[47px] rounded-[8px] border border-dark-500 bg-dark-400 flex items-center gap-[10px] px-5">
-            {formData.tags.map((tag) => (
-              <div
-                key={tag}
-                className="h-[30px] w-[121px] flex items-center justify-center py-[7px] px-[10px] bg-dark-200 rounded-[10px] gap-2 z-10"
-              >
-                <p className="text-primary text-sm">{`#${tag}`}</p>
-                <button onClick={() => handleTagDelete(tag)}>
-                  <Image
-                    src="/assets/image/cancel-tag.svg"
-                    width={11}
-                    height={11}
-                    alt="delete"
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
-          <input
-            type="text"
-            className="absolute w-full bg-transparent top-0 h-[47px] outline-none"
-            onKeyDown={(e) => {
-              const input = e.currentTarget.value.trim();
-              if (e.key === 'Enter' && input && !e.nativeEvent.isComposing) {
-                if (formData.tags.length >= 3) {
-                  alert('태그는 최대 3개까지 추가 가능합니다.');
-                  return;
-                }
-                if (formData.tags.includes(input)) {
-                  alert('이미 추가된 태그입니다.');
-                  return;
-                }
-                updateFormData('tags', [...formData.tags, input]);
-                e.currentTarget.value = '';
-              }
-            }}
-          />
-        </div>
+      <div>
+        <h2 className="mb-[10px]">모임 태그 </h2>
+
+        <TagInput
+          initialTags={formData.tags} // 초기 태그 데이터
+          maxTags={3} // 최대 태그 개수
+          onTagsChange={(updatedTags) => updateFormData('tags', updatedTags)} // 부모 상태 업데이트
+        />
       </div>
+
       {/* 장소 및 최대 인원 */}
       <div className="flex gap-[10px] mt-[20px]">
         <div id="place">
@@ -236,4 +199,3 @@ export default function GatheringInfomationModal({
     </div>
   );
 }
-
