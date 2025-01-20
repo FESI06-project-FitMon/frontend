@@ -8,10 +8,9 @@ import Link from 'next/link';
 
 interface CardProps {
   data: GatheringListItem;
-  valid?: boolean;
 }
 
-export default function Card({ data, valid }: CardProps) {
+export default function Card({ data }: CardProps) {
   const {
     gatheringId,
     title,
@@ -36,7 +35,7 @@ export default function Card({ data, valid }: CardProps) {
           <StatusTag status={status} />
         </div>
         <div className="absolute bottom-2.5 right-2.5 z-10">
-          <ZzimHeart valid={valid} />
+          <ZzimHeart gatheringId={gatheringId} />
         </div>
         <Image src={imageUrl} fill alt="모임 사진" className="rounded-xl" />
       </div>
