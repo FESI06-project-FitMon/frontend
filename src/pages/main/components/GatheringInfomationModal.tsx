@@ -156,6 +156,7 @@ export default function GatheringInfomationModal({
               handleInputChange={(e) => updateFormData('title', e.target.value)}
               value={formData.title}
               className="outline-dark-500 bg-dark-400 mb-[7px] h-[47px]"
+              maxLength={25}
             />
             <TextArea
               placeholder="설명을 입력해 주세요. (50자 제한)"
