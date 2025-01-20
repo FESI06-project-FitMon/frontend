@@ -29,9 +29,9 @@ export default function GatheringState({
   }, [gatheringId]);
 
   // 참여하기 버튼 클릭 핸들러
-  const handleGatheringButtonClick = () => {
+  const handleGatheringButtonClick = async () => {
     try {
-      participantGathering(gatheringId);
+      await participantGathering(gatheringId);
       showToast('참여하기 완료되었습니다.', 'check');
     } catch (error) {
       console.log(error);
@@ -50,7 +50,13 @@ export default function GatheringState({
 
     addGatheringId(gatheringId);
   };
-  const handleShareButtonClick = () => {};
+  const handleShareButtonClick = () => {
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => showToast('클립보드에 URL이 복사되었습니다.', 'check'))
+      .catch(() => showToast('URL 복사를 실패했습니다.', 'error'));
+  };
 
   if (!gatheringStatus) {
     return <div>{'Loading..'}</div>;

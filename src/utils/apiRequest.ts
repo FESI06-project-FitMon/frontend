@@ -36,11 +36,6 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
 
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error);
-      console.log('123');
-      throw new Error('API request failed');
-    }
     throw error;
   }
 }
