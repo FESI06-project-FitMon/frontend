@@ -2,7 +2,6 @@ import GatheringDetail from '@/pages/detail/[gatheringId].page';
 import { ChallengeType, GuestbookItem } from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import { create } from 'zustand';
-import instance from '@/utils/axios';
 
 export interface GatheringDetail {
   gatheringId: number;
@@ -69,6 +68,8 @@ interface GatheringState {
   gatheringStatus?: GatheringStatus;
   challenges?: Array<ChallengeType>;
   guestbooks?: Array<GuestbookItem>;
+  hasNextPage: boolean;
+  setHasNextPage: (hasNextPage: boolean) => void;
   fetchGathering: (gatheringId: number) => void;
   fetchGatheringStatus: (gatheringId: number) => void;
   fetchGatheringChallenges: (
@@ -106,6 +107,8 @@ interface GatheringGuestbookResponse {
   hasNext: boolean;
 }
 const useGatheringStore = create<GatheringState>((set, get) => ({
+  hasNextPage: false,
+  setHasNextPage: (hasNextPage: boolean) => set({ hasNextPage: hasNextPage }),
   // 모임 정보 불러오기 API
   fetchGathering: async (gatheringId: number) => {
     try {
@@ -146,7 +149,12 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
         param: `/api/v1/gatherings/${gatheringId}/challenges?page=${page}&pageSize=${pageSize}&status=${status}`,
         method: 'get',
       });
-      set({ challenges: response.content });
+      console.log(response);
+      const prevChallenges = get().challenges ?? [];
+      set({
+        challenges: [...prevChallenges, ...response.content],
+        hasNextPage: response.hasNext,
+      });
     } catch (error) {
       throw error;
     }

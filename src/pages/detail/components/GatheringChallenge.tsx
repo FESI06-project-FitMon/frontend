@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import useGatheringStore from '@/stores/useGatheringStore';
 import GatheringChallengeCard from './GatheringChallengeCard';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import Null from '@/components/common/Null';
 
 export default function GatheringChallenge({
   captainStatus,
@@ -17,8 +19,28 @@ export default function GatheringChallenge({
   ];
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
+  const [isLoading, setIsLoading] = useState(false);
+  const { fetchGatheringChallenges, challenges, hasNextPage, setHasNextPage } =
+    useGatheringStore();
+  const [page, setPage] = useState(0);
 
-  const { fetchGatheringChallenges, challenges } = useGatheringStore();
+  const fetchNextPage = async () => {
+    await fetchGatheringChallenges(
+      gatheringId,
+      page + 1,
+      10,
+      currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
+    );
+    setPage(page + 1);
+    setHasNextPage(!hasNextPage);
+  };
+
+  // 무한 스크롤 옵저버 연결
+  const observerRef = useInfiniteScroll({
+    onIntersect: fetchNextPage,
+    isLoading: isLoading,
+    hasNextPage: !!hasNextPage,
+  });
 
   useEffect(() => {
     fetchGatheringChallenges(
@@ -28,6 +50,10 @@ export default function GatheringChallenge({
       currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
     );
   }, [gatheringId, currentTag]);
+
+  if (isLoading) {
+    return <Null message="로딩중입니다." />;
+  }
 
   return (
     <div>
@@ -106,6 +132,8 @@ export default function GatheringChallenge({
           )}
         </div>
       </div>
+
+      {hasNextPage && <div ref={observerRef} style={{ height: '1px' }} />}
     </div>
   );
 }

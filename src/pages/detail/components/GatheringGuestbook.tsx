@@ -20,7 +20,7 @@ export default function GatheringGuestbook({
     <div className="mt-[43px] mb-[130px] w-full">
       {/* 방명록 리스트 */}
       <div className=" flex flex-col gap-5 mb-[33px]">
-        {guestbooks ? (
+        {guestbooks && guestbooks.length > 0 ? (
           guestbooks.map((guestbook, index) => (
             <Guestbook key={index} guestbook={guestbook} />
           ))
