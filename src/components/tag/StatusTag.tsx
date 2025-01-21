@@ -5,7 +5,7 @@ interface StatusTagProps {
 
 export default function StatusTag({ status, className = '' }: StatusTagProps) {
   const baseStyles =
-    'w-20 h-[25px] smd:h-8 md:w-[106px] rounded-full flex items-center justify-center font-semibold text-xs md:text-base';
+    'w-20 h-[25px] sm:h-8 md:w-[106px] rounded-full flex items-center justify-center font-semibold text-xs md:text-base';
 
   const statusText = {
     시작전: '시작 전',

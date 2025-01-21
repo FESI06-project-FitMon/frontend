@@ -77,7 +77,7 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-8 pt-20">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
       <h2 className="text-[1.75rem] font-semibold pb-[30px]">
         지금 핫한 챌린지 🔥
       </h2>
@@ -86,7 +86,7 @@ export default function Home() {
         <ListChallenge />
       </div>
 
-      <div className="mt-20">
+      <div className="mt-[30px] md:mt-[50px] lg:mt-20">
         <Tab
           items={LISTPAGE_MAINTYPE}
           currentTab={mainType}
@@ -95,16 +95,26 @@ export default function Home() {
             setSubType('전체');
           }}
           rightElement={
-            <div className="w-full flex justify-end">
+            <div className="hidden lg:flex w-full justify-end">
               <Button
                 style="custom"
                 name="모임 만들기"
-                className="text-base my-2 h-10 w-32"
+                className="text-base my-2 h-9 w-[126px]"
                 handleButtonClick={handleCreateButton}
               />
             </div>
           }
         />
+        {/* 모바일/태블릿용 고정 버튼 */}
+        <div className="lg:hidden fixed right-6 bottom-10 z-50">
+          <Button
+            style="custom"
+            name="모임 만들기"
+            className="text-base h-9 w-[126px]"
+            handleButtonClick={handleCreateButton}
+          />
+        </div>
+
 
         {showModal && (
           <CreateGathering setShowModal={() => setShowModal(false)} />

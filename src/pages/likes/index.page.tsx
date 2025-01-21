@@ -65,9 +65,9 @@ export default function LikesGatherings() {
   const [subType, setSubType] = useState('전체'); // 서브 타입 상태
 
   return (
-    <div className="max-w-screen-xl mx-auto px-8">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
       {/* 메인 타입 탭 */}
-      <div className="mt-20">
+      <div>
         <Tab
           items={LISTPAGE_MAINTYPE}
           currentTab={mainType}
