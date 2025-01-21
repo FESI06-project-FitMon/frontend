@@ -69,12 +69,15 @@ interface GatheringState {
   challenges?: Array<ChallengeType>;
   guestbooks?: Array<GuestbookItem>;
   hasNextPage: boolean;
+  isStatusChanged: boolean;
+  currentChallengePage: number;
+  setCurrentChallengePage: (page: number) => void;
+  setIsStatusChanged: (status: boolean) => void;
   setHasNextPage: (hasNextPage: boolean) => void;
   fetchGathering: (gatheringId: number) => void;
   fetchGatheringStatus: (gatheringId: number) => void;
   fetchGatheringChallenges: (
     gatheringId: number,
-    page: number,
     pageSize: number,
     status: string,
   ) => void;
@@ -108,6 +111,11 @@ interface GatheringGuestbookResponse {
 }
 const useGatheringStore = create<GatheringState>((set, get) => ({
   hasNextPage: false,
+  isStatusChanged: false,
+  currentChallengePage: 0,
+  setCurrentChallengePage: (page: number) =>
+    set({ currentChallengePage: page }),
+  setIsStatusChanged: (status: boolean) => set({ isStatusChanged: status }),
   setHasNextPage: (hasNextPage: boolean) => set({ hasNextPage: hasNextPage }),
   // 모임 정보 불러오기 API
   fetchGathering: async (gatheringId: number) => {
@@ -140,21 +148,25 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   // 챌린지 불러오기 API
   fetchGatheringChallenges: async (
     gatheringId,
-    page = 0,
     pageSize = 10,
     status = 'IN_PROGRESS',
   ) => {
     try {
+      if (get().isStatusChanged) {
+        set({ currentChallengePage: 0 });
+      }
       const response = await apiRequest<GatheringChallengeResponse>({
-        param: `/api/v1/gatherings/${gatheringId}/challenges?page=${page}&pageSize=${pageSize}&status=${status}`,
+        param: `/api/v1/gatherings/${gatheringId}/challenges?page=${get().currentChallengePage}&pageSize=${pageSize}&status=${status}`,
         method: 'get',
       });
-      console.log(response);
       const prevChallenges = get().challenges ?? [];
       set({
-        challenges: [...prevChallenges, ...response.content],
+        challenges: get().isStatusChanged
+          ? response.content
+          : [...prevChallenges, ...response.content],
         hasNextPage: response.hasNext,
       });
+      set({ currentChallengePage: get().currentChallengePage + 1 });
     } catch (error) {
       throw error;
     }
