@@ -1,24 +1,63 @@
-import BarChart from '@/components/chart/BarChart';
-import Button from '@/components/common/Button';
-import Popover from '@/components/common/Popover';
-import Modal from '@/components/dialog/Modal';
 import SubTag from '@/components/tag/SubTag';
-
-import { GatheringChallegeProps } from '@/types';
 import Image from 'next/image';
-import { useState } from 'react';
-import ChallengeCertificationModal from './ChallengeCertificationModal';
+import { useEffect, useState } from 'react';
+import useGatheringStore from '@/stores/useGatheringStore';
+import GatheringChallengeCard from './GatheringChallengeCard';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import Null from '@/components/common/Null';
 
 export default function GatheringChallenge({
-  challenges,
   captainStatus,
-}: GatheringChallegeProps) {
+  gatheringId,
+}: {
+  captainStatus: boolean;
+  gatheringId: number;
+}) {
   const challengeSubTagItems = [
     { id: 'inProgress', label: '진행중인 챌린지' },
     { id: 'done', label: '마감된 챌린지' },
   ];
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
+  const [isLoading, setIsLoading] = useState(false);
+  const { fetchGatheringChallenges, challenges, hasNextPage, setHasNextPage } =
+    useGatheringStore();
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+  const [page, setPage] = useState(0);
+
+  const fetchNextPage = async () => {
+    await fetchGatheringChallenges(
+      gatheringId,
+      page + 1,
+      10,
+      currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
+    );
+    setPage(page + 1);
+    setHasNextPage(!hasNextPage);
+  };
+
+  // 무한 스크롤 옵저버 연결
+  const observerRef = useInfiniteScroll({
+    onIntersect: fetchNextPage,
+    isLoading: isLoading,
+    hasNextPage: !!hasNextPage,
+  });
+
+  useEffect(() => {
+    fetchGatheringChallenges(
+      gatheringId,
+      0,
+      10,
+      currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
+    );
+  }, [gatheringId, currentTag]);
+
+  if (isLoading) {
+    return <Null message="로딩중입니다." />;
+  }
 
   return (
     <div>
@@ -77,31 +116,19 @@ export default function GatheringChallenge({
 
         <div className="flex flex-col mt-[31px] mb-[27px] gap-6">
           {currentInquiryState === 'list' ? (
-            currentTag === 'inProgress' ? (
-              challenges.inProgressChallenges &&
-              challenges.inProgressChallenges.length > 0 ? (
-                challenges?.inProgressChallenges.map((challenge, index) => (
-                  <Challenge
-                    key={index}
-                    challenge={{ ...challenge, captainStatus }}
-                  />
-                ))
-              ) : (
-                <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                  {'진행중인 챌린지가 없습니다.'}
-                </div>
-              )
-            ) : challenges.doneChallenges &&
-              challenges.doneChallenges.length > 0 ? (
-              challenges?.doneChallenges.map((challenge, index) => (
-                <Challenge
+            challenges && challenges.length > 0 ? (
+              challenges?.map((challenge, index) => (
+                <GatheringChallengeCard
                   key={index}
                   challenge={{ ...challenge, captainStatus }}
+                  inProgress={currentTag === 'inProgress'}
                 />
               ))
             ) : (
               <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                {'마감된 챌린지가 없습니다.'}
+                {currentTag === 'inProgress'
+                  ? '진행중인 챌린지가 없습니다.'
+                  : '마감된 챌린지가 없습니다.'}
               </div>
             )
           ) : (
@@ -109,132 +136,8 @@ export default function GatheringChallenge({
           )}
         </div>
       </div>
+
+      {hasNextPage && <div ref={observerRef} style={{ height: '1px' }} />}
     </div>
   );
-}
-
-function Challenge({ challenge }: { challenge: ChallengeProps }) {
-  const [openModal, setOpenModal] = useState(false);
-  const handleGatheringButtonClick = () => {
-    setOpenModal(true);
-  };
-  const button = () => {
-    if (!challenge.participantStatus) {
-      return (
-        <Button
-          style="custom"
-          name="참여하기"
-          className="w-40 h-10 font-semibold text-base"
-        />
-      );
-    }
-
-    if (!challenge.verificationStatus) {
-      return (
-        <>
-          <Button
-            style="custom"
-            name="인증하기"
-            className="w-40 h-10 font-semibold text-base"
-            handleButtonClick={() => handleGatheringButtonClick()}
-          />
-          <>
-            {openModal && (
-              <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
-                <ChallengeCertificationModal />
-              </Modal>
-            )}
-          </>
-        </>
-      );
-    }
-
-    return (
-      <Button
-        style="disabled"
-        name="인증완료"
-        className="bg-dark-700 w-40 h-10 font-semibold text-base "
-      />
-    );
-  };
-
-  return (
-    <div className="w-full h-[250px] bg-dark-200 rounded-[10px]">
-      <div className="flex">
-        {/* 좌측 사진 */}
-        <Image
-          className="rounded-bl-[10px] rounded-tl-[10px]"
-          src="/assets/image/fitmon.png"
-          alt="alt"
-          width={250}
-          height={250}
-        />
-        {/* 우측 설명 */}
-        <div className="w-full ml-[50px] mr-[30px]">
-          <div className="flex flex-col mt-[30px] mb-[20px] gap-[10px]">
-            <div className="flex justify-between">
-              {/* 날짜 */}
-              <p className="text-sm text-dark-700">
-                {`${challenge.startDate.substring(0, 10)} ~ ${challenge.endDate.substring(0, 10)}`}
-              </p>
-              {/* 모임장만 보이는 설정 버튼 */}
-              {challenge.captainStatus && (
-                <Popover
-                  items={[{ id: 'delete', label: '삭제하기' }]}
-                  type="dot"
-                />
-              )}
-            </div>
-            {/* 제목, 설명 */}
-            <p className="text-2xl font-semibold">{challenge.title}</p>
-            <p className="text-dark-700 h-[50px]">{challenge.description}</p>
-          </div>
-          <div className="w-full flex justify-between">
-            <div className="w-[608px]">
-              <div className="flex justify-between">
-                {/* 인원 수 정보 */}
-                <div className="flex items-center justify-center gap-[6px] mb-[15px]">
-                  <Image
-                    src="/assets/image/person.svg"
-                    alt="참여자 아이콘"
-                    width={28}
-                    height={28}
-                  />
-                  <p>{`${challenge.successParticipantCount}/${challenge.participantCount}`}</p>
-                </div>
-                {/* 퍼센트 */}
-                <p className="text-2xl text-primary font-bold">
-                  {(challenge.successParticipantCount /
-                    challenge.participantCount) *
-                    100}
-                  %
-                </p>
-              </div>
-              <BarChart
-                total={challenge.participantCount}
-                value={challenge.successParticipantCount}
-              />
-            </div>
-            {/* 참여했다면 인증하기 버튼, 참여하지 않았다면 참여하기 버튼 */}
-            {button()}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface ChallengeProps {
-  gatheringId: number;
-  challengeId: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  participantCount: number;
-  successParticipantCount: number;
-  participantStatus: boolean;
-  verificationStatus: boolean;
-  startDate: string;
-  endDate: string;
-  captainStatus: boolean;
 }

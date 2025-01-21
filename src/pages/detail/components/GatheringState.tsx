@@ -2,42 +2,72 @@ import BarChart from '@/components/chart/BarChart';
 import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
-import { GatheringStateType } from '@/types';
+import useGatheringStore from '@/stores/useGatheringStore';
+import useToastStore from '@/stores/useToastStore';
+import {
+  addGatheringId,
+  gatheringIdInLikes,
+  removeGatheringId,
+} from '@/utils/likesgathering';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export default function GatheringState({
-  state,
+  gatheringId,
 }: {
-  state: GatheringStateType;
+  gatheringId: number;
 }) {
-  const gatheringId = 1;
+  const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
+  const {
+    fetchGatheringStatus,
+    gatheringStatus,
+    gathering,
+    participantGathering,
+  } = useGatheringStore();
+
+  // 초기 상태 세팅
   useEffect(() => {
-    setHeart(
-      localStorage.getItem('zzims') &&
-        JSON.parse(localStorage.getItem('zzims')!).includes(gatheringId),
-    );
+    fetchGatheringStatus(gatheringId);
+    setHeart(gatheringIdInLikes(gatheringId));
   }, [gatheringId]);
 
-  if (!state) {
-    return <div>{'Loading..'}</div>;
-  }
+  // 참여하기 버튼 클릭 핸들러
+  const handleGatheringButtonClick = async () => {
+    try {
+      await participantGathering(gatheringId);
+      showToast('참여하기 완료되었습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
+  };
 
-  const handleGatheringButtonClick = () => {};
+  // 찜 버튼 클릭 핸들러
   const handleZzimButtonClick = () => {
     setHeart(!heart);
-    const zzims = localStorage.getItem('zzims');
-    let zzimArray: Array<number> = zzims ? JSON.parse(zzims) : [];
-    // 이미 로컬스토리지에 있다면,
-    if (zzimArray.indexOf(gatheringId) !== -1) {
-      zzimArray = zzimArray.filter((zzim: number) => zzim !== gatheringId);
-      localStorage.setItem('zzims', JSON.stringify(zzimArray));
+
+    if (gatheringIdInLikes(gatheringId)) {
+      removeGatheringId(gatheringId);
       return;
     }
-    localStorage.setItem('zzims', JSON.stringify([...zzimArray, gatheringId]));
+
+    addGatheringId(gatheringId);
   };
-  const handleShareButtonClick = () => {};
+  const handleShareButtonClick = () => {
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => showToast('클립보드에 URL이 복사되었습니다.', 'check'))
+      .catch(() => showToast('URL 복사를 실패했습니다.', 'error'));
+  };
+
+  if (!gatheringStatus) {
+    return <div>{'Loading..'}</div>;
+  }
 
   return (
     <div
@@ -48,10 +78,10 @@ export default function GatheringState({
       <div id="rating">
         <h3 className="mb-[18px] font-bold">{'모임 만족도'}</h3>
         <div className="flex">
-          <Heart rating={state.gatheringAverageRating} />
-          <span className="ml-[10px]">{`${state.gatheringAverageRating} / 5.0`}</span>
+          <Heart rating={gatheringStatus.averageRating} />
+          <span className="ml-[10px]">{`${gatheringStatus.averageRating} / 5.0`}</span>
         </div>
-        <div className="text-sm mt-[18px]">{`총 ${state.gatheringGuestbookCount}개의 방명록`}</div>
+        <div className="text-sm mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
       </div>
       <div className="flex">
         <div className="gap-[15px] w-[388px]">
@@ -59,7 +89,7 @@ export default function GatheringState({
             <div id="joined-people" className="flex items-center">
               {/* 참가자 5인 프로필 이미지 */}
               <div className="flex -space-x-[10px]">
-                {state.gatheringJoinedFivePeopleImages?.map((image, index) => (
+                {gatheringStatus.participants?.map((image, index) => (
                   <Image
                     key={index}
                     src="/assets/image/fitmon.png"
@@ -71,9 +101,9 @@ export default function GatheringState({
                 ))}
 
                 {/* 추가 인원 */}
-                {state.gatheringJoinedPeopleCount >= 5 && (
+                {gatheringStatus.participantCount >= 5 && (
                   <div className="w-[29px] h-[29px] text-center content-center bg-white text-black text-sm font-extrabold rounded-full">
-                    +{state.gatheringJoinedPeopleCount - 5}
+                    +{gatheringStatus.participantCount - 5}
                   </div>
                 )}
               </div>
@@ -81,7 +111,7 @@ export default function GatheringState({
               {/* 참가자 수 안내 */}
               <div className="flex justify-center items-center ml-3">
                 <p className="text-primary text-sm font-semibold">
-                  {`${state.gatheringJoinedPeopleCount}명`}
+                  {`${gatheringStatus.participantCount}명`}
                 </p>
                 <p className="text-sm font-semibold">{'이 참가하고 있어요'}</p>
               </div>
@@ -90,31 +120,42 @@ export default function GatheringState({
             {/* 개설 상태 안내 */}
             <OpenStatus
               className="h-5"
-              gatheringJoinedPeopleCount={state.gatheringJoinedPeopleCount}
+              gatheringJoinedPeopleCount={gatheringStatus.participantCount}
             />
           </div>
 
           {/* 참가자 상태 바 */}
           <div className="my-[15px]">
             <BarChart
-              total={state.gatheringMaxPeopleCount}
-              value={state.gatheringJoinedPeopleCount}
+              total={gatheringStatus.totalCount}
+              value={gatheringStatus.participantCount}
             />
           </div>
 
           <div className="flex justify-between">
-            <p className="text-sm text-dark-700 mt-[15px]">{`최소 ${state.gatheringMinPeopleCount}명`}</p>
-            <p className="text-sm text-dark-700 mt-[15px]">{`최대 ${state.gatheringMaxPeopleCount}명`}</p>
+            <p className="text-sm text-dark-700 mt-[15px]">{`최소 ${gatheringStatus.minCount}명`}</p>
+            <p className="text-sm text-dark-700 mt-[15px]">{`최대 ${gatheringStatus.totalCount}명`}</p>
           </div>
         </div>
         <div className="flex mb-auto h-[56px]" id="buttons">
-          <Button
-            className="ml-[25px] w-[242px]"
-            style="custom"
-            height="100%"
-            name="참여하기"
-            handleButtonClick={() => handleGatheringButtonClick()}
-          />
+          {gathering?.participantStatus ? (
+            <Button
+              className="ml-[25px] w-[242px]"
+              style="disabled"
+              height="100%"
+              name="참여 완료"
+              handleButtonClick={() => handleGatheringButtonClick()}
+            />
+          ) : (
+            <Button
+              className="ml-[25px] w-[242px]"
+              style="custom"
+              height="100%"
+              name="참여하기"
+              handleButtonClick={() => handleGatheringButtonClick()}
+            />
+          )}
+
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
               src={

@@ -3,19 +3,29 @@ import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
 import TextArea from '@/components/common/TextArea';
+import useGatheringStore from '@/stores/useGatheringStore';
+import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 
 interface ChallengeAddModalProps {
   onClose: () => void;
+  gatheringId: number;
 }
-export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
+export default function ChallengeAddModal({
+  onClose,
+  gatheringId,
+}: ChallengeAddModalProps) {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1); // 오늘 날짜 +1일
   const [challengeTitle, setChallengeTitle] = useState('');
   const [challengeDescription, setChallengeDescription] = useState('');
   const [challengeImageUrl, setChallengeImageUrl] = useState('');
   const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [startDate, setStartDate] = useState<Date>(tomorrow);
+  const [endDate, setEndDate] = useState<Date>(tomorrow);
+
+  const { createChallenge } = useGatheringStore();
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChallengeTitle(e.target.value);
@@ -26,12 +36,13 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
     setChallengeDescription(e.target.value);
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      setChallengeImageUrl(URL.createObjectURL(file));
+      const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
+      setChallengeImageUrl(imageUrl);
     }
   };
 
@@ -46,17 +57,18 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
     setChallengeImageUrl('');
   };
 
-  const handleChallengeAddButtonClick = () => {
+  const handleChallengeAddButtonClick = async () => {
     onClose();
     const newChallenge = {
       title: challengeTitle,
       description: challengeDescription,
       imageUrl: challengeImageUrl,
-      maxPeopleCount: maxPeopleCount,
-      startDate: startDate,
-      endDate: endDate,
+      totalCount: maxPeopleCount,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     };
     console.log(newChallenge);
+    await createChallenge(newChallenge, gatheringId);
   };
 
   return (
@@ -72,10 +84,7 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
               src={
-                challengeImageUrl &&
-                ['https', 'http', 'blob'].indexOf(
-                  challengeImageUrl.split(':')[0],
-                ) !== -1
+                challengeImageUrl
                   ? challengeImageUrl
                   : '/assets/image/fitmon.png'
               }
@@ -146,6 +155,7 @@ export default function ChallengeAddModal({ onClose }: ChallengeAddModalProps) {
             <DatePickerCalendar
               selectedDate={startDate}
               setSelectedDate={setStartDate}
+              minDate={tomorrow}
               width="195px"
               height="47px"
             />

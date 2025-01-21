@@ -1,27 +1,33 @@
 import Heart from '@/components/common/Heart';
 import Pagination from '@/components/common/Pagination';
-import { GuestbookItem } from '@/types';
+import useGatheringStore from '@/stores/useGatheringStore';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function GatheringGuestbook({
-  guestbooks,
   gatheringGuestbookCount,
+  gatheringId,
 }: {
-  guestbooks: Array<GuestbookItem>;
   gatheringGuestbookCount: number;
+  gatheringId: number;
 }) {
   const [page, setPage] = useState(0);
+  const { guestbooks, fetchGatheringGuestbooks } = useGatheringStore();
+  useEffect(() => {
+    fetchGatheringGuestbooks(gatheringId, page, 10);
+  }, [gatheringId]);
   return (
     <div className="mt-[43px] mb-[130px] w-full">
       {/* 방명록 리스트 */}
       <div className=" flex flex-col gap-5 mb-[33px]">
-        {guestbooks ? (
+        {guestbooks && guestbooks.length > 0 ? (
           guestbooks.map((guestbook, index) => (
             <Guestbook key={index} guestbook={guestbook} />
           ))
         ) : (
-          <div>존재하지 않습니다</div>
+          <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
+            방명록이 존재하지 않습니다
+          </div>
         )}
       </div>
 
@@ -31,6 +37,7 @@ export default function GatheringGuestbook({
           page={page}
           setPage={setPage}
           totalNumber={gatheringGuestbookCount}
+          countPerPage={4}
         />
       </div>
     </div>
