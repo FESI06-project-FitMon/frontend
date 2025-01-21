@@ -8,7 +8,7 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import TagInput from '@/components/common/TagInput';
 import cityData from '@/constants/city';
-import useToastStore, { ToastType } from '@/stores/useToastStore';
+import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
 
 interface FormData {

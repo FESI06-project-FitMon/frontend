@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import NumberSelect from '@/components/common/NumberSelect';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
-import useToastStore, { ToastType } from '@/stores/useToastStore';
+import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
 interface ChallengeInfomationModalProps {
   onChange: (data: CreateChallenge) => void;
