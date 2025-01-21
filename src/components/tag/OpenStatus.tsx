@@ -19,15 +19,17 @@ export default function OpenStatus({
           }`}
       >
         {isConfirmed ? (
-          <div className="flex items-center gap-[4px]">
+          <div className="flex items-center text-xs md:text-base gap-[4px]">
             <span>개설확정</span>
-            <Image
-              src="/assets/image/open-check.svg"
-              alt="확정"
-              width={16}
-              height={16}
-              className="rounded-full bg-primary ml-[2px]" 
-            />
+            <div className="w-3 h-3 md:w-4 md:h-4 ml-[2px] bg-primary rounded-full">
+              <Image
+                src="/assets/image/open-check.svg"
+                alt="확정"
+                layout="responsive"
+                width={16}
+                height={16}
+              />
+            </div>
           </div>
         ) : (
           '개설대기'

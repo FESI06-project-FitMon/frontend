@@ -7,6 +7,7 @@ import ModalInput from '@/components/common/ModalInput';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { profileService } from '@/pages/mypage/api/profileService';
 import useToastStore from '@/stores/useToastStore';
+import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export default function ProfileEditModal({
   }, [isOpen, initialNickname, initialImage]);
 
   const { handleImageUpload, isUploading } = useImageUpload({
-    uploadFn: profileService.uploadImage,
+    type: 'MEMBER',
     onUploadSuccess: (imageUrl) => {
       setEditedImage(imageUrl);
     }
@@ -78,7 +79,7 @@ export default function ProfileEditModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateNickname(editedNickname)) {
-      showToast('닉네임은 2글자 이상, 10글자 이하로 입력해주세요.', 'error');
+      showToast('닉네임은 2글자에서 10글자 이내로 입력해주세요.', 'error');
       setIsDisabled(true);
       return;
     }
@@ -96,14 +97,14 @@ export default function ProfileEditModal({
       title="회원 정보를 입력해주세요."
       onClose={onClose}
     >
-      <div className="w-[500px] h-[254px]">
+      <div className="w-full md:w-[500px] h-auto">
         <form onSubmit={handleSubmit} className="h-full flex flex-col">
-          <div className="flex items-center gap-[10px] mt-[30px]">
+          <div className="flex flex-col md:flex-row items-center gap-[10px] mt-[30px]">
             <div className="relative h-[130px]">
               <Image
                 src={
                   !editedImage || editedImage === 'null'
-                    ? '/assets/image/fitmon.png'
+                    ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
                     : editedImage
                 }
                 alt="프로필 이미지"
@@ -115,38 +116,14 @@ export default function ProfileEditModal({
                   target.src = '/assets/image/mypage_profile.svg';
                 }}
               />
-              <div className="absolute inset-0 border border-dark_500 bg-dark-500/80 flex flex-col rounded-[10px] items-center justify-center gap-2">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/jpeg,image/jpg,image/png"
-                  onChange={handleImageUpload}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                >
-                  <Image
-                    src="/assets/image/profile_edit.svg"
-                    alt="프로필 이미지 수정"
-                    width={45}
-                    height={45}
-                    className="hover:opacity-80"
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="text-dark-700 font-normal hover:text-primary"
-                  onClick={handleImageDelete}
-                  disabled={isUploading}
-                >
-                  이미지 삭제
-                </button>
-              </div>
+              <ImageUploadOverlay
+                fileInputRef={fileInputRef}
+                onUpload={handleImageUpload}
+                onDelete={handleImageDelete}
+                isUploading={isUploading}
+              />
             </div>
-            <div className="flex-1 h-[130px] flex flex-col justify-end">
+            <div className="w-full md:flex-1 md:h-[130px] flex flex-col justify-end">
               <label className="text-base mb-[10px] font-normal block">
                 닉네임
               </label>
@@ -166,6 +143,7 @@ export default function ProfileEditModal({
               type="submit"
               name="확인"
               style="default"
+              className="h-[52px]"
             />
           </div>
         </form>

@@ -2,67 +2,54 @@ import Button from '@/components/common/Button';
 import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
-import Select from '@/components/common/Select';
+import Select, { SelectItem } from '@/components/common/Select';
 import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
-import { GatheringItem } from '@/types';
 import Image from 'next/image';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
+import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
+import cityData from '@/constants/city';
+import uploadImage from '@/utils/uploadImage';
+
 export default function GatheringEditModal({
   information,
+  gatheringId,
+  setIsModalOpen,
 }: {
-  information: GatheringItem;
+  information: GatheringDetail;
+  gatheringId: number;
+  setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
-  const [title, setTitle] = useState(information.gatheringTitle);
-  const [description, setDescription] = useState(
-    information.gatheringDescription,
-  );
+  const { updateGathering } = useGatheringStore();
+  const [title, setTitle] = useState(information.title);
+  const [description, setDescription] = useState(information.description);
   const [newTag, setNewTag] = useState('');
-  const [tags, setTags] = useState<Array<string>>(information.gatheringTags);
-  const [imageUrl, setImageUrl] = useState(information.gatheringImage);
-  const [selectedPlaceSi, setSelectedPlaceSi] = useState('seoul');
-  const [selectedPlaceGu, setSelectedPlaceGu] = useState('dongjak');
-  const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date(
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[0],
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[1],
-      information.gatheringStartDate.split('-').map((str) => parseInt(str))[2],
-    ),
+  const [tags, setTags] = useState<Array<string>>(information.tags);
+  const [imageUrl, setImageUrl] = useState(information.imageUrl); // 기존 이미지 URL
+  const [selectedPlaceSi, setSelectedPlaceSi] = useState(
+    information.mainLocation,
   );
-  const [endDate, setEndDate] = useState<Date | null>(
-    new Date(
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[0],
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[1],
-      information.gatheringEndDate.split('-').map((str) => parseInt(str))[2],
-    ),
+  const [selectedPlaceGu, setSelectedPlaceGu] = useState(
+    information.subLocation,
   );
-  const placeSiItems = [
-    {
-      value: 'seoul',
-      label: '서울시',
-    },
-    {
-      value: 'busan',
-      label: '부산시',
-    },
-    {
-      value: 'daejeon',
-      label: '대전시',
-    },
-  ];
-  const placeGuItems = [
-    {
-      value: 'dongjak',
-      label: '동작구',
-    },
-    {
-      value: 'kangsu',
-      label: '강서구',
-    },
-    { value: 'mapo', label: '마포구' },
-  ];
+  const [maxPeopleCount, setMaxPeopleCount] = useState(information.totalCount);
+  const [startDate, setStartDate] = useState<string>(information.startDate);
+  const [endDate, setEndDate] = useState<string>(information.endDate);
+
+  type CityData = typeof cityData;
+  type CityKeys = keyof CityData;
+
+  const placeSiItems: SelectItem[] = Object.keys(cityData).map((city) => ({
+    value: city,
+    label: city,
+  }));
+
+  const placeGuItems: SelectItem[] =
+    cityData[selectedPlaceSi as CityKeys]?.map((gu) => ({
+      value: gu.value,
+      label: gu.label,
+    })) || [];
 
   const handleGatheringTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -97,6 +84,8 @@ export default function GatheringEditModal({
       setNewTag('');
     }
   };
+
+  // 수정버튼 클릭 핸들러
   const handleEditButtonClick = () => {
     const editedInformation = {
       title: title,
@@ -104,15 +93,23 @@ export default function GatheringEditModal({
       imageUrl: imageUrl,
       startDate: startDate,
       endDate: endDate,
-      mainLocation: '서울시',
-      subLocation: '송파구',
+      totalCount: maxPeopleCount,
+      mainLocation: placeSiItems.filter(
+        (item) => item.value === selectedPlaceSi,
+      )[0].label,
+      subLocation: placeGuItems.filter(
+        (item) => item.value === selectedPlaceGu,
+      )[0].label,
       tags: tags,
     };
 
-    // TODO: API로 수정
-    console.log(editedInformation);
+    updateGathering(editedInformation, gatheringId);
+
+    // 모달을 닫는다.
+    setIsModalOpen(false);
   };
 
+  // 숨겨져 있는 fileInput Html 클릭
   const handleImageEditButtonClick = () => {
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
@@ -120,12 +117,14 @@ export default function GatheringEditModal({
     }
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // 이미지 변경 핸들러
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      setImageUrl(URL.createObjectURL(file));
+      const imageFileUrl = (await uploadImage(file, 'GATHERING')).imageUrl;
+      setImageUrl(imageFileUrl);
     }
   };
 
@@ -268,8 +267,8 @@ export default function GatheringEditModal({
         <div>
           <div className="mt-[20px] mb-[10px]">시작 날짜</div>
           <DatePickerCalendar
-            selectedDate={startDate}
-            setSelectedDate={setStartDate}
+            selectedDate={new Date(startDate)}
+            setSelectedDate={(date: Date) => setStartDate(date.toISOString())}
             className="w-[245px] h-[47px]"
             width="245px"
             height="47px"
@@ -279,12 +278,12 @@ export default function GatheringEditModal({
         <div>
           <div className="mt-[20px] mb-[10px]">마감 날짜</div>
           <DatePickerCalendar
-            selectedDate={endDate}
-            setSelectedDate={setEndDate}
+            selectedDate={new Date(endDate)}
+            setSelectedDate={(date: Date) => setEndDate(date.toISOString())}
             className="w-[245px] h-[47px]"
             width="245px"
             height="47px"
-            minDate={startDate!}
+            minDate={new Date(startDate)}
           />
         </div>
       </div>

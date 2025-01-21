@@ -4,10 +4,33 @@ import TextArea from '@/components/common/TextArea';
 import { CreateChallenge } from '@/types';
 import Image from 'next/image';
 import { useState, ChangeEvent } from 'react';
+import instance from '@/utils/axios';
+import NumberSelect from '@/components/common/NumberSelect';
 
 interface ChallengeInfomationModalProps {
   onChange: (data: CreateChallenge) => void; // 부모로 데이터 전달
 }
+
+// 기본 이미지 URL
+const DEFAULT_IMAGE_URL =
+  'https://fitmon-bucket.s3.amazonaws.com/challenges/default-image.png';
+
+// 이미지 업로드 함수
+const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await instance.request<{ imageUrl: string }>({
+    url: 'api/v1/images?type=CHALLENGE',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data;
+};
 
 export default function ChallengeInfomationModal({
   onChange,
@@ -18,6 +41,7 @@ export default function ChallengeInfomationModal({
     imageUrl: null,
     startDate: null,
     endDate: null,
+    maxPeopleCount: 0,
   });
 
   // 상태 업데이트 핸들러
@@ -27,20 +51,32 @@ export default function ChallengeInfomationModal({
   ) => {
     setFormData((prev) => {
       const updated = { ...prev, [key]: value };
-      onChange(updated); // 부모로 업데이트된 데이터 전달
+
+      // 부모로 데이터 전달 시 기본 이미지를 포함하도록 처리
+      onChange({
+        ...updated,
+        imageUrl: updated.imageUrl || DEFAULT_IMAGE_URL,
+      });
+
       return updated;
     });
   };
 
-  // 이미지 관련 핸들러
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // 이미지 변경 핸들러
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    updateFormData('imageUrl', imageUrl);
+
+    try {
+      const { imageUrl } = await uploadImage(file); // 이미지 업로드
+      updateFormData('imageUrl', imageUrl); // 성공 시 S3 URL 저장
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
-  const handleImageDelete = () => updateFormData('imageUrl', '');
+  const handleImageDelete = () => updateFormData('imageUrl', null); // 이미지 삭제 시 null 설정
 
   const handleImageEditClick = () => {
     const fileInput = document.getElementById('file-input') as HTMLInputElement;
@@ -55,7 +91,8 @@ export default function ChallengeInfomationModal({
         <div className="flex gap-[10px]">
           {/* 이미지 업로드 */}
           <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
-            {formData.imageUrl && (
+            {/* 업로드된 이미지가 있을 때만 미리보기 */}
+            {formData.imageUrl ? (
               <>
                 <Image
                   src={formData.imageUrl}
@@ -65,7 +102,7 @@ export default function ChallengeInfomationModal({
                 />
                 <div className="absolute w-full h-full bg-black/70 rounded-[10px] z-10" />
               </>
-            )}
+            ) : null}
             <div className="absolute w-full h-full flex flex-col justify-center items-center gap-2 z-20 hover:cursor-pointer">
               <input
                 type="file"
@@ -111,9 +148,9 @@ export default function ChallengeInfomationModal({
         </div>
       </div>
 
-      {/* 최대 인원 및 날짜 선택 */}
+      {/* 날짜 선택 */}
       <div className="flex gap-[10px] mt-[20px]">
-        {/* <div id="max-people-count">
+        <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect
             targetNumber={formData.maxPeopleCount}
@@ -121,13 +158,13 @@ export default function ChallengeInfomationModal({
             className="w-[90px]"
             height="47px"
           />
-        </div> */}
+        </div>
         <div id="start-date">
           <h2 className="mb-[10px]">시작 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.startDate}
             setSelectedDate={(date) => updateFormData('startDate', date)}
-            className="w-[196px]"
+            width="196px"
             height="47px"
           />
         </div>
@@ -136,7 +173,7 @@ export default function ChallengeInfomationModal({
           <DatePickerCalendar
             selectedDate={formData.endDate}
             setSelectedDate={(date) => updateFormData('endDate', date)}
-            className="w-[196px]"
+            width="196px"
             height="47px"
             minDate={formData.startDate!}
           />

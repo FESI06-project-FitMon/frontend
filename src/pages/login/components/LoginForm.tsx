@@ -122,11 +122,11 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleLoginSubmit}
-      className="flex flex-col w-full px-6 gap-6"
+      className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
       <FormField
         label="이메일"
-        type="email"
+        type="text"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
@@ -149,7 +149,7 @@ export default function LoginForm() {
       />
 
       <Button type="submit" name="로그인" className="h-16 mt-3" />
-      <div className="flex flex-row justify-end mt-3">
+      <div className="flex flex-row justify-center md:justify-end -mt-2 md:mt-3">
         <p className="mr-4 text-[1rem]">{'아직 회원이 아니신가요?'}</p>
         <p
           onClick={() => router.push('/signup')}

@@ -5,18 +5,18 @@ interface PaginationProps {
   page: number;
   setPage: (page: number) => void;
   totalNumber: number;
+  countPerPage: number;
 }
 export default function Pagination({
   page,
   setPage,
   totalNumber,
+  countPerPage,
 }: PaginationProps) {
   const [index, setIndex] = useState<number>(0);
-  const lastPage: number = Math.floor(totalNumber / 4); // 총 4개로 구성된 페이지 수
-  const lastCount = totalNumber % 4; // 페이지 이외에 나오는 수
+  const lastPage: number = Math.floor(totalNumber / countPerPage); // 총 4개로 구성된 페이지 수
+  const lastCount = totalNumber % countPerPage; // 페이지 이외에 나오는 수
   const pageCount = lastPage + (lastCount === 0 ? 0 : 1);
-  console.log(lastCount);
-  console.log('pageCount % 10', pageCount % 10);
   const pageStyle = (current: boolean) => {
     if (current) {
       return 'text-center	font-bold text-white bg-primary rounded-full w-[22px] h-[22px]';
@@ -38,8 +38,9 @@ export default function Pagination({
       setIndex(index + 1);
     }
     setPage(page + 1);
-    console.log(page);
   };
+
+  if (totalNumber <= 0) return;
   return (
     <div className="flex w-full items-center justify-center">
       <Image

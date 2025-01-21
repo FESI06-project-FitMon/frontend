@@ -47,11 +47,12 @@
     }
 
     .datepicker__header {
-      position: fixed;
+      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      text-align: center;
       top: 0;
     }
 
@@ -63,7 +64,6 @@
     }
 
     .react-datepicker__day-names {
-      margin-top: 34px;
       display: flex;
       align-items: center;
       justify-content: center;

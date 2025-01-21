@@ -30,7 +30,7 @@ export default function GuestbookModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     console.log('Form submission started with:', {
       gatheringId,
       content,
@@ -55,7 +55,7 @@ export default function GuestbookModal({
         content: content.trim(),
         rating: Number(rating)
       };
-      
+
       console.log('Sending request with data:', requestData);
 
       if (isEditMode && initialData) {
@@ -63,7 +63,7 @@ export default function GuestbookModal({
       } else {
         await createGuestbook(gatheringId, requestData);
       }
-      
+
       console.log('Request successful');
       onSubmit(requestData);
     } catch (err) {
@@ -75,47 +75,41 @@ export default function GuestbookModal({
     }
   };
 
-  const handleContentChange = (value: string) => {
-    console.log('Content changed:', value);
-    setContent(value);
-  };
-
-  const handleRatingChange = (value: number) => {
-    console.log('Rating changed:', value);
-    setRating(value);
-  };
-
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
-      <div className="w-[500px] h-[340px] relative">
-        <div className="absolute inset-0 z-10 bg-white/80">
-          <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
-        </div>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="my-[20px] flex items-center gap-4">
-            <Heart rating={rating} onChange={handleRatingChange} />
+      <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
+        <form onSubmit={handleSubmit} className="w-full flex flex-col items-center md:items-start">
+          <div className="mb-3 md:my-4 flex items-center justify-center md:justify-start w-full">
+            <Heart rating={rating} onChange={(value) => setRating(value)} />
           </div>
 
-          <ModalInput
-            type="description"
-            value={content}
-            onChange={handleContentChange}
-            placeholder="방명록을 작성해주세요."
-            maxLength={300}
-            height="220px"
-            onValidationFail={onValidationFail}
-          />
+          <div className="w-full">
+            <ModalInput
+              type="description"
+              value={content}
+              onChange={(value) => setContent(value)}
+              placeholder="방명록을 작성해주세요."
+              maxLength={300}
+              height="220px"
+              onValidationFail={onValidationFail}
+            />
+          </div>
 
-          <div className="mt-[20px]">
-            <Button 
-              type="submit" 
-              name={isEditMode ? "수정하기" : "작성하기"} 
-              style="default" 
+          <div className="w-full mt-4">
+            <Button
+              type="submit"
+              name={isEditMode ? "수정하기" : "작성하기"}
+              style="default"
+              className="w-full h-[52px]"
             />
           </div>
         </form>
+        {/* Preparing 컴포넌트를 absolute로 배치 */}
+        <div className="absolute inset-0 z-[9999] pointer-events-none">
+          <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
+        </div>
       </div>
     </Modal>
   );
 }
+

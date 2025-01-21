@@ -20,18 +20,27 @@ export default function GuestbookCard({
   onDelete
 }: GuestbookCardProps) {
   return (
-    <div className="flex gap-[30px] bg-dark-900 rounded-lg">
-      <div className="relative w-[300px] h-[200px]">
+    <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
+      {/* 이미지 영역 */}
+      <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
         <Image
-          src="/assets/image/default_img.png"
-          alt="모임 이미지"
-          width={300}
-          height={200}
-          className="rounded-[20px] object-cover"
+          src={
+            gathering?.gatheringImage === 'null' || !gathering?.gatheringImage
+              ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+              : gathering.gatheringImage
+          }
+          alt={gathering?.gatheringTitle || '모임 이미지'}
+          layout="fill"
+          className="object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+          }}
         />
       </div>
 
-      <div className="flex-1 py-6 pr-6">
+      <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
         <div className="flex justify-between items-start mb-4">
           <Heart rating={guestbook.rating} />
           {showActions && onEdit && onDelete && (
@@ -53,12 +62,12 @@ export default function GuestbookCard({
           )}
         </div>
 
-        <p className="mb-4 break-all line-clamp-4">
+        <p className="mb-2 lg:mb-4 break-all line-clamp-4">
           {guestbook.content}
         </p>
 
         {gathering && (
-          <div className="flex items-end justify-between">
+          <div className="flex flex-col lg:flex-row mb-[10px] lg:mb-0items-start lg:items-end justify-between">
             <p className="text-primary font-normal">
               {gathering.gatheringTitle} |
               {gathering.gatheringSi}
@@ -73,3 +82,4 @@ export default function GuestbookCard({
     </div>
   );
 }
+

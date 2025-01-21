@@ -1,33 +1,47 @@
 import { useInfiniteQuery, QueryFunctionContext } from '@tanstack/react-query';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
-import Card from './Card';
+import Card from '@/components/card/gathering/Card';
 import { GatheringList } from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import { MainType } from '@/constants/MainList';
+import { getLikes } from '@/utils/likesgathering';
 
-interface CardlistProps {
+interface likesGatheringsProps {
   mainType: MainType;
   subType: string;
 }
 
-export default function Cardlist({ mainType, subType }: CardlistProps) {
-  const pageSize = 6; // 한 페이지당 아이템 수
+interface RequestData {
+  gatheringIds: number[];
+}
 
-  // 데이터 페치 함수
-  const fetchGatherings = async ({ pageParam = 0 }: QueryFunctionContext) => {
-    const apiEndpoint = '/api/v1/gatherings';
+export default function LikesGatheringsList({
+  mainType,
+  subType,
+}: likesGatheringsProps) {
+  // 한 페이지당 모임 수
+  const ROWS_PER_PAGE = 8;
+
+  const postlikesGatherings = async ({
+    pageParam = 0,
+  }: QueryFunctionContext) => {
+    const apiEndpoint = '/api/v1/gatherings/likes';
     const queryParams = {
       sortBy: 'deadline',
       sortDirection: 'ASC',
       page: String(pageParam),
-      pageSize: String(pageSize),
+      pageSize: String(ROWS_PER_PAGE),
       ...(mainType !== '전체' && { mainType }),
       ...(subType !== '전체' && { subType }),
     };
 
     const param = `${apiEndpoint}?${new URLSearchParams(queryParams).toString()}`;
-    return await apiRequest<GatheringList>({ param });
+    return await apiRequest<GatheringList, RequestData>({
+      param,
+      method: 'post',
+      requestData: { gatheringIds: getLikes() },
+    });
   };
 
   // React Query를 사용한 무한 스크롤 데이터 처리
@@ -39,8 +53,8 @@ export default function Cardlist({ mainType, subType }: CardlistProps) {
     isLoading,
     error,
   } = useInfiniteQuery<GatheringList, Error>({
-    queryKey: ['gatheringList', mainType, subType],
-    queryFn: fetchGatherings,
+    queryKey: ['likesGatherings', mainType, subType],
+    queryFn: postlikesGatherings,
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.content.length > 0 ? allPages.length : undefined;
     },
@@ -82,8 +96,11 @@ export default function Cardlist({ mainType, subType }: CardlistProps) {
                 <Null message="이 페이지에는 모임 정보가 없습니다." />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {page.content.map((gathering) => (
-                    <Card key={gathering.gatheringId} data={gathering} />
+                  {page.content.map((likesgathering) => (
+                    <Card
+                      key={likesgathering.gatheringId}
+                      data={likesgathering}
+                    />
                   ))}
                 </div>
               )}

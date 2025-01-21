@@ -41,15 +41,17 @@ export default function Toast({
   };
 
   return (
-    <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 transition-opacity duration-300 opacity-100">
-      <div className="flex items-center px-[30px] py-[15px] rounded-[10px] bg-dark-300">
-        <Image
-          src={toastIcons[type]}
-          alt={`${type} icon`}
-          width={24}
-          height={24}
-        />
-        <span className="ml-[10px] text-white">
+    <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-[10010] transition-opacity duration-300 opacity-100">
+      <div className="flex items-center px-3 py-2 md:px-6 md:py-4 rounded-[10px] bg-dark-300">
+        <div className="w-4 h-4 md:w-6 md:h-6 relative flex-shrink-0">
+          <Image
+            src={toastIcons[type]}
+            alt={`${type} icon`}
+            fill
+            className="object-contain"
+          />
+        </div>
+        <span className="ml-1 md:ml-2.5 text-white text-xs md:text-base">
           {message}
         </span>
       </div>

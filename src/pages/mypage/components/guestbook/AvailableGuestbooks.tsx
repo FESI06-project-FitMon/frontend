@@ -14,25 +14,29 @@ export default function AvailableGuestbooks({
   gatheringStates,
   onWriteClick
 }: AvailableGuestbooksProps) {
-
   if (gatherings.length === 0) {
     return <Null message="작성 가능한 방명록이 없습니다." />;
   }
 
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {gatherings.map((gathering) => (
-        <div key={gathering.gatheringId} className="flex gap-[30px]">
-          <div className="relative w-[300px] h-[200px]">
+        <div 
+          key={gathering.gatheringId} 
+          className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-[10px] md:gap-[24px] lg:gap-[30px]"
+        >
+          {/* 이미지 영역 */}
+          <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
             <Image
-              src={gathering.gatheringImage === "null"
-                ? '/assets/image/default_img.png'
-                : gathering.gatheringImage}
+            src={
+              gathering.gatheringImage === 'null' || !gathering.gatheringImage
+                ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+                : gathering.gatheringImage
+            }
               alt={gathering.gatheringTitle}
               width={300}
               height={200}
-              className="rounded-[20px] object-cover"
+              className="w-full h-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.onerror = null;
@@ -41,12 +45,15 @@ export default function AvailableGuestbooks({
             />
           </div>
 
-          <div className="flex flex-col flex-1 py-[19px]">
-            <h3 className="text-primary font-normal mb-3.5">
+          {/* 정보 영역 */}
+          <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px]">
+            <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
               {gathering.gatheringSubType} | {gathering.gatheringSi} {gathering.gatheringGu}
             </h3>
-            <h2 className="text-xl font-bold mb-3.5">{gathering.gatheringTitle}</h2>
-            <div className="flex items-center gap-[13px] text-dark-700 mb-[21px]">
+            <h2 className="text-sm md:text-xl font-bold mb-3.5">
+              {gathering.gatheringTitle}
+            </h2>
+            <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
               <h4>{gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}</h4>
               <div className="flex items-center font-normal gap-2 text-white">
                 <Image
@@ -54,6 +61,7 @@ export default function AvailableGuestbooks({
                   alt="참여자 아이콘"
                   width={18}
                   height={18}
+                  className="w-4 h-4 md:w-[18px] md:h-[18px]"
                 />
                 <span>
                   {gatheringStates[gathering.gatheringId]?.gatheringJoinedPeopleCount}/
@@ -61,12 +69,14 @@ export default function AvailableGuestbooks({
                 </span>
               </div>
             </div>
-            <Button
-              name="방명록 작성하기"
-              style="custom"
-              className="w-[163px] h-[43px] text-base"
-              handleButtonClick={() => onWriteClick(gathering.gatheringId)}
-            />
+            <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
+              <Button
+                name="방명록 작성하기"
+                style="custom"
+                className="w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base"
+                handleButtonClick={() => onWriteClick(gathering.gatheringId)}
+              />
+            </div>
           </div>
         </div>
       ))}

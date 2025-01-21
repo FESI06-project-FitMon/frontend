@@ -1,12 +1,31 @@
+import Button from '@/components/common/Button';
+import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
+import NumberSelect from '@/components/common/NumberSelect';
 import TextArea from '@/components/common/TextArea';
+import useGatheringStore from '@/stores/useGatheringStore';
+import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 
-export default function ChallengeAddModal() {
+interface ChallengeAddModalProps {
+  onClose: () => void;
+  gatheringId: number;
+}
+export default function ChallengeAddModal({
+  onClose,
+  gatheringId,
+}: ChallengeAddModalProps) {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1); // 오늘 날짜 +1일
   const [challengeTitle, setChallengeTitle] = useState('');
   const [challengeDescription, setChallengeDescription] = useState('');
   const [challengeImageUrl, setChallengeImageUrl] = useState('');
+  const [maxPeopleCount, setMaxPeopleCount] = useState(0);
+  const [startDate, setStartDate] = useState<Date>(tomorrow);
+  const [endDate, setEndDate] = useState<Date>(tomorrow);
+
+  const { createChallenge } = useGatheringStore();
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChallengeTitle(e.target.value);
@@ -17,12 +36,13 @@ export default function ChallengeAddModal() {
     setChallengeDescription(e.target.value);
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      setChallengeImageUrl(URL.createObjectURL(file));
+      const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
+      setChallengeImageUrl(imageUrl);
     }
   };
 
@@ -37,8 +57,22 @@ export default function ChallengeAddModal() {
     setChallengeImageUrl('');
   };
 
+  const handleChallengeAddButtonClick = async () => {
+    onClose();
+    const newChallenge = {
+      title: challengeTitle,
+      description: challengeDescription,
+      imageUrl: challengeImageUrl,
+      totalCount: maxPeopleCount,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    };
+    console.log(newChallenge);
+    await createChallenge(newChallenge, gatheringId);
+  };
+
   return (
-    <div>
+    <>
       {/* 챌린지 정보 */}
       <div id="information">
         <div className="mt-[30px] mb-[10px]">챌린지 정보</div>
@@ -50,10 +84,7 @@ export default function ChallengeAddModal() {
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
               src={
-                challengeImageUrl &&
-                ['https', 'http', 'blob'].indexOf(
-                  challengeImageUrl.split(':')[0],
-                ) !== -1
+                challengeImageUrl
                   ? challengeImageUrl
                   : '/assets/image/fitmon.png'
               }
@@ -106,12 +137,50 @@ export default function ChallengeAddModal() {
           </div>
         </div>
 
-        <div className="flex gap-[10px]">
+        {/* 하단 정보 */}
+        <div className="flex gap-[10px] mt-[30px] mb-[10px]">
+          {/* 최대 인원 */}
           <div>
-            <div className="mt-[30px] mb-[10px]">챌린지 정보</div>
+            <p className="mb-[10px]">최대 인원</p>
+            <NumberSelect
+              targetNumber={maxPeopleCount}
+              setTargetNumber={setMaxPeopleCount}
+              className="w-[90px] h-[47px]"
+            />
+          </div>
+
+          {/* 시작 날짜 */}
+          <div className="w-[195px]">
+            <p className="mb-[10px]">시작 날짜</p>
+            <DatePickerCalendar
+              selectedDate={startDate}
+              setSelectedDate={setStartDate}
+              minDate={tomorrow}
+              width="195px"
+              height="47px"
+            />
+          </div>
+
+          {/* 마감 날짜 */}
+          <div className="w-[195px]">
+            <p className="mb-[10px]">마감 날짜</p>
+            <DatePickerCalendar
+              selectedDate={endDate}
+              setSelectedDate={setEndDate}
+              minDate={startDate!}
+              width="195px"
+              height="47px"
+            />
           </div>
         </div>
+
+        {/* 챌린지 추가 버튼 */}
+        <Button
+          name="확인"
+          className="w-[500px] h-[52px] mt-[30px]"
+          handleButtonClick={handleChallengeAddButtonClick}
+        />
       </div>
-    </div>
+    </>
   );
 }
