@@ -125,7 +125,7 @@ export default function ChallengeInfomationModal({
             setTargetNumber={(value) => updateFormData('totalCount', value)}
             className="w-[90px]"
             height="47px"
-            min={5}
+            min={2}
           />
         </div>
         <div id="start-date">
