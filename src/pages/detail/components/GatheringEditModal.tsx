@@ -255,6 +255,7 @@ export default function GatheringEditModal({
         <div id="max-people-count">
           <div className="mt-[20px] mb-[10px]">최대인원</div>
           <NumberSelect
+            min={2}
             width="130px"
             height="47px"
             targetNumber={maxPeopleCount}

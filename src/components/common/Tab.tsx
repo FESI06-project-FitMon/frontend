@@ -22,25 +22,22 @@ export default function Tab({
   };
 
   return (
-    <div className={` ${className}`}>
+    <div className={`${className}`}>
       <div className="w-full flex items-center justify-between">
-        <div
-          className={`flex w-full lg:px-0 ${'md:border-b-[2px] sm:border-dark-400 md:justify-start '
-            } justify-center`} //모바일에선 검정선 안보이고, 가운데 정렬렬
-        >
-          <div className="flex">
+        <div className="flex w-full md:border-b-[2px] border-dark-400">
+          <div className="flex w-full justify-center md:justify-start">
             {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item.id)}
-                //모바일 글씨 크기 14px, 넓이 100
                 className={`
-                  pb-[15px] text-sm md:text-lg lg:text-lg font-bold 
-                  min-w-[90px] md:min-w-[140px] 
-                  border-b-[2px] z-20 
-                  ${currentTab === item.id
-                    ? 'text-primary border-primary -mb-[2px]'
-                    : 'text-dark-700 border-dark-700 -mb-[2px]'
+                  pb-[15px] text-sm md:text-lg lg:text-lg font-bold
+                  min-w-[90px] md:min-w-[140px]
+                  border-b-[2px] z-20
+                  ${
+                    currentTab === item.id
+                      ? 'text-primary border-primary -mb-[2px]'
+                      : 'text-dark-700 border-dark-700 -mb-[2px]'
                   }
                 `}
               >
@@ -49,7 +46,9 @@ export default function Tab({
             ))}
           </div>
           {rightElement && (
-            <div className="flex items-center px-4 ml-auto">{rightElement}</div>
+            <div className="hidden md:flex items-center px-4 ml-auto">
+              {rightElement}
+            </div>
           )}
         </div>
       </div>
