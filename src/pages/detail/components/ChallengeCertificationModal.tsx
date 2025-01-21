@@ -1,17 +1,30 @@
 import Button from '@/components/common/Button';
+import useGatheringStore from '@/stores/useGatheringStore';
+import useToastStore from '@/stores/useToastStore';
+import uploadImage from '@/utils/uploadImage';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 
-export default function ChallengeCertificationModal() {
+export default function ChallengeCertificationModal({
+  challengeId,
+  setOpenModal,
+}: {
+  challengeId: number;
+  setOpenModal: (openModal: boolean) => void;
+}) {
   const [challengeGatheringImagUrl, setChallengeGatheringImageUrl] =
     useState('');
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const { verificationChallenge } = useGatheringStore();
+  const showToast = useToastStore((state) => state.show);
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      setChallengeGatheringImageUrl(URL.createObjectURL(file));
+      const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
+      setChallengeGatheringImageUrl(imageUrl);
     }
   };
 
@@ -26,6 +39,18 @@ export default function ChallengeCertificationModal() {
     setChallengeGatheringImageUrl('');
   };
 
+  const handleCertificationButtonClick = async () => {
+    try {
+      await verificationChallenge(challengeId, challengeGatheringImagUrl);
+      setOpenModal(false);
+      showToast('챌린지 인증에 성공했습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
+  };
   return (
     <>
       {/* 이미지 첨부 */}
@@ -75,6 +100,7 @@ export default function ChallengeCertificationModal() {
           name="인증하기"
           className="mt-[30px] w-[500px] h-[52px]"
           style="custom"
+          handleButtonClick={() => handleCertificationButtonClick()}
         />
       </div>
     </>

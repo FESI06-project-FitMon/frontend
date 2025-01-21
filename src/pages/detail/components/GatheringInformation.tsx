@@ -1,21 +1,26 @@
 import Image from 'next/image';
 import TagList from './tag';
-import { GatheringItem } from '@/types';
 import Popover from '@/components/common/Popover';
 import { useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
+import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
+import getDatePart from '@/utils/getDatePart';
+import useToastStore from '@/stores/useToastStore';
+import { AxiosError } from 'axios';
 
 export default function GatheringInformation({
-  information,
+  gathering,
 }: {
-  information: GatheringItem;
+  gathering: GatheringDetail;
 }) {
+  const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const { deleteGathering } = useGatheringStore();
 
-  if (!information) {
+  if (!gathering) {
     return <div>{'Loading..'}</div>;
   }
 
@@ -28,27 +33,35 @@ export default function GatheringInformation({
       },
     },
     {
-      id: 'delete',
-      label: '삭제하기',
+      id: 'cancel',
+      label: '취소하기',
       onClick: () => {
         setShowSelectAlert(true);
       },
     },
   ];
-  const handleDeleteConfirmButtonClick = () => {
-    setShowModal(true);
-  };
 
+  const handleDeleteConfirmButtonClick = async () => {
+    try {
+      await deleteGathering(gathering.gatheringId);
+      setShowSelectAlert(false);
+      showToast('모임을 취소했습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
+  };
   const handleDeleteCancelButtonClick = () => {
     setShowSelectAlert(false);
   };
+
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">
         <div className="flex mt-20 gap-[10px]">
-          <p className="text-lg font-semibold">
-            {information.gatheringMainType ?? ''}
-          </p>
+          <p className="text-lg font-semibold">{gathering.mainType ?? ''}</p>
           <Image
             src="/assets/image/arrow-right.svg"
             alt="arrow"
@@ -56,7 +69,7 @@ export default function GatheringInformation({
             height={12}
           />
           <p className="text-primary text-lg font-semibold">
-            {information.gatheringSubType}
+            {gathering.subType}
           </p>
         </div>
       </div>
@@ -65,22 +78,22 @@ export default function GatheringInformation({
           width={280}
           height={300}
           alt="gathering-image"
-          src="/assets/image/fitmon.png"
+          src={
+            gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
+          }
           className="rounded-[20px] mr-[50px] w-[280px] h-[300px] object-cover"
         />
         <div id="detail-information" className=" w-full">
           <div className="flex justify-between">
             {' '}
-            <h3 className="text-[1.75rem] font-semibold">
-              {information.gatheringTitle}
-            </h3>
-            {information.captainStatus && (
+            <h3 className="text-[1.75rem] font-semibold">{gathering.title}</h3>
+            {gathering.captainStatus && (
               <>
                 <Popover items={popoverItems} type="setting" />
                 <Alert
                   isOpen={showSelectAlert}
                   type="select"
-                  message="모임을 삭제하시겠습니까?"
+                  message="모임을 취소하시겠습니까?"
                   onConfirm={handleDeleteConfirmButtonClick}
                   onCancel={handleDeleteCancelButtonClick}
                 />
@@ -91,16 +104,20 @@ export default function GatheringInformation({
                 onClose={() => setShowModal(false)}
                 title="모임 정보를 입력해주세요."
               >
-                <GatheringEditModal information={information} />
+                <GatheringEditModal
+                  information={gathering}
+                  gatheringId={gathering.gatheringId}
+                  setIsModalOpen={setShowModal}
+                />
               </Modal>
             )}
           </div>
 
           <p className="text-[1.125rem] text-dark-700 mt-[3px]">
-            {information.gatheringDescription}
+            {gathering.description}
           </p>
           <div id="tags" className="mt-5">
-            <TagList tagList={information.gatheringTags} />
+            <TagList tagList={gathering.tags} />
           </div>
           <div
             id="range-and-place"
@@ -116,7 +133,7 @@ export default function GatheringInformation({
               />
               <h1 className="font-semibold text-lg">{'모임 기간'}</h1>
               <p className="bg-dark-500 h-[12px] w-[1px] mx-[15px]"></p>{' '}
-              <p className="text-lg">{`${information.gatheringStartDate}~${information.gatheringEndDate}`}</p>
+              <p className="text-lg">{`${getDatePart(gathering.startDate)}~${getDatePart(gathering.endDate)}`}</p>
             </div>
             <div id="place" className="flex items-center">
               <Image
@@ -128,7 +145,7 @@ export default function GatheringInformation({
               />
               <h1 className="font-semibold text-lg">{'모임 장소'}</h1>
               <p className="bg-dark-500 h-[12px] w-[1px] mx-[15px]"></p>
-              <p className="text-lg">{`${information.gatheringSi} ${information.gatheringGu}`}</p>
+              <p className="text-lg">{`${gathering.mainLocation} ${gathering.subLocation}`}</p>
             </div>
           </div>
         </div>

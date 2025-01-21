@@ -6,7 +6,10 @@ interface PreparingProps {
   isVisible: boolean;
 }
 
-export default function Preparing({ message = "준비중입니다...", isVisible }: PreparingProps) {
+export default function Preparing({
+  message = '준비중입니다...',
+  isVisible,
+}: PreparingProps) {
   if (!isVisible) return null;
 
   return (

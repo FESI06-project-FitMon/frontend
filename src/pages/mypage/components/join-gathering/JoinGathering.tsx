@@ -5,7 +5,7 @@ import MainCard from '../gathering-section/MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
 import Null from '@/components/common/Null';
 import { useState } from 'react';
-import Preparing from '@/components/common/Preparing';
+// import Preparing from '@/components/common/Preparing';
 import {
   userGatherings,
   userGatheringStates,

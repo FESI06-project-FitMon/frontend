@@ -35,6 +35,5 @@ export default async function apiRequest<TResponse, TRequest = TResponse>({
       'Content-Type': 'application/json',
     },
   });
-
   return response.data;
 }

@@ -109,10 +109,10 @@ export default function CreateGathering({
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (currentStep === 2) {
       // 2단계에서 POST 요청
-      handlePostGathering();
+      await handlePostGathering();
     } else {
       setCurrentStep((prev) => Math.min(prev + 1, 3));
     }
@@ -142,8 +142,6 @@ export default function CreateGathering({
           {currentStep === 0 && (
             <ChoiceMainTypeModal
               onSelect={(mainType, subType) => {
-                console.log('메인 타입:', mainType);
-                console.log('서브 타입:', subType);
                 updateFormData('mainType', mainType);
                 updateFormData('subType', subType);
               }}
