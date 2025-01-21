@@ -52,6 +52,9 @@ export default function DatePickerCalendar({
         minDate={minDate}
         maxDate={maxDate}
         yearDropdownItemNumber={50}
+        showTimeSelect // 시간 선택 활성화
+        timeFormat="HH:mm" // 시간 표시 포맷
+        timeIntervals={15} // 시간 선택 간격 (15분)
         selected={selectedDate}
         onChange={(date: Date | null) => setSelectedDate(date!)}
         renderCustomHeader={({
