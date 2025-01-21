@@ -1,8 +1,6 @@
 import DatePickerCalendar from '@/components/common/DatePicker';
-import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
 import Select, { SelectItem } from '@/components/common/Select';
-import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
@@ -10,6 +8,8 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import TagInput from '@/components/common/TagInput';
 import cityData from '@/constants/city';
+import useToastStore, { ToastType } from '@/stores/useToastStore';
+import ModalInput from '@/components/common/ModalInput';
 
 interface FormData {
   title: string;
@@ -37,6 +37,9 @@ export default function GatheringInfomationModal({
     'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = useToastStore((state) => state.show);
+
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -85,13 +88,21 @@ export default function GatheringInfomationModal({
       label: gu.label,
     })) || [];
 
+  const handleInputChange = (value: string, field: keyof Pick<FormData, 'title' | 'description'>) => {
+    if (!value.trim()) {
+      showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
+      return;
+    }
+    updateFormData(field, value);
+  };
+
   return (
     <div>
       {/* 모임 정보 */}
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">모임 정보</h2>
         <div className="flex gap-[10px]">
-          <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] overflow-hidden">
             <Image
               src={
                 !formData.imageUrl || formData.imageUrl === 'null'
@@ -99,8 +110,9 @@ export default function GatheringInfomationModal({
                   : formData.imageUrl
               }
               alt="이미지 미리보기"
-              className="rounded-[10px] w-full h-full object-cover"
-              fill
+              width={130}
+              height={130}
+              className="rounded-[10px] object-cover"
             />
             <ImageUploadOverlay
               fileInputRef={fileInputRef}
@@ -110,23 +122,23 @@ export default function GatheringInfomationModal({
             />
           </div>
           <div className="w-[360px]">
-            <Input
-              type="text"
+            <ModalInput
+              type="title"
               placeholder="모임명을 입력해 주세요. (25자 제한)"
-              handleInputChange={(e) => updateFormData('title', e.target.value)}
               value={formData.title}
-              className="outline-dark-500 bg-dark-400 mb-[7px] h-[47px]"
+              onChange={(value) => handleInputChange(value, 'title')}
+              className="outline-dark-700 mb-[7px]"
               maxLength={25}
+              height="47px"
             />
-            <TextArea
+            <ModalInput
+              type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
-              handleInputChange={(e) =>
-                updateFormData('description', e.target.value)
-              }
               value={formData.description}
-              rows={2}
-              className="outline-dark-500 bg-dark-400 mb-[7px]"
+              onChange={(value) => handleInputChange(value, 'description')}
+              className="outline-dark-700 mb-[7px]"
               maxLength={50}
+              height="76px"
             />
           </div>
         </div>

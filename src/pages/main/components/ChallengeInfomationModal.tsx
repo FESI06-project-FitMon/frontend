@@ -1,40 +1,23 @@
 import DatePickerCalendar from '@/components/common/DatePicker';
-import Input from '@/components/common/Input';
-import TextArea from '@/components/common/TextArea';
 import { CreateChallenge } from '@/types';
 import Image from 'next/image';
-import { useState, ChangeEvent } from 'react';
-import instance from '@/utils/axios';
+import { useRef, useState } from 'react';
 import NumberSelect from '@/components/common/NumberSelect';
-
+import { useImageUpload } from '@/hooks/useImageUpload';
+import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
+import useToastStore, { ToastType } from '@/stores/useToastStore';
+import ModalInput from '@/components/common/ModalInput';
 interface ChallengeInfomationModalProps {
-  onChange: (data: CreateChallenge) => void; // 부모로 데이터 전달
+  onChange: (data: CreateChallenge) => void;
 }
-
-// 기본 이미지 URL
-const DEFAULT_IMAGE_URL =
-  'https://fitmon-bucket.s3.amazonaws.com/challenges/default-image.png';
-
-// 이미지 업로드 함수
-const uploadImage = async (file: File): Promise<{ imageUrl: string }> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await instance.request<{ imageUrl: string }>({
-    url: 'api/v1/images?type=CHALLENGE',
-    method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  return response.data;
-};
 
 export default function ChallengeInfomationModal({
   onChange,
 }: ChallengeInfomationModalProps) {
+  const DEFAULT_IMAGE_URL = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const showToast = useToastStore((state) => state.show);
   const [formData, setFormData] = useState<CreateChallenge>({
     title: '',
     description: '',
@@ -44,44 +27,37 @@ export default function ChallengeInfomationModal({
     maxPeopleCount: 0,
   });
 
-  // 상태 업데이트 핸들러
   const updateFormData = <K extends keyof CreateChallenge>(
     key: K,
     value: CreateChallenge[K],
   ) => {
-    setFormData((prev) => {
-      const updated = { ...prev, [key]: value };
+    const updatedForm = { ...formData, [key]: value };
 
-      // 부모로 데이터 전달 시 기본 이미지를 포함하도록 처리
-      onChange({
-        ...updated,
-        imageUrl: updated.imageUrl || DEFAULT_IMAGE_URL,
-      });
+    const transformedData = {
+      ...updatedForm,
+      imageUrl: updatedForm.imageUrl || DEFAULT_IMAGE_URL,
+    };
 
-      return updated;
-    });
+    setFormData(updatedForm);
+    onChange(transformedData);
   };
 
-  // 이미지 변경 핸들러
-  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-
-    try {
-      const { imageUrl } = await uploadImage(file); // 이미지 업로드
-      updateFormData('imageUrl', imageUrl); // 성공 시 S3 URL 저장
-    } catch (error) {
+  const { handleImageUpload, isUploading } = useImageUpload({
+    type: 'CHALLENGE',
+    onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
+    onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
-      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+    },
+  });
+
+  const handleInputChange = (value: string, field: keyof Pick<CreateChallenge, 'title' | 'description'>) => {
+    if (!value.trim()) {
+      showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
+      return;
     }
+    updateFormData(field, value);
   };
 
-  const handleImageDelete = () => updateFormData('imageUrl', null); // 이미지 삭제 시 null 설정
-
-  const handleImageEditClick = () => {
-    const fileInput = document.getElementById('file-input') as HTMLInputElement;
-    fileInput?.click();
-  };
 
   return (
     <div>
@@ -89,60 +65,49 @@ export default function ChallengeInfomationModal({
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
         <div className="flex gap-[10px]">
-          {/* 이미지 업로드 */}
-          <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
-            {/* 업로드된 이미지가 있을 때만 미리보기 */}
-            {formData.imageUrl ? (
-              <>
-                <Image
-                  src={formData.imageUrl}
-                  alt="이미지 미리보기"
-                  className="rounded-[10px] w-full h-full object-cover"
-                  fill
-                />
-                <div className="absolute w-full h-full bg-black/70 rounded-[10px] z-10" />
-              </>
-            ) : null}
-            <div className="absolute w-full h-full flex flex-col justify-center items-center gap-2 z-20 hover:cursor-pointer">
-              <input
-                type="file"
-                id="file-input"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              <Image
-                src="/assets/image/gathering_edit.svg"
-                width={45}
-                height={45}
-                alt="edit-image"
-                onClick={handleImageEditClick}
-              />
-              <button
-                onClick={handleImageDelete}
-                className="text-sm text-dark-700 hover:cursor-pointer"
-              >
-                이미지 삭제
-              </button>
-            </div>
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] w-[130px]">
+            <Image
+              src={
+                !formData.imageUrl || formData.imageUrl === 'null'
+                  ? DEFAULT_IMAGE_URL
+                  : formData.imageUrl
+              }
+              alt="이미지 미리보기"
+              width={130}
+              height={130}
+              className="rounded-[10px] object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = DEFAULT_IMAGE_URL;
+              }}
+            />
+            <ImageUploadOverlay
+              fileInputRef={fileInputRef}
+              onUpload={handleImageUpload}
+              onDelete={() => updateFormData('imageUrl', null)}
+              isUploading={isUploading}
+            />
           </div>
-
           {/* 제목 및 설명 */}
           <div className="w-[360px]">
-            <Input
-              type="text"
+            <ModalInput
+              type="title"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
-              handleInputChange={(e) => updateFormData('title', e.target.value)}
               value={formData.title}
-              className="outline-dark-500 bg-dark-400 mb-[7px] h-[47px]"
+              onChange={(value) => handleInputChange(value, 'title')}
+              className="outline-dark-500 mb-[7px]"
+              maxLength={25}
+              height="47px"
             />
-            <TextArea
+            <ModalInput
+              type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
-              handleInputChange={(e) =>
-                updateFormData('description', e.target.value)
-              }
               value={formData.description}
-              className="h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words"
+              onChange={(value) => handleInputChange(value, 'description')}
+              className="outline-dark-500 mb-[7px]"
+              maxLength={50}
+              height="76px"
             />
           </div>
         </div>
