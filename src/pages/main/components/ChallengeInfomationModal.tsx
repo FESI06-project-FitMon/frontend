@@ -1,25 +1,23 @@
 import DatePickerCalendar from '@/components/common/DatePicker';
-import Input from '@/components/common/Input';
-import TextArea from '@/components/common/TextArea';
 import { CreateChallenge } from '@/types';
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import NumberSelect from '@/components/common/NumberSelect';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
-
+import useToastStore from '@/stores/useToastStore';
+import ModalInput from '@/components/common/ModalInput';
 interface ChallengeInfomationModalProps {
-  onChange: (data: CreateChallenge) => void; // 부모로 데이터 전달
+  onChange: (data: CreateChallenge) => void;
 }
-
-// 기본 이미지 URL
-const DEFAULT_IMAGE_URL =
-  'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
 
 export default function ChallengeInfomationModal({
   onChange,
 }: ChallengeInfomationModalProps) {
+  const DEFAULT_IMAGE_URL = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const showToast = useToastStore((state) => state.show);
   const [formData, setFormData] = useState<CreateChallenge>({
     title: '',
     description: '',
@@ -49,9 +47,17 @@ export default function ChallengeInfomationModal({
     onUploadSuccess: (imageUrl) => updateFormData('imageUrl', imageUrl),
     onUploadError: (error) => {
       console.error('이미지 업로드 실패:', error);
-      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
     },
   });
+
+  const handleInputChange = (value: string, field: keyof Pick<CreateChallenge, 'title' | 'description'>) => {
+    if (!value.trim()) {
+      showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
+      return;
+    }
+    updateFormData(field, value);
+  };
+
 
   return (
     <div>
@@ -59,8 +65,7 @@ export default function ChallengeInfomationModal({
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
         <div className="flex gap-[10px]">
-          {/* 이미지 업로드 */}
-          <div className="relative border-[1px] rounded-[10px] bg-dark-400 border-dark-500 w-[130px] h-[130px] flex">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] w-[130px]">
             <Image
               src={
                 !formData.imageUrl || formData.imageUrl === 'null'
@@ -68,8 +73,14 @@ export default function ChallengeInfomationModal({
                   : formData.imageUrl
               }
               alt="이미지 미리보기"
-              className="rounded-[10px] w-full h-full object-cover"
-              fill
+              width={130}
+              height={130}
+              className="rounded-[10px] object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = DEFAULT_IMAGE_URL;
+              }}
             />
             <ImageUploadOverlay
               fileInputRef={fileInputRef}
@@ -78,25 +89,25 @@ export default function ChallengeInfomationModal({
               isUploading={isUploading}
             />
           </div>
-
           {/* 제목 및 설명 */}
           <div className="w-[360px]">
-            <Input
-              type="text"
+            <ModalInput
+              type="title"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
-              handleInputChange={(e) => updateFormData('title', e.target.value)}
               value={formData.title}
-              className="outline-dark-500 bg-dark-400 mb-[7px] h-[47px]"
+              onChange={(value) => handleInputChange(value, 'title')}
+              className="outline-dark-500 mb-[7px]"
               maxLength={25}
+              height="47px"
             />
-            <TextArea
+            <ModalInput
+              type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
-              handleInputChange={(e) =>
-                updateFormData('description', e.target.value)
-              }
               value={formData.description}
-              className="h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words"
+              onChange={(value) => handleInputChange(value, 'description')}
+              className="outline-dark-500 mb-[7px]"
               maxLength={50}
+              height="76px"
             />
           </div>
         </div>

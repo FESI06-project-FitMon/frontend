@@ -30,7 +30,7 @@ export default function Card({ data }: CardProps) {
 
   return (
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
-      <div className="relative min-w-[130px] h-[136px] md:min-w-[220px] md:h-[220px]">
+      <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
         <div className="absolute bottom-2.5 left-2.5 z-10">
           <StatusTag status={status} />
         </div>
