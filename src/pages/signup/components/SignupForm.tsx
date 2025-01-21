@@ -105,6 +105,8 @@ export default function SignupForm() {
     if (alertMessage === '회원가입이 완료되었습니다.') {
       setShowConfirmAlert(false);
       router.push('/login');
+    } else {
+      setShowConfirmAlert(false);
     }
   };
 

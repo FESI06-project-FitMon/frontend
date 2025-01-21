@@ -20,22 +20,26 @@ export default function GatheringChallenge({
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
   const [isLoading, setIsLoading] = useState(false);
-  const { fetchGatheringChallenges, challenges, hasNextPage, setHasNextPage } =
-    useGatheringStore();
+  const {
+    fetchGatheringChallenges,
+    challenges,
+    hasNextPage,
+    setHasNextPage,
+    setIsStatusChanged,
+  } = useGatheringStore();
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
-  const [page, setPage] = useState(0);
 
   const fetchNextPage = async () => {
+    console.log('fetchNextPage');
+    setIsStatusChanged(false);
     await fetchGatheringChallenges(
       gatheringId,
-      page + 1,
       10,
       currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
     );
-    setPage(page + 1);
     setHasNextPage(!hasNextPage);
   };
 
@@ -49,12 +53,16 @@ export default function GatheringChallenge({
   useEffect(() => {
     fetchGatheringChallenges(
       gatheringId,
-      0,
       10,
       currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
     );
   }, [gatheringId, currentTag]);
 
+  const handleTagChange = (newTag: string) => {
+    setCurrentTag(newTag);
+    setHasNextPage(false);
+    setIsStatusChanged(true);
+  };
   if (isLoading) {
     return <Null message="로딩중입니다." />;
   }
@@ -66,7 +74,7 @@ export default function GatheringChallenge({
           <SubTag
             tags={challengeSubTagItems}
             currentTag={currentTag}
-            onTagChange={(newTag) => setCurrentTag(newTag)}
+            onTagChange={(newTag) => handleTagChange(newTag)}
           />
 
           <div className="flex">
