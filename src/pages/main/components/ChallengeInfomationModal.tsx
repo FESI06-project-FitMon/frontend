@@ -107,8 +107,8 @@ export default function ChallengeInfomationModal({
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect
-            targetNumber={formData.maxPeopleCount}
-            setTargetNumber={(value) => updateFormData('maxPeopleCount', value)}
+            targetNumber={formData.totalCount}
+            setTargetNumber={(value) => updateFormData('totalCount', value)}
             className="w-[90px]"
             height="47px"
           />
