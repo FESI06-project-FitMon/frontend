@@ -86,7 +86,7 @@ export default function Home() {
         <ListChallenge />
       </div>
 
-      <div className="mt-[30px] md:mt-[50px] lg:mt-20">
+      <div className="w-full mt-[30px] md:mt-[50px] lg:mt-20">
         <Tab
           items={LISTPAGE_MAINTYPE}
           currentTab={mainType}
@@ -121,7 +121,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-7">
+      <div className="my-[20px] lg:my-[35px]">
         {mainType !== '전체' && (
           <SubTag
             tags={LISTPAGE_SUBTYPE[mainType]}
@@ -131,7 +131,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-7 pb-20">
+      <div className="pb-20">
         <HydrationBoundary>
           <Cardlist mainType={mainType} subType={subType} />
         </HydrationBoundary>
