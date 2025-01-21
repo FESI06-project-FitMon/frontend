@@ -5,12 +5,12 @@ import MainCard from '../gathering-section/MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
 import Null from '@/components/common/Null';
 import { useState } from 'react';
-// import Preparing from '@/components/common/Preparing';
 import {
   userGatherings,
   userGatheringStates,
   userGatheringChallenges
 } from '@/pages/mypage/constants/constants';
+import Preparing from '@/components/common/Preparing';
 
 interface JoinGatheringProps {
   onGatheringClick: (gatheringId: number) => void;
@@ -56,7 +56,7 @@ export default function JoinGathering({
             key={gathering.gatheringId}
             className="relative rounded-lg overflow-hidden mb-[50px]"
           >
-            {/* <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." /> */}
+            <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
             <MainCard
               gathering={gathering}
               state={state}
@@ -88,6 +88,3 @@ export default function JoinGathering({
     </div>
   );
 }
-
-
-
