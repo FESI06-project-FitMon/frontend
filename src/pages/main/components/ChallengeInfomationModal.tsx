@@ -14,7 +14,8 @@ interface ChallengeInfomationModalProps {
 export default function ChallengeInfomationModal({
   onChange,
 }: ChallengeInfomationModalProps) {
-  const DEFAULT_IMAGE_URL = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+  const DEFAULT_IMAGE_URL =
+    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
@@ -24,7 +25,7 @@ export default function ChallengeInfomationModal({
     imageUrl: null,
     startDate: null,
     endDate: null,
-    maxPeopleCount: 0,
+    totalCount: 0,
   });
 
   const updateFormData = <K extends keyof CreateChallenge>(
@@ -50,14 +51,16 @@ export default function ChallengeInfomationModal({
     },
   });
 
-  const handleInputChange = (value: string, field: keyof Pick<CreateChallenge, 'title' | 'description'>) => {
+  const handleInputChange = (
+    value: string,
+    field: keyof Pick<CreateChallenge, 'title' | 'description'>,
+  ) => {
     if (!value.trim()) {
       showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
       return;
     }
     updateFormData(field, value);
   };
-
 
   return (
     <div>
@@ -118,10 +121,11 @@ export default function ChallengeInfomationModal({
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect
-            targetNumber={formData.maxPeopleCount}
-            setTargetNumber={(value) => updateFormData('maxPeopleCount', value)}
+            targetNumber={formData.totalCount}
+            setTargetNumber={(value) => updateFormData('totalCount', value)}
             className="w-[90px]"
             height="47px"
+            min={2}
           />
         </div>
         <div id="start-date">

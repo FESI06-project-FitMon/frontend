@@ -88,7 +88,10 @@ export default function GatheringInfomationModal({
       label: gu.label,
     })) || [];
 
-  const handleInputChange = (value: string, field: keyof Pick<FormData, 'title' | 'description'>) => {
+  const handleInputChange = (
+    value: string,
+    field: keyof Pick<FormData, 'title' | 'description'>,
+  ) => {
     if (!value.trim()) {
       showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
       return;
@@ -187,6 +190,7 @@ export default function GatheringInfomationModal({
             setTargetNumber={(value) => updateFormData('totalCount', value)}
             width="130px"
             height="47px"
+            min={5}
           />
         </div>
       </div>
@@ -215,4 +219,3 @@ export default function GatheringInfomationModal({
     </div>
   );
 }
-

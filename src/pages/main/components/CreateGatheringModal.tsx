@@ -31,7 +31,7 @@ const initialState: CreateGatheringForm = {
       title: '',
       description: '',
       imageUrl: null,
-      maxPeopleCount: 0,
+      totalCount: 0,
       startDate: null,
       endDate: null,
     },
@@ -162,10 +162,9 @@ export default function CreateGathering({
           )}
           {currentStep === 3 && (
             <div className="text-center">
-              <h1 className="text-2xl font-bold">
-                모임이 성공적으로 생성되었습니다!
-              </h1>
-              <p>모임과 관련된 추가 정보를 확인하거나 수정할 수 있습니다.</p>
+              <h2 className="text-2xl font-bold">
+                🎉 모임이 성공적으로 생성되었습니다!
+              </h2>
             </div>
           )}
         </div>
@@ -181,7 +180,12 @@ export default function CreateGathering({
               />
             </div>
           ) : (
-            <div className="text-center mt-4">완료~</div>
+            <Button
+              name="확인"
+              handleButtonClick={() => setShowModal()}
+              style="default"
+              className="w-full mt-4 h-[52px]"
+            />
           )}
         </div>
       </div>
