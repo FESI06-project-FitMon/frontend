@@ -92,7 +92,7 @@ export default function ChallengeInfomationModal({
     return true;
   };
 
-  const handleInputChange = (
+  const handleBlur = (
     value: string,
     field: keyof Pick<CreateChallenge, 'title' | 'description'>,
   ) => {
@@ -137,7 +137,10 @@ export default function ChallengeInfomationModal({
               type="title"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
               value={formData.title}
-              onChange={(value) => handleInputChange(value, 'title')}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, title: value }))
+              }
+              onBlur={(value) => handleBlur(value, 'title')}
               className="outline-dark-500 mb-[7px]"
               maxLength={25}
               height="47px"
@@ -146,7 +149,10 @@ export default function ChallengeInfomationModal({
               type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
               value={formData.description}
-              onChange={(value) => handleInputChange(value, 'description')}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, description: value }))
+              }
+              onBlur={(value) => handleBlur(value, 'description')}
               className="outline-dark-500 mb-[7px]"
               maxLength={50}
               height="76px"

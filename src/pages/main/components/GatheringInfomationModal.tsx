@@ -88,17 +88,18 @@ export default function GatheringInfomationModal({
       label: gu.label,
     })) || [];
 
-  const handleInputChange = (
+  const handleBlur = (
     value: string,
     field: keyof Pick<FormData, 'title' | 'description'>,
   ) => {
-    if (!value.trim()) {
+    // 입력값이 비어 있는지 확인
+    if (!value || !value.trim()) {
       showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
       return;
     }
+
     updateFormData(field, value);
   };
-
   // 두 날짜 및 시간 비교 함수
   const isSameDateTime = (date1: Date, date2: Date) => {
     return (
@@ -151,10 +152,11 @@ export default function GatheringInfomationModal({
           <div className="w-[360px]">
             <ModalInput
               type="title"
-              placeholder="모임명을 입력해 주세요. (25자 제한)"
+              placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
               value={formData.title}
-              onChange={(value) => handleInputChange(value, 'title')}
-              className="outline-dark-700 mb-[7px]"
+              onChange={(value) => updateFormData('title', value)}
+              onBlur={(value) => handleBlur(value, 'title')} // value만 전달받음
+              className="outline-dark-500 mb-[7px]"
               maxLength={25}
               height="47px"
             />
@@ -162,8 +164,9 @@ export default function GatheringInfomationModal({
               type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
               value={formData.description}
-              onChange={(value) => handleInputChange(value, 'description')}
-              className="outline-dark-700 mb-[7px]"
+              onChange={(value) => updateFormData('description', value)}
+              onBlur={(value) => handleBlur(value, 'description')} // value만 전달받음
+              className="outline-dark-500 mb-[7px]"
               maxLength={50}
               height="76px"
             />
