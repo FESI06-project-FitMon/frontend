@@ -45,11 +45,11 @@
     .react-datepicker__time-container {
       overflow-y: scroll;
       height: 225px;
-      padding: 0 10px 0 20px;
+      padding: 0 5px 0 15px;
     }
 
     .react-datepicker__time-list-item {
-      padding: 5px 0;
+      padding: 5px;
     }
 
     .react-datepicker__triangle {
@@ -103,7 +103,8 @@
       background-color: #ff2140;
     }
 
-    .react-datepicker__day--disabled {
+    .react-datepicker__day--disabled,
+    .react-datepicker__time-list-item--disabled {
       background-color: #2d2d2f;
       color: gray;
     }

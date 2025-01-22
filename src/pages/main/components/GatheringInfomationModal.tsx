@@ -99,6 +99,30 @@ export default function GatheringInfomationModal({
     updateFormData(field, value);
   };
 
+  // 두 날짜 및 시간 비교 함수
+  const isSameDateTime = (date1: Date, date2: Date) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate() &&
+      date1.getHours() === date2.getHours() &&
+      date1.getMinutes() === date2.getMinutes()
+    );
+  };
+
+  // 마감 날짜 유효성 검사 함수
+  const validateEndDate = (startDate: Date | null, endDate: Date | null) => {
+    if (!startDate) {
+      showToast('현재 날짜를 먼저 선택해야 합니다.', 'caution');
+      return false;
+    }
+    if (endDate && isSameDateTime(startDate, endDate)) {
+      showToast('현재 날짜와 같은 날짜, 시간은 선택할 수 없습니다.', 'caution');
+      return false;
+    }
+    return true;
+  };
+
   return (
     <div>
       {/* 모임 정보 */}
@@ -209,10 +233,14 @@ export default function GatheringInfomationModal({
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.endDate}
-            setSelectedDate={(date) => updateFormData('endDate', date)}
+            setSelectedDate={(date) => {
+              if (validateEndDate(formData.startDate, date)) {
+                updateFormData('endDate', date!);
+              }
+            }}
             width="245px"
             height="47px"
-            minDate={formData.startDate!}
+            minDate={formData.startDate!} // 마감 날짜는 시작 날짜 이후로만 설정 가능
           />
         </div>
       </div>
