@@ -10,6 +10,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
+import FormRedirect from '@/pages/signup/components/\bFormRedirect';
 
 interface LoginFields {
   email: string;
@@ -148,15 +149,7 @@ export default function LoginForm() {
       />
 
       <Button type="submit" name="로그인" className="h-16 mt-3" />
-      <div className="flex flex-row justify-center md:justify-end -mt-2 md:mt-3">
-        <p className="mr-4 text-[1rem]">{'아직 회원이 아니신가요?'}</p>
-        <p
-          onClick={() => router.push('/signup')}
-          className="text-[1rem] text-primary underline decoration-primary underline-offset-[5px] cursor-pointer"
-        >
-          {'회원가입하기'}
-        </p>
-      </div>
+      <FormRedirect currentPage="login" />
       <Alert
         isOpen={showConfirmAlert}
         type="confirm"

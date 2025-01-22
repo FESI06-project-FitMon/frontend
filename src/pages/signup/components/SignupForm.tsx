@@ -10,6 +10,7 @@ import FormField from './FormField';
 import useDebounce from '@/hooks/useDebounce';
 import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
+import FormRedirect from './FormRedirect';
 
 interface SignupFormFields {
   nickName: string;
@@ -161,15 +162,7 @@ export default function SignupForm() {
         errorMessage="비밀번호가 일치하지 않습니다."
       />
       <Button type="submit" name="회원가입" className="h-16 mt-3" />
-      <div className="flex flex-row justify-center md:justify-end -mt-2 md:mt-3">
-        <p className="mr-4 text-[1rem]">{'이미 회원이신가요?'}</p>
-        <p
-          onClick={() => router.push('/login')}
-          className="text-[1rem] text-primary underline decoration-primary underline-offset-[5px] cursor-pointer"
-        >
-          {'로그인하기'}
-        </p>
-      </div>
+      <FormRedirect currentPage="signup" />
       <Alert
         isOpen={showConfirmAlert}
         type="confirm"
