@@ -4,14 +4,13 @@ import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { GatheringItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
 import useToastStore from '@/stores/useToastStore';
-import useGuestbookStore from '@/stores/useGuestbookStore';
+import { useDeleteGuestbook } from '@/utils/useGuestbooks';
 
 interface WrittenGuestbooksProps {
   guestbooks: GuestbookItem[];
   gatherings: GatheringItem[];
   onEditClick: (guestbook: GuestbookItem) => void;
 }
-
 export default function WrittenGuestbooks({
   guestbooks,
   gatherings,
@@ -23,7 +22,7 @@ export default function WrittenGuestbooks({
   });
   
   const showToast = useToastStore((state) => state.show);
-  const { deleteGuestbook } = useGuestbookStore();
+  const deleteGuestbookMutation = useDeleteGuestbook();  // React Query mutation 사용
 
   const updateState = (updates: Partial<typeof state>) => {
     setState((prev) => ({ ...prev, ...updates }));
@@ -40,10 +39,10 @@ export default function WrittenGuestbooks({
   const handleDeleteConfirm = async () => {
     if (state.selectedGuestbook) {
       try {
-        await deleteGuestbook(
-          state.selectedGuestbook.gatheringId,
-          state.selectedGuestbook.reviewId
-        );
+        await deleteGuestbookMutation.mutateAsync({  // mutateAsync 사용
+          gatheringId: state.selectedGuestbook.gatheringId,
+          guestbookId: state.selectedGuestbook.reviewId
+        });
         showToast('삭제가 완료되었습니다.', 'check');
       } catch {
         showToast('삭제에 실패했습니다.', 'error');

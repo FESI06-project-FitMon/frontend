@@ -19,7 +19,6 @@ const MY_PAGE_TABS: TabItem[] = [
 
 const CURRENT_TAB_KEY = 'mypage_current_tab';
 
-
 export default function MyPage() {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -29,7 +28,6 @@ export default function MyPage() {
     storageKey: CURRENT_TAB_KEY
   });
 
-  // 초기 로그인 체크 로그인 x -> 쿼리스트링으로 뒤로가기 불가능하게 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLogin') === 'true';
     setIsLogin(isLoggedIn);
@@ -43,7 +41,6 @@ export default function MyPage() {
     setIsInitialized(true);
   }, [router, setIsLogin]);
 
-  //아직 구현중 
   const handleGatheringClick = (gatheringId: number) => {
     console.log('모임 클릭:', gatheringId);
   };
@@ -56,12 +53,38 @@ export default function MyPage() {
     console.log('참여 취소:', gatheringId);
   };
 
-  if (!isInitialized) {
-    return null;
-  }
+  if (!isInitialized) return null;
+
+  const renderContent = () => {
+    switch (currentTab) {
+      case 'gathering':
+        return (
+          <JoinGathering
+            onGatheringClick={handleGatheringClick}
+            onCancelParticipation={handleCancelParticipation}
+          />
+        );
+      case 'guestbook':
+        return <Guestbook />;
+      case 'myGathering':
+        return (
+          <MyGathering
+            onGatheringClick={handleGatheringClick}
+            onCancelGathering={handleCancelGathering}
+          />
+        );
+      case 'calendar':
+        return <Calendar />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="w-full mx-auto px-4 md:px-6 xl:px-0 pt-[30px] md:pt-[50px] xl:pt-20" style={{ maxWidth: '1200px' }}>
+    <div
+      className="w-full mx-auto px-4 md:px-6 xl:px-0 pt-[30px] md:pt-[50px] xl:pt-20"
+      style={{ maxWidth: '1200px' }}
+    >
       <Profile />
 
       <div className="mt-14">
@@ -71,26 +94,7 @@ export default function MyPage() {
           onTabChange={handleTabChange}
         />
 
-        <div className="mt-6 lg:mt-[37px]">
-          {currentTab === 'gathering' && (
-            <JoinGathering
-              onGatheringClick={handleGatheringClick}
-              onCancelParticipation={handleCancelParticipation}
-            />
-          )}
-          {currentTab === 'guestbook' && (
-            <Guestbook />
-          )}
-          {currentTab === 'myGathering' && (
-            <MyGathering
-              onGatheringClick={handleGatheringClick}
-              onCancelGathering={handleCancelGathering}
-            />
-          )}
-          {currentTab === 'calendar' && (
-            <Calendar />
-          )}
-        </div>
+        <div className="mt-6 lg:mt-[37px]">{renderContent()}</div>
       </div>
     </div>
   );
