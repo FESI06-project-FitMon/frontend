@@ -165,9 +165,16 @@ export default function CreateGathering({
           )}
           {currentStep === 3 && (
             <div className="text-center">
-              <h2 className="text-2xl font-bold">
-                🎉 모임이 성공적으로 생성되었습니다!
-              </h2>
+              <Image
+                src="/assets/image/trophy.png"
+                width={73}
+                height={73}
+                alt="트로피"
+                className="mx-auto py-4"
+              />
+              <p className="text-lg pb-4">
+                챌린지와 함게 모임 활동을 즐겨보세요!
+              </p>
             </div>
           )}
         </div>
