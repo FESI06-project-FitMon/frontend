@@ -1,18 +1,16 @@
 import Button from '@/components/common/Button';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import postSignup, {
   postSignupProps,
   postSignupResponse,
 } from '@/pages/signup/components/service/postSignup';
-import signupValidation from '@/utils/validation/signupValidation';
 import router from 'next/router';
 import FormField from './FormField';
-import useDebounce from '@/hooks/useDebounce';
 import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import FormRedirect from './FormRedirect';
 
-interface SignupFormFields {
+export interface SignupFields {
   nickName: string;
   email: string;
   password: string;
@@ -40,31 +38,6 @@ export default function SignupForm() {
   // 회원가입 성공, 실패 메시지 및 표시
   const [alertMessage, setAlertMessage] = useState('');
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-
-  const debouncedSignupForm = useDebounce(signupForm, 1000);
-
-  // 포커스 아웃 시 특정 필드 유효성 검사
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    signupValidation({
-      name: e.target.name,
-      value: e.target.value,
-      password: signupForm.password,
-      setSignupFormError,
-    });
-  };
-
-  // 폼 전체 유효성 검사 (포커스 후 입력값 없는 경우)
-  useEffect(() => {
-    Object.entries(debouncedSignupForm).forEach(([name, value]) => {
-      if (value === '') return;
-      signupValidation({
-        name: name,
-        value: value.trim(),
-        password: debouncedSignupForm.password,
-        setSignupFormError,
-      });
-    });
-  }, [debouncedSignupForm]);
 
   // 회원가입 요청
   const useSignupMutation = useMutation<
@@ -96,13 +69,14 @@ export default function SignupForm() {
     const isValid = Object.values(signupFormError).every((error) => !error);
     if (isValid) {
       useSignupMutation.mutate({
-        email: signupForm.email.trim(),
-        nickName: signupForm.nickName.trim(),
-        password: signupForm.password.trim(),
+        email: signupForm.email,
+        nickName: signupForm.nickName,
+        password: signupForm.password,
       });
     }
   };
 
+  // 회원가입 성공 여부 표시
   const handleConfirm = () => {
     if (alertMessage === '회원가입이 완료되었습니다.') {
       setShowConfirmAlert(false);
@@ -117,47 +91,55 @@ export default function SignupForm() {
       onSubmit={handleSignupSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField<SignupFormFields>
+      <FormField<SignupFields>
         label="닉네임"
         type="text"
         name="nickName"
         value={signupForm.nickName}
         placeholder="닉네임을 입력해주세요"
+        form={signupForm}
         setForm={setSignupForm}
-        handleBlur={handleBlur}
+        formError={signupFormError}
+        setFormError={setSignupFormError}
         hasError={signupFormError.nickName}
         errorMessage="닉네임은 2자 이상 10자 이하로 입력해주세요."
       />
-      <FormField<SignupFormFields>
+      <FormField<SignupFields>
         label="이메일"
         type="text"
         name="email"
         value={signupForm.email}
         placeholder="이메일을 입력해주세요"
+        form={signupForm}
         setForm={setSignupForm}
-        handleBlur={handleBlur}
+        formError={signupFormError}
+        setFormError={setSignupFormError}
         hasError={signupFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
-      <FormField<SignupFormFields>
+      <FormField<SignupFields>
         label="비밀번호"
         type="password"
         name="password"
         value={signupForm.password}
         placeholder="비밀번호를 입력해주세요"
+        form={signupForm}
         setForm={setSignupForm}
-        handleBlur={handleBlur}
+        formError={signupFormError}
+        setFormError={setSignupFormError}
         hasError={signupFormError.password}
         errorMessage="비밀번호는 최소 8자 이상이어야 합니다."
       />
-      <FormField<SignupFormFields>
+      <FormField<SignupFields>
         label="비밀번호 확인"
         type="password"
         name="passwordCheck"
         value={signupForm.passwordCheck}
         placeholder="비밀번호를 입력해주세요"
+        form={signupForm}
         setForm={setSignupForm}
-        handleBlur={handleBlur}
+        formError={signupFormError}
+        setFormError={setSignupFormError}
         hasError={signupFormError.passwordCheck}
         errorMessage="비밀번호가 일치하지 않습니다."
       />

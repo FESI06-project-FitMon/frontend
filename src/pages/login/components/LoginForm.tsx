@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from '@/components/common/Button';
 import postLogin, {
   postLoginProps,
@@ -6,13 +6,12 @@ import postLogin, {
 } from './service/postLogin';
 import router from 'next/router';
 import FormField from '@/pages/signup/components/FormField';
-import useDebounce from '@/hooks/useDebounce';
 import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
-import FormRedirect from '@/pages/signup/components/\bFormRedirect';
+import FormRedirect from '@/pages/signup/components/FormRedirect';
 
-interface LoginFields {
+export interface LoginFields {
   email: string;
   password: string;
 }
@@ -32,44 +31,6 @@ export default function LoginForm() {
   // 로그인 성공, 실패 메시지 및 표시
   const [alertMessage, setAlertMessage] = useState('');
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-
-  const debouncedLoginForm = useDebounce(loginForm, 1000);
-
-  // 포커스 아웃 시 특정 필드 유효성 검사
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (name === 'email') {
-      setLoginFormError((prev) => ({
-        ...prev,
-        [name]: value.trim() === '' || !emailRegex.test(value.trim()),
-      }));
-    } else if (name === 'password') {
-      setLoginFormError((prev) => ({
-        ...prev,
-        [name]: value.trim() === '',
-      }));
-    }
-  };
-
-  // 폼 전체 유효성 검사 (포커스 후 입력값 없는 경우)
-  useEffect(() => {
-    Object.entries(debouncedLoginForm).forEach(([name, value]) => {
-      if (value === '') return;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (name === 'email') {
-        setLoginFormError((prev) => ({
-          ...prev,
-          [name]: value.trim() === '' || !emailRegex.test(value.trim()),
-        }));
-      } else if (name === 'password') {
-        setLoginFormError((prev) => ({
-          ...prev,
-          [name]: value.trim() === '',
-        }));
-      }
-    });
-  }, [debouncedLoginForm]);
 
   // 로그인 요청 Mutation 함수
   const useLoginMutation = useMutation<
@@ -130,8 +91,10 @@ export default function LoginForm() {
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
+        form={loginForm}
         setForm={setLoginForm}
-        handleBlur={handleBlur}
+        formError={loginFormError}
+        setFormError={setLoginFormError}
         hasError={loginFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
@@ -142,8 +105,10 @@ export default function LoginForm() {
         name="password"
         value={loginForm.password}
         placeholder="비밀번호를 입력해주세요"
+        form={loginForm}
         setForm={setLoginForm}
-        handleBlur={handleBlur}
+        formError={loginFormError}
+        setFormError={setLoginFormError}
         hasError={loginFormError.password}
         errorMessage="비밀번호를 입력해주세요."
       />
