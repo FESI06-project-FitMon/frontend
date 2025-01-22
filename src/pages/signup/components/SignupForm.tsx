@@ -1,6 +1,9 @@
 import Button from '@/components/common/Button';
 import { useEffect, useState } from 'react';
-import postSignup, { postSignupProps, postSignupResponse } from './postSignup';
+import postSignup, {
+  postSignupProps,
+  postSignupResponse,
+} from '@/pages/signup/components/service/postSignup';
 import signupValidation from '@/utils/validation/signupValidation';
 import router from 'next/router';
 import FormField from './FormField';

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Button from '@/components/common/Button';
-import postLogin, { postLoginProps, postLoginResponse } from './postLogin';
+import postLogin, {
+  postLoginProps,
+  postLoginResponse,
+} from './service/postLogin';
 import router from 'next/router';
 import FormField from '@/pages/signup/components/FormField';
 import useDebounce from '@/hooks/useDebounce';
