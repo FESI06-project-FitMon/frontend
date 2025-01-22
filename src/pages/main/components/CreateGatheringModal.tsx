@@ -120,7 +120,7 @@ export default function CreateGathering({
 
   return (
     <Modal title={stepTitles[currentStep]} onClose={setShowModal}>
-      <div className="relative">
+      <div className="relative text-sm md:text-base">
         {/* 이전 버튼 */}
         {currentStep > 0 && (
           <div
@@ -138,7 +138,7 @@ export default function CreateGathering({
 
         {currentStep < 3 && <Step currentStep={currentStep} />}
 
-        <div className="mt-4">
+        <div className="mt-4 overflow-y-auto flex flex-col md:flex-row justify-center h-[60vh] md:h-auto md:overflow-visible">
           {currentStep === 0 && (
             <ChoiceMainTypeModal
               onSelect={(mainType, subType) => {
