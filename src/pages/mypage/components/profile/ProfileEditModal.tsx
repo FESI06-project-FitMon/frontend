@@ -1,13 +1,12 @@
 import { useRef, useState, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import Modal from '@/components/dialog/Modal';
 import Button from '@/components/common/Button';
 import ModalInput from '@/components/common/ModalInput';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { profileService } from '@/pages/mypage/api/profileService';
 import useToastStore from '@/stores/useToastStore';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import { ProfileImage } from './ProfileImage';
+import { profileUtils } from '@/utils/query/profile/profileEdit';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -33,6 +32,11 @@ export default function ProfileEditModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
 
+  const updateProfileMutation = profileUtils.useProfileUpdate((nickname, imageUrl) => {
+    onUpdate(nickname, imageUrl);
+    onClose();
+  });
+
   useEffect(() => {
     if (isOpen) {
       setFormState({
@@ -50,28 +54,10 @@ export default function ProfileEditModal({
     }
   });
 
-  const validateNickname = (nickname: string): boolean => {
-    const trimmedNickname = nickname.trim();
-    return trimmedNickname.length >= 2 && trimmedNickname.length <= 10;
-  };
-
-  const updateProfileMutation = useMutation({
-    mutationFn: ({ nickname, profileImageUrl }: { nickname: string; profileImageUrl: string | null }) =>
-      profileService.updateProfile({ nickName: nickname, profileImageUrl }),
-    onSuccess: () => {
-      onUpdate(formState.nickname, formState.imageUrl);
-      onClose();
-      showToast('프로필 수정을 성공하였습니다.', 'check');
-    },
-    onError: () => {
-      showToast('프로필 수정에 실패했습니다.', 'error');
-    },
-  });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateNickname(formState.nickname)) {
+    if (!profileUtils.validateNickname(formState.nickname)) {
       showToast('닉네임은 2글자에서 10글자 이내로 입력해주세요.', 'error');
       setFormState(prev => ({ ...prev, isValid: false }));
       return;
@@ -117,7 +103,7 @@ export default function ProfileEditModal({
                   setFormState(prev => ({
                     ...prev,
                     nickname: value,
-                    isValid: validateNickname(value)
+                    isValid: profileUtils.validateNickname(value)
                   }));
                 }}
                 placeholder="닉네임을 수정해주세요."

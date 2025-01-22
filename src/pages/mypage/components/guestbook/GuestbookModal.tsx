@@ -4,7 +4,7 @@ import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import ModalInput from '@/components/common/ModalInput';
 import { GuestbookItem } from '@/types';
-import { useCreateGuestbook, useUpdateGuestbook } from '@/utils/useGuestbooks';
+import { useCreateGuestbook, useUpdateGuestbook } from '@/utils/query/guestbook/myGuestbooks';
 import Preparing from '@/components/common/Preparing';
 
 
@@ -84,7 +84,7 @@ export default function GuestbookModal({
       onValidationFail();
     }
   };
-  
+
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
