@@ -11,6 +11,11 @@ import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
 
+interface LoginFields {
+  email: string;
+  password: string;
+}
+
 export default function LoginForm() {
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -26,15 +31,6 @@ export default function LoginForm() {
   // 로그인 성공, 실패 메시지 및 표시
   const [alertMessage, setAlertMessage] = useState('');
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-
-  // 로그인 정보 저장
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const debouncedLoginForm = useDebounce(loginForm, 1000);
 
@@ -127,25 +123,25 @@ export default function LoginForm() {
       onSubmit={handleLoginSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField
+      <FormField<LoginFields>
         label="이메일"
         type="text"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
-        handleInputChange={handleInputChange}
+        setForm={setLoginForm}
         handleBlur={handleBlur}
         hasError={loginFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
 
-      <FormField
+      <FormField<LoginFields>
         label="비밀번호"
         type="password"
         name="password"
         value={loginForm.password}
         placeholder="비밀번호를 입력해주세요"
-        handleInputChange={handleInputChange}
+        setForm={setLoginForm}
         handleBlur={handleBlur}
         hasError={loginFormError.password}
         errorMessage="비밀번호를 입력해주세요."

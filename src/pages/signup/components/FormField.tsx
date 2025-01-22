@@ -1,30 +1,39 @@
 import Input from '@/components/common/Input';
 import React from 'react';
 
-interface FormFieldProps {
+interface FormFieldProps<T> {
   label: string;
   type: 'text' | 'email' | 'password';
   name: string;
   value: string;
   placeholder: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setForm: React.Dispatch<React.SetStateAction<T>>;
   handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   hasError?: boolean;
   errorMessage: string;
 }
 
 // 회원가입, 로그인 input 컴포넌트
-export default function FormField({
+export default function FormField<T>({
   label,
   type,
   name,
   value,
   placeholder,
-  handleInputChange,
+  setForm,
   handleBlur,
   hasError = false,
   errorMessage,
-}: FormFieldProps) {
+}: FormFieldProps<T>) {
+  // 입력 값 저장
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="flex flex-col w-full">
       <p className="mb-2.5 text-[1rem]">{label}</p>
