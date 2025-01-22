@@ -92,36 +92,12 @@ export default function GatheringInfomationModal({
     value: string,
     field: keyof Pick<FormData, 'title' | 'description'>,
   ) => {
-    // 입력값이 비어 있는지 확인
     if (!value || !value.trim()) {
       showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
       return;
     }
 
     updateFormData(field, value);
-  };
-  // 두 날짜 및 시간 비교 함수
-  const isSameDateTime = (date1: Date, date2: Date) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate() &&
-      date1.getHours() === date2.getHours() &&
-      date1.getMinutes() === date2.getMinutes()
-    );
-  };
-
-  // 마감 날짜 유효성 검사 함수
-  const validateEndDate = (startDate: Date | null, endDate: Date | null) => {
-    if (!startDate) {
-      showToast('현재 날짜를 먼저 선택해야 합니다.', 'caution');
-      return false;
-    }
-    if (endDate && isSameDateTime(startDate, endDate)) {
-      showToast('현재 날짜와 같은 날짜, 시간은 선택할 수 없습니다.', 'caution');
-      return false;
-    }
-    return true;
   };
 
   return (
@@ -155,7 +131,7 @@ export default function GatheringInfomationModal({
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
               value={formData.title}
               onChange={(value) => updateFormData('title', value)}
-              onBlur={(value) => handleBlur(value, 'title')} // value만 전달받음
+              onBlur={(value) => handleBlur(value, 'title')}
               className="outline-dark-500 mb-[7px]"
               maxLength={25}
               height="47px"
@@ -165,7 +141,7 @@ export default function GatheringInfomationModal({
               placeholder="설명을 입력해 주세요. (50자 제한)"
               value={formData.description}
               onChange={(value) => updateFormData('description', value)}
-              onBlur={(value) => handleBlur(value, 'description')} // value만 전달받음
+              onBlur={(value) => handleBlur(value, 'description')}
               className="outline-dark-500 mb-[7px]"
               maxLength={50}
               height="76px"
@@ -236,14 +212,10 @@ export default function GatheringInfomationModal({
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.endDate}
-            setSelectedDate={(date) => {
-              if (validateEndDate(formData.startDate, date)) {
-                updateFormData('endDate', date!);
-              }
-            }}
+            setSelectedDate={(date) => updateFormData('endDate', date)}
             width="245px"
             height="47px"
-            minDate={formData.startDate!} // 마감 날짜는 시작 날짜 이후로만 설정 가능
+            minDate={formData.startDate!}
           />
         </div>
       </div>

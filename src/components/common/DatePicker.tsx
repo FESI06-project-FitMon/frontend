@@ -1,4 +1,4 @@
-import { getMonth, getYear, setHours, setMinutes, isToday } from 'date-fns';
+import { getMonth, getYear } from 'date-fns';
 import Image from 'next/image';
 import DatePicker from 'react-datepicker';
 
@@ -40,28 +40,15 @@ export default function DatePickerCalendar({
     'December',
   ];
 
-  const now = new Date(); // 현재 시간
-  const getMinSelectableTime = (date: Date | null) => {
-    // 오늘인 경우 현재 시간 이후, 다른 날짜는 제한 없음
-    return isToday(date || new Date())
-      ? setMinutes(setHours(now, now.getHours()), now.getMinutes())
-      : setHours(setMinutes(new Date(), 0), 0); // 00:00으로 제한 없음
-  };
-
   return (
     <div
       className={`relative flex items-center bg-dark-400 border-[1px] border-dark-500 rounded-[8px] ${className} w-[${width}] h-[${height}]`}
     >
       <DatePicker
         className="datepicker"
-        dateFormat="yyyy-MM-dd HH:mm"
-        showTimeSelect // 시간 선택 활성화
-        timeFormat="HH:mm" // 시간 표시 포맷
-        timeIntervals={10} // 10분 간격으로 시간 선택 가능
+        dateFormat="yyyy-MM-dd" // 시간 관련 포맷 제거
         minDate={minDate} // 최소 날짜
         maxDate={maxDate} // 최대 날짜
-        minTime={getMinSelectableTime(selectedDate)} // 동적으로 최소 시간 설정
-        maxTime={setHours(setMinutes(new Date(), 59), 23)} // 최대 시간 (23:59)
         selected={selectedDate}
         onChange={(date: Date | null) => setSelectedDate(date!)}
         renderCustomHeader={({
