@@ -17,7 +17,7 @@ const initialState: CreateGatheringForm = {
   title: '',
   description: '',
   mainType: '유산소형',
-  subType: '',
+  subType: '달리기',
   imageUrl: null,
   startDate: null,
   endDate: null,
