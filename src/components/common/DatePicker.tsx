@@ -18,7 +18,7 @@ export default function DatePickerCalendar({
   className,
   width = '245px',
   height,
-  minDate,
+  minDate = new Date(), // 최소 날짜 기본값을 현재 시각으로 설정
   maxDate,
 }: DatePickerCalendarProps) {
   const YEARS = Array.from(
@@ -49,9 +49,9 @@ export default function DatePickerCalendar({
         dateFormat="yyyy-MM-dd HH:mm"
         showTimeSelect // 시간 선택 활성화
         timeFormat="HH:mm"
-        timeIntervals={15} // 15분 간격으로 시간 선택 가능
-        minDate={minDate} // 선택 가능 최소 날짜
-        maxDate={maxDate} // 선택 가능 최대 날짜
+        timeIntervals={10} // 10분 간격으로 시간 선택 가능
+        minDate={minDate} // 현재 시각 이전 날짜 선택 불가
+        maxDate={maxDate} // 최대 날짜 설정
         selected={selectedDate}
         onChange={(date: Date | null) => setSelectedDate(date!)}
         renderCustomHeader={({

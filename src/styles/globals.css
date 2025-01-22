@@ -48,6 +48,10 @@
       padding: 0 10px 0 20px;
     }
 
+    .react-datepicker__time-list-item {
+      padding: 5px 0;
+    }
+
     .react-datepicker__triangle {
       display: none;
     }
