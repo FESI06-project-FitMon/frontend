@@ -7,7 +7,7 @@ interface ProfileUpdateData {
   profileImageUrl: string | null;
 }
 
-export const profileUtils = {
+export const profileEdit = {
   validateNickname: (nickname: string): boolean => {
     const trimmedNickname = nickname.trim();
     return trimmedNickname.length >= 2 && trimmedNickname.length <= 10;

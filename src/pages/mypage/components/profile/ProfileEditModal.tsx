@@ -6,7 +6,7 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import useToastStore from '@/stores/useToastStore';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import { ProfileImage } from './ProfileImage';
-import { profileUtils } from '@/utils/query/profile/profileEdit';
+import { profileEdit } from '@/utils/query/profile/profileEdit';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -32,7 +32,7 @@ export default function ProfileEditModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
 
-  const updateProfileMutation = profileUtils.useProfileUpdate((nickname, imageUrl) => {
+  const updateProfileMutation = profileEdit.useProfileUpdate((nickname, imageUrl) => {
     onUpdate(nickname, imageUrl);
     onClose();
   });
@@ -57,7 +57,7 @@ export default function ProfileEditModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!profileUtils.validateNickname(formState.nickname)) {
+    if (!profileEdit.validateNickname(formState.nickname)) {
       showToast('닉네임은 2글자에서 10글자 이내로 입력해주세요.', 'error');
       setFormState(prev => ({ ...prev, isValid: false }));
       return;
@@ -103,7 +103,7 @@ export default function ProfileEditModal({
                   setFormState(prev => ({
                     ...prev,
                     nickname: value,
-                    isValid: profileUtils.validateNickname(value)
+                    isValid: profileEdit.validateNickname(value)
                   }));
                 }}
                 placeholder="닉네임을 수정해주세요."
