@@ -77,8 +77,8 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-8 pt-20">
-      <h2 className="text-[1.75rem] font-semibold pb-[30px]">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
+      <h2 className="text-xl tmd:text-[1.75rem] font-semibold pb-[20px] md:pb-[30px]">
         지금 핫한 챌린지 🔥
       </h2>
 
@@ -86,7 +86,7 @@ export default function Home() {
         <ListChallenge />
       </div>
 
-      <div className="mt-20">
+      <div className="w-full mt-[30px] md:mt-[50px] lg:mt-20">
         <Tab
           items={LISTPAGE_MAINTYPE}
           currentTab={mainType}
@@ -95,23 +95,33 @@ export default function Home() {
             setSubType('전체');
           }}
           rightElement={
-            <div className="w-full flex justify-end">
+            <div className="hidden lg:flex w-full justify-end">
               <Button
                 style="custom"
                 name="모임 만들기"
-                className="text-base my-2 h-10 w-32"
+                className="text-base my-2 h-9 w-[126px]"
                 handleButtonClick={handleCreateButton}
               />
             </div>
           }
         />
+        {/* 모바일/태블릿용 고정 버튼 */}
+        <div className="lg:hidden fixed right-6 bottom-10 z-50">
+          <Button
+            style="custom"
+            name="모임 만들기"
+            className="text-base h-9 w-[126px]"
+            handleButtonClick={handleCreateButton}
+          />
+        </div>
+
 
         {showModal && (
           <CreateGathering setShowModal={() => setShowModal(false)} />
         )}
       </div>
 
-      <div className="mt-7">
+      <div className="my-[20px] lg:my-[35px]">
         {mainType !== '전체' && (
           <SubTag
             tags={LISTPAGE_SUBTYPE[mainType]}
@@ -121,7 +131,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-7 pb-20">
+      <div className="pb-20">
         <HydrationBoundary>
           <Cardlist mainType={mainType} subType={subType} />
         </HydrationBoundary>
