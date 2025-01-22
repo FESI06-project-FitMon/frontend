@@ -4,8 +4,9 @@ import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import ModalInput from '@/components/common/ModalInput';
 import { GuestbookItem } from '@/types';
-import useGuestbookStore from '@/stores/useGuestbookStore';
+import { useCreateGuestbook, useUpdateGuestbook } from '@/utils/useGuestbooks';
 import Preparing from '@/components/common/Preparing';
+
 
 interface GuestbookModalProps {
   isEditMode: boolean;
@@ -26,7 +27,9 @@ export default function GuestbookModal({
 }: GuestbookModalProps) {
   const [rating, setRating] = useState(initialData?.rating || 0);
   const [content, setContent] = useState(initialData?.content || '');
-  const { createGuestbook, updateGuestbook } = useGuestbookStore();
+  
+  const createGuestbookMutation = useCreateGuestbook();
+  const updateGuestbookMutation = useUpdateGuestbook();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,9 +62,16 @@ export default function GuestbookModal({
       console.log('Sending request with data:', requestData);
 
       if (isEditMode && initialData) {
-        await updateGuestbook(gatheringId, initialData.reviewId, requestData);
+        await updateGuestbookMutation.mutateAsync({
+          gatheringId,
+          guestbookId: initialData.reviewId,
+          data: requestData
+        });
       } else {
-        await createGuestbook(gatheringId, requestData);
+        await createGuestbookMutation.mutateAsync({
+          gatheringId,
+          data: requestData
+        });
       }
 
       console.log('Request successful');
@@ -74,7 +84,7 @@ export default function GuestbookModal({
       onValidationFail();
     }
   };
-
+  
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
