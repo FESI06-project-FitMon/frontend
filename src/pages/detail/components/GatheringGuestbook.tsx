@@ -2,6 +2,7 @@ import Heart from '@/components/common/Heart';
 import Pagination from '@/components/common/Pagination';
 import useGatheringStore from '@/stores/useGatheringStore';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function GatheringGuestbook({
@@ -25,8 +26,11 @@ export default function GatheringGuestbook({
             <Guestbook key={index} guestbook={guestbook} />
           ))
         ) : (
-          <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-            방명록이 존재하지 않습니다
+          <div className="h-[250px] bg-dark-200 rounded-[10px] flex flex-col items-center justify-center">
+            <h1>방명록이 존재하지 않습니다</h1>
+            <Link href={`/guestbooks/${gatheringId}`}>
+              방명록 작성하러 가기 ✏️
+            </Link>
           </div>
         )}
       </div>

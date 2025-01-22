@@ -98,22 +98,23 @@ export default function GatheringChallengeCard({
 
   return (
     <div className="w-full h-[250px] bg-dark-200 rounded-[10px]">
-      <div className="flex">
+      <div className="flex ">
         {/* 좌측 사진 */}
-        <Image
-          className="rounded-bl-[10px] rounded-tl-[10px] "
-          src={
-            challenge.imageUrl
-              ? challenge.imageUrl
-              : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-          }
-          alt="alt"
-          width={258}
-          height={250}
-        />
+        <div className="w-[258px]  h-[250px] relative ">
+          <Image
+            className="rounded-bl-[10px] rounded-tl-[10px] l w-full h-full"
+            src={
+              challenge.imageUrl
+                ? challenge.imageUrl
+                : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+            }
+            alt="alt"
+            fill
+          />
+        </div>
         {/* 우측 설명 */}
-        <div className="w-full ml-[50px] mr-[30px]">
-          <div className="flex flex-col mt-[30px] mb-[20px] gap-[10px]">
+        <div className="ml-[50px] mr-[30px] ">
+          <div className="flex flex-col mt-[30px] mb-[20px] gap-[10px] w-full">
             <div className="flex justify-between">
               {/* 날짜 */}
               <p className="text-sm text-dark-700">
@@ -138,7 +139,7 @@ export default function GatheringChallengeCard({
             <p className="text-dark-700 h-[50px]">{challenge.description}</p>
           </div>
           <div className="w-full flex justify-between">
-            <div className="w-[608px]">
+            <div className="w-[608px] mr-[92px]">
               <div className="flex justify-between">
                 {/* 인원 수 정보 */}
                 <div className="flex items-center justify-center gap-[6px] mb-[15px]">
