@@ -100,7 +100,7 @@ export default function ProfileEditModal({
       <div className="w-full md:w-[500px] h-auto">
         <form onSubmit={handleSubmit} className="h-full flex flex-col">
           <div className="flex flex-col md:flex-row items-center gap-[10px] mt-[30px]">
-            <div className="relative h-[130px]">
+            <div className="relative h-[130px] rounded-[10px] overflow-hidden">
               <Image
                 src={
                   !editedImage || editedImage === 'null'

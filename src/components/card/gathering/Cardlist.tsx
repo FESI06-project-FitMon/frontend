@@ -71,7 +71,7 @@ export default function Cardlist({ mainType, subType }: CardlistProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {data?.pages.map((page, pageIndex) => {
           const isLastPage = pageIndex === data.pages.length - 1; // 현재 페이지가 마지막 페이지인지 확인
 
@@ -81,7 +81,7 @@ export default function Cardlist({ mainType, subType }: CardlistProps) {
               {page.content.length === 0 && !isLastPage ? (
                 <Null message="이 페이지에는 모임 정보가 없습니다." />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-[20px] lg:gap-5">
                   {page.content.map((gathering) => (
                     <Card key={gathering.gatheringId} data={gathering} />
                   ))}

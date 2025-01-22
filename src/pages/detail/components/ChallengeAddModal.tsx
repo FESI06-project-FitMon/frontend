@@ -143,6 +143,7 @@ export default function ChallengeAddModal({
           <div>
             <p className="mb-[10px]">최대 인원</p>
             <NumberSelect
+              min={2} 
               targetNumber={maxPeopleCount}
               setTargetNumber={setMaxPeopleCount}
               className="w-[90px] h-[47px]"

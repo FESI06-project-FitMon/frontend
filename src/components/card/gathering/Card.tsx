@@ -30,14 +30,14 @@ export default function Card({ data }: CardProps) {
 
   return (
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
-      <div className="relative min-w-[130px] h-[136px] md:min-w-[220px] md:h-[220px]">
-        <div className="absolute bottom-2.5 left-2.5 z-10">
+      <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]  ">
+        <div className="absolute bottom-2.5 left-1.5 md:left-2.5 z-10 ">
           <StatusTag status={status} />
         </div>
-        <div className="absolute bottom-2.5 right-2.5 z-10">
+        <div className="absolute bottom-2.5 right-1.5 md:right-2.5 z-10">
           <ZzimHeart gatheringId={gatheringId} />
         </div>
-        <Image src={imageUrl} fill alt="모임 사진" className="rounded-xl" />
+        <Image src={imageUrl} fill alt="모임 사진" className="rounded-[20px]" />
       </div>
       <div className="flex flex-col gap-2 md:gap-2.5 w-full">
         <span className="text-primary font-normal text-xs md:text-base">
@@ -48,7 +48,7 @@ export default function Card({ data }: CardProps) {
         <div className="flex gap-3">
           {tags.map((tag) => {
             return (
-              <div key={tag} className="bg-dark-200 py-1 px-2 rounded-[5px]">
+              <div key={tag} className="bg-dark-200 text-[10px] md:text-sm md:py-1 md:px-2 rounded-[5px]">
                 #{tag}
               </div>
             );
