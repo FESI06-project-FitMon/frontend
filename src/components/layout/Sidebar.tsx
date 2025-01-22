@@ -1,18 +1,34 @@
 import useLayoutStore from '@/stores/useLayoutStore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export default function SideBar() {
   const { isListExpanded, toggleListExpanded } = useLayoutStore();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const sideBarContents = ['모임 찾기', '찜한 모임', '모든 방명록'];
-  const mypageContents = ['마이페이지', '로그아웃'];
+  const router = useRouter();
+
+  const sideBarContents = [
+    { label: '모임 찾기', path: '/' },
+    { label: '찜한 모임', path: '/likes' },
+    { label: '모든 방명록', path: '/guestBooks' },
+  ];
+  const mypageContents = [
+    { label: '마이페이지', path: '/mypage' },
+    { label: '로그아웃', path: '/logout' },
+  ];
+
   const isActive = (isActive: boolean) => {
-    if (isActive) {
-      return `text-primary flex items-center text-lg w-[67vw] h-[50px] p-[15px] bg-dark-300 rounded-[10px]`;
-    }
-    return `text-white flex items-center text-lg w-[67vw] h-[50px] p-[15px]`;
+    return isActive
+      ? `text-primary flex items-center text-lg w-[67vw] h-[50px] p-[15px] bg-dark-300 rounded-[10px]`
+      : `text-white flex items-center text-lg w-[67vw] h-[50px] p-[15px]`;
+  };
+
+  const handleNavigation = (path: string, index: number) => {
+    setSelectedIndex(index); // 선택된 항목 상태 업데이트
+    toggleListExpanded(); // 사이드바 닫기
+    router.push(path); // 라우터를 통해 페이지 이동
   };
 
   return (
@@ -21,7 +37,7 @@ export default function SideBar() {
         <>
           {/* 배경을 누르면 리스트를 닫기 위한 div 요소 */}
           <div
-            className="fixed flex w-screen h-screen z-[45]"
+            className="fixed flex w-screen h-screen z-[51]"
             onClick={() => toggleListExpanded()}
           >
             {/* 사이드바 */}
@@ -51,9 +67,9 @@ export default function SideBar() {
                   <li
                     key={index}
                     className={`${isActive(index === selectedIndex)}`}
-                    onClick={() => setSelectedIndex(index)}
+                    onClick={() => handleNavigation(content.path, index)}
                   >
-                    {content}
+                    {content.label}
                   </li>
                 ))}
               </ul>
@@ -66,14 +82,18 @@ export default function SideBar() {
                   <li
                     key={index}
                     className={`${isActive(index + 3 === selectedIndex)}`}
-                    onClick={() => setSelectedIndex(index + 3)}
+                    onClick={() => handleNavigation(content.path, index + 3)}
                   >
-                    {content}
+                    {content.label}
                     {/* 로그아웃 이미지 */}
-                    {content === '로그아웃' && (
+                    {content.label === '로그아웃' && (
                       <Image
                         className="ml-2"
-                        src={`${index + 3 === selectedIndex ? '/assets/image/logout-primary.svg' : '/assets/image/logout.svg'}`}
+                        src={`${
+                          index + 3 === selectedIndex
+                            ? '/assets/image/logout-primary.svg'
+                            : '/assets/image/logout.svg'
+                        }`}
                         alt="logout button"
                         width={16}
                         height={16}
