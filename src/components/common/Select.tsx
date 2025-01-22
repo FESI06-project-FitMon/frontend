@@ -43,7 +43,7 @@ export default function Select({
     setOpen(true);
   };
   const currentLabel =
-    items.find((item) => item.value === selectedItem)?.label || '선택하세요';
+    items.find((item) => item.value === selectedItem)?.label || '선택';
 
   return (
     <div className={`${className} w-[${width}] h-[${height}] z-[100] relative`}>
