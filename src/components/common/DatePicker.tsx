@@ -11,13 +11,14 @@ interface DatePickerCalendarProps {
   minDate?: Date;
   maxDate?: Date;
 }
+
 export default function DatePickerCalendar({
   selectedDate,
   setSelectedDate,
   className,
   width = '245px',
   height,
-  minDate,
+  minDate = new Date(), // 최소 날짜를 현재 시간으로 설정
   maxDate,
 }: DatePickerCalendarProps) {
   const YEARS = Array.from(
@@ -44,14 +45,10 @@ export default function DatePickerCalendar({
       className={`relative flex items-center bg-dark-400 border-[1px] border-dark-500 rounded-[8px] ${className} w-[${width}] h-[${height}]`}
     >
       <DatePicker
-        className={'datepicker'}
-        dateFormat="yyyy-MM-dd"
-        formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
-        shouldCloseOnSelect
-        scrollableYearDropdown
-        minDate={minDate}
-        maxDate={maxDate}
-        yearDropdownItemNumber={50}
+        className="datepicker"
+        dateFormat="yyyy-MM-dd" // 시간 관련 포맷 제거
+        minDate={minDate} // 최소 날짜
+        maxDate={maxDate} // 최대 날짜
         selected={selectedDate}
         onChange={(date: Date | null) => setSelectedDate(date!)}
         renderCustomHeader={({
@@ -62,7 +59,7 @@ export default function DatePickerCalendar({
           prevMonthButtonDisabled,
           nextMonthButtonDisabled,
         }) => (
-          <div className={`datepicker__header`}>
+          <div className="datepicker__header">
             <div className={`flex justify-between items-center w-[${width}]`}>
               <button
                 type="button"
@@ -77,10 +74,9 @@ export default function DatePickerCalendar({
                 />
               </button>
               <div className="flex my-[6.5px] gap-[5px]">
-                {' '}
                 <span className="bg-dark-500">{MONTHS[getMonth(date)]}</span>
                 <select
-                  className="bg-transparent select-none appearance-none "
+                  className="bg-transparent select-none appearance-none"
                   value={getYear(date)}
                   onChange={({ target: { value } }) => changeYear(+value)}
                 >
@@ -107,13 +103,13 @@ export default function DatePickerCalendar({
           </div>
         )}
       />
-      <div className="absolute right-0 flex items-center  px-5">
+      <div className="absolute right-0 flex items-center px-5">
         <Image
           src="/assets/image/calendar.svg"
           width={20}
           height={20}
           alt="calendar"
-          className="flex "
+          className="flex"
         />
       </div>
     </div>

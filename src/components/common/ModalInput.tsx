@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 interface ModalInputProps {
   type: 'title' | 'description'; // 입력 타입 (타이틀 또는 설명)
@@ -9,6 +9,7 @@ interface ModalInputProps {
   maxLength: number; // 최대 글자수 지정
   height?: string; // 텍스트 영역 높이
   onValidationFail?: () => void; // 유효성 검사 실패 시 콜백
+  onBlur?: (value: string) => void; // onBlur 이벤트 핸들러
 }
 
 const ModalInput: React.FC<ModalInputProps> = ({
@@ -16,56 +17,64 @@ const ModalInput: React.FC<ModalInputProps> = ({
   placeholder,
   value,
   onChange,
+  onBlur,
   className = '',
   maxLength,
-  height = '76px', // 기본 높이
+  height = '76px',
   onValidationFail,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null); // `input` 참조
+  const textareaRef = useRef<HTMLTextAreaElement>(null); // `textarea` 참조
   const [error, setError] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setError(false); // 입력 중 에러 제거
-    onChange(newValue); // 변경된 값을 전달
-  };
-
-  const validateInput = () => {
+  const handleBlur = () => {
     if (!value.trim()) {
       setError(true);
       if (onValidationFail) {
-        onValidationFail(); // 명시적으로 호출
+        onValidationFail();
       }
-      return false;
+      // 적절한 필드에 포커스 재설정
+      if (type === 'title') {
+        inputRef.current?.focus();
+      } else {
+        textareaRef.current?.focus();
+      }
+    } else {
+      setError(false);
     }
-    setError(false);
-    return true;
+
+    if (onBlur) {
+      onBlur(value); // 부모로 value 전달
+    }
   };
 
   return (
     <div className={`relative w-full ${className}`}>
       {type === 'title' ? (
         <input
+          ref={inputRef} // `input` 참조 설정
           type="text"
           value={value}
-          onChange={handleChange}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
           className={`w-full px-4 py-3 bg-dark-400 text-white rounded-lg placeholder-dark-700 focus:outline-none focus:ring-2 transition-all ${
-            error ? 'focus:ring-primary' : 'focus:ring-[#FF7487]'
+            error ? 'focus:ring-error' : 'focus:ring-[#FF7487]'
           }`}
-          onBlur={validateInput}
+          onBlur={handleBlur} // 블러 이벤트 처리
         />
       ) : (
         <textarea
+          ref={textareaRef} // `textarea` 참조 설정
           value={value}
-          onChange={handleChange}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
           className={`w-full px-4 py-3 bg-dark-400 text-white rounded-lg placeholder-dark-700 focus:outline-none focus:ring-2 transition-all ${
-            error ? 'focus:ring-primary' : 'focus:ring-[#FF7487]'
+            error ? 'focus:ring-error' : 'focus:ring-[#FF7487]'
           }`}
-          style={{ height }} // 전달받은 높이 적용
-          onBlur={validateInput}
+          style={{ height }}
+          onBlur={handleBlur} // 블러 이벤트 처리
         />
       )}
     </div>
@@ -73,4 +82,3 @@ const ModalInput: React.FC<ModalInputProps> = ({
 };
 
 export default ModalInput;
-

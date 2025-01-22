@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useEffect } from 'react';
 import { ChangeEvent, KeyboardEvent } from 'react';
 
 interface NumberSelectProps {
@@ -19,6 +20,13 @@ export default function NumberSelect({
   className,
 }: NumberSelectProps) {
   const MAX_VALUE = 30; // 최대값 고정
+
+  // 초기값 설정
+  useEffect(() => {
+    if (targetNumber < min) {
+      setTargetNumber(min);
+    }
+  }, [targetNumber, min, setTargetNumber]);
 
   // 범위 제한 함수
   const clampValue = (value: number) =>
