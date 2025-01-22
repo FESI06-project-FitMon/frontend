@@ -158,7 +158,10 @@ export default function CreateGathering({
             />
           )}
           {currentStep === 2 && (
-            <ChallengeInfomationModal onChange={handleChallengeUpdate} />
+            <ChallengeInfomationModal
+              onChange={handleChallengeUpdate}
+              gatheringEndDate={formData.endDate}
+            />
           )}
           {currentStep === 3 && (
             <div className="text-center">

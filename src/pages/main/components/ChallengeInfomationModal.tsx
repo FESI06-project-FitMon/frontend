@@ -7,12 +7,15 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
+
 interface ChallengeInfomationModalProps {
   onChange: (data: CreateChallenge) => void;
+  gatheringEndDate: Date | null;
 }
 
 export default function ChallengeInfomationModal({
   onChange,
+  gatheringEndDate,
 }: ChallengeInfomationModalProps) {
   const DEFAULT_IMAGE_URL =
     'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
@@ -51,6 +54,44 @@ export default function ChallengeInfomationModal({
     },
   });
 
+  const isSameDateTime = (date1: Date, date2: Date) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate() &&
+      date1.getHours() === date2.getHours() &&
+      date1.getMinutes() === date2.getMinutes()
+    );
+  };
+
+  const validateEndDate = (
+    startDate: Date | null,
+    endDate: Date | null,
+    maxDate: Date | null,
+  ) => {
+    if (!startDate) {
+      showToast('시작 날짜를 먼저 선택해야 합니다.', 'caution');
+      return false;
+    }
+    if (endDate && isSameDateTime(startDate, endDate)) {
+      showToast('시작 날짜와 같은 날짜, 시간은 선택할 수 없습니다.', 'caution');
+      return false;
+    }
+    if (
+      endDate &&
+      maxDate &&
+      endDate > maxDate &&
+      !isSameDateTime(endDate, maxDate) // maxDate와 동일한 경우는 허용
+    ) {
+      showToast(
+        '챌린지 종료 날짜는 모임 종료 날짜를 초과할 수 없습니다.',
+        'caution',
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleInputChange = (
     value: string,
     field: keyof Pick<CreateChallenge, 'title' | 'description'>,
@@ -64,7 +105,6 @@ export default function ChallengeInfomationModal({
 
   return (
     <div>
-      {/* 챌린지 정보 */}
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
         <div className="flex gap-[10px]">
@@ -92,7 +132,6 @@ export default function ChallengeInfomationModal({
               isUploading={isUploading}
             />
           </div>
-          {/* 제목 및 설명 */}
           <div className="w-[360px]">
             <ModalInput
               type="title"
@@ -116,7 +155,6 @@ export default function ChallengeInfomationModal({
         </div>
       </div>
 
-      {/* 날짜 선택 */}
       <div className="flex gap-[10px] mt-[20px]">
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
@@ -141,7 +179,11 @@ export default function ChallengeInfomationModal({
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.endDate}
-            setSelectedDate={(date) => updateFormData('endDate', date)}
+            setSelectedDate={(date) => {
+              if (validateEndDate(formData.startDate, date, gatheringEndDate)) {
+                updateFormData('endDate', date!);
+              }
+            }}
             width="196px"
             height="47px"
             minDate={formData.startDate!}
