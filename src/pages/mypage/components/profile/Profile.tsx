@@ -1,21 +1,14 @@
-// components/profile/Profile.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import useMemberStore from '@/stores/useMemberStore';
 import ProfileEditModal from './ProfileEditModal';
+import { ProfileImage } from './ProfileImage';
 
 export default function Profile() {
   const { user, setUser } = useMemberStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEditClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleProfileUpdate = (
-    newNickname: string,
-    newImageUrl: string | null,
-  ) => {
+  const handleProfileUpdate = (newNickname: string, newImageUrl: string | null) => {
     setUser({
       ...user,
       nickName: newNickname,
@@ -27,21 +20,9 @@ export default function Profile() {
     <>
       <div className="flex items-start gap-[20px]">
         <div className="flex-shrink-0">
-          <Image
-            src={
-              !user.profileImageUrl || user.profileImageUrl === 'null'
-                ? '/assets/image/mypage_profile.svg'
-                : user.profileImageUrl
-            }
-            alt="프로필 이미지"
-            width={50}
-            height={50}
+          <ProfileImage
+            imageUrl={user.profileImageUrl}
             className="rounded-full"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = '/assets/image/mypage_profile.svg';
-            }}
           />
         </div>
 
@@ -53,7 +34,7 @@ export default function Profile() {
                 {user.email || '이메일 없음'}
               </p>
             </div>
-            <button onClick={handleEditClick}>
+            <button onClick={() => setIsModalOpen(true)}>
               <Image
                 src="/assets/image/profile_edit.svg"
                 alt="프로필 수정"

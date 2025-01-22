@@ -63,6 +63,7 @@ export default function GatheringList({
             key={gathering.gatheringId}
             className="relative rounded-lg overflow-hidden mb-[50px]"
           >
+            <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
 
             <MainCard
               gathering={{
