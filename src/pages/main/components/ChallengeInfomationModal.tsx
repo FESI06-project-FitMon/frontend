@@ -107,8 +107,8 @@ export default function ChallengeInfomationModal({
     <div>
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
-        <div className="flex gap-[10px]">
-          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] w-[130px]">
+        <div className="flex-col md:flex-row flex items-start gap-[10px]">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500  h-[106px] md:h-[130px] overflow-hidden">
             <Image
               src={
                 !formData.imageUrl || formData.imageUrl === 'null'
@@ -116,9 +116,9 @@ export default function ChallengeInfomationModal({
                   : formData.imageUrl
               }
               alt="이미지 미리보기"
-              width={130}
-              height={130}
-              className="rounded-[10px] object-cover"
+              width={106}
+              height={106}
+              className="rounded-[10px] object-cover md:w-[130px] md:h-[130px]"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.onerror = null;
@@ -153,7 +153,7 @@ export default function ChallengeInfomationModal({
                 setFormData((prev) => ({ ...prev, description: value }))
               }
               onBlur={(value) => handleBlur(value, 'description')}
-              className="outline-dark-500 mb-[7px]"
+              className="outline-dark-500 md:mb-[7px]"
               maxLength={50}
               height="76px"
             />
@@ -161,7 +161,7 @@ export default function ChallengeInfomationModal({
         </div>
       </div>
 
-      <div className="flex gap-[10px] mt-[20px]">
+      <div className="flex flex-col md:flex-row gap-[10px] mt-[20px]">
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect

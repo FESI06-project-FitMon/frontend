@@ -124,7 +124,7 @@ export default function CreateGathering({
         {/* 이전 버튼 */}
         {currentStep > 0 && (
           <div
-            className="absolute -top-10 -left-1 cursor-pointer"
+            className="fixed left-4 top-9 md:absolute md:-top-10 md:-left-1 cursor-pointer"
             onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
           >
             <Image
@@ -138,7 +138,7 @@ export default function CreateGathering({
 
         {currentStep < 3 && <Step currentStep={currentStep} />}
 
-        <div className="mt-4 overflow-y-auto flex flex-col md:flex-row justify-center h-[60vh] md:h-auto md:overflow-visible">
+        <div className="mt-4 overflow-y-auto overflow-x-clip flex flex-col md:flex-row justify-center max-h-[60vh] md:h-auto md:overflow-visible">
           {currentStep === 0 && (
             <ChoiceMainTypeModal
               onSelect={(mainType, subType) => {
@@ -173,7 +173,7 @@ export default function CreateGathering({
                 className="mx-auto py-4"
               />
               <p className="text-lg pb-4">
-                챌린지와 함게 모임 활동을 즐겨보세요!
+                챌린지와 함께 모임 활동을 즐겨보세요!
               </p>
             </div>
           )}

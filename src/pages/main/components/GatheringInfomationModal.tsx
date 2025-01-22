@@ -173,7 +173,7 @@ export default function GatheringInfomationModal({
               }}
               height="47px"
               width=""
-              className="mr-[10px] w-full md:w-[175px]"
+              className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             />
             <Select
@@ -181,7 +181,7 @@ export default function GatheringInfomationModal({
               selectedItem={formData.subLocation}
               setSelectedItem={(value) => updateFormData('subLocation', value)}
               width=""
-              className="mr-[10px] w-full md:w-[175px]"
+              className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
               height="47px"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
             />
