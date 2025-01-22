@@ -18,7 +18,7 @@ export default function DatePickerCalendar({
   className,
   width = '245px',
   height,
-  minDate = new Date(), // 최소 날짜를 현재 시간으로 설정
+  minDate = new Date(),
   maxDate,
 }: DatePickerCalendarProps) {
   const YEARS = Array.from(
@@ -40,17 +40,27 @@ export default function DatePickerCalendar({
     'December',
   ];
 
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      // 선택한 날짜를 UTC 기준 00:00:00으로 설정
+      const utcDate = new Date(
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+      );
+      setSelectedDate(utcDate); // 수정된 날짜를 전달
+    }
+  };
+
   return (
     <div
       className={`relative flex items-center bg-dark-400 border-[1px] border-dark-500 rounded-[8px] ${className} w-[${width}] h-[${height}]`}
     >
       <DatePicker
         className="datepicker"
-        dateFormat="yyyy-MM-dd" // 시간 관련 포맷 제거
-        minDate={minDate} // 최소 날짜
-        maxDate={maxDate} // 최대 날짜
+        dateFormat="yyyy-MM-dd"
+        minDate={minDate}
+        maxDate={maxDate}
         selected={selectedDate}
-        onChange={(date: Date | null) => setSelectedDate(date!)}
+        onChange={handleDateChange} // 날짜 선택 시 UTC 자정으로 강제 설정
         renderCustomHeader={({
           date,
           changeYear,
