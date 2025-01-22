@@ -1,6 +1,5 @@
 // api/memberService.ts
 import apiRequest from '@/utils/apiRequest';
-import { UserProfile } from '@/types';
 
 interface ProfileUpdate {
   nickName: string;
