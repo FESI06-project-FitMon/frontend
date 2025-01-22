@@ -89,7 +89,7 @@ export function useDeleteGuestbook() {
       guestbookService.deleteGuestbook(gatheringId, guestbookId),
 
     // onSuccess: 방명록 삭제 후 목록 캐시 무효화
-    onSuccess: (_) => {
+    onSuccess: ( ) => {
       queryClient.invalidateQueries({ 
         queryKey: GUESTBOOK_KEYS.lists() 
       });
