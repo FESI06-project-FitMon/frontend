@@ -64,10 +64,11 @@ export default function FormField<T extends object & { password: string }>({
   // 포커스 후 1초 이상 입력 없으면 유효성 검사
   useEffect(() => {
     const formType = 'nickName' in form ? 'signup' : 'login';
+    if (typeof name !== 'string') return;
     setFormError((prev) => ({
       ...prev,
       [name]: formValidation({
-        name: name as string,
+        name: name,
         value: debouncedFormValue.trim(),
         password: form.password,
         formType,

@@ -43,8 +43,7 @@ export default function SignupForm() {
   const useSignupMutation = useMutation<
     postSignupResponse,
     Error,
-    postSignupProps,
-    unknown
+    postSignupProps
   >({
     mutationFn: postSignup,
     onSuccess: (data: postSignupResponse) => {

@@ -24,7 +24,6 @@ const REDIRECT_TEXT: Record<
 
 // 회원가입 페이지에서 로그인 페이지로 이동
 // 로그인 페이지에서 회원가입 페이지로 이동
-
 export default function FormRedirect({ currentPage }: FormRedirectProps) {
   const { message, recommend, link } = REDIRECT_TEXT[currentPage];
 
