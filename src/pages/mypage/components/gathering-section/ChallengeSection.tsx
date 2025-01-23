@@ -68,7 +68,7 @@ export default function ChallengeSection({
       {/* 챌린지 리스트 */}
       {isOpen && filteredChallenges?.length > 0 && (
         <div
-          className="grid gap-[8px] md:gap-[10px] px-4 md:px-[20px] lg:px-8 py-[10px] md:py-[30px] max-h-[443px] overflow-y-auto bg-dark-200
+          className="grid gap-2 md:gap-2.5 px-4 md:px-5 lg:px-8 py-2.5 md:py-[30px] max-h-[443px] overflow-y-auto bg-dark-200
           grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         >
           {filteredChallenges.map((challenge) => {
@@ -76,7 +76,7 @@ export default function ChallengeSection({
             return (
               <div
                 key={challenge.challengeId}
-                className="bg-dark-300 h-[168px] px-[28px] py-[25px] rounded-lg"
+                className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg"
               >
                 <div className="flex items-start gap-[17px]">
                   {/* 챌린지 이미지 */}
@@ -101,9 +101,9 @@ export default function ChallengeSection({
 
                   {/* 챌린지 상태 및 정보 */}
                   <div className="flex-1">
-                    <div className="flex items-center gap-[13px] mb-[10px]">
+                    <div className="flex items-center gap-[13px] mb-2.5">
                       <span
-                        className={`text-sm font-semibold w-[84px] text-center px-[12px] py-[7px] rounded-full ${status.style}`}
+                        className={`text-sm font-semibold w-[84px] text-center px-3 py-[7px] rounded-full ${status.style}`}
                       >
                         {status.text}
                       </span>

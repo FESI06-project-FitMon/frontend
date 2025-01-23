@@ -113,7 +113,6 @@ export default function CalendarTab() {
 
         {/* FullCalendar 컴포넌트 */}
         <div className="calendar-wrapper">
-          <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
           <FullCalendar
             ref={calendarRef} // FullCalendar 레퍼런스 설정
             plugins={[dayGridPlugin]} // FullCalendar 플러그인 (dayGrid 사용)
