@@ -14,12 +14,17 @@ import {
   QueryClient,
   dehydrate,
   HydrationBoundary,
+  DehydratedState,
 } from '@tanstack/react-query';
 import CreateGathering from './main/components/CreateGatheringModal';
 import useMemberStore from '@/stores/useMemberStore';
 import Alert from '@/components/dialog/Alert';
 import { useRouter } from 'next/router';
 import { prefetchGatheringList } from './main/api/fetchGatheringList';
+
+interface HomeProps {
+  dehydratedState: DehydratedState;
+}
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();
@@ -32,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default function Home() {
+export default function Home({ dehydratedState }: HomeProps) {
   const [mainType, setMainType] = useState<MainType>('전체');
   const [subType, setSubType] = useState('전체');
   const [showModal, setShowModal] = useState(false);
@@ -109,7 +114,7 @@ export default function Home() {
       </div>
 
       <div className="pb-20">
-        <HydrationBoundary>
+        <HydrationBoundary state={dehydratedState}>
           <CardList mainType={mainType} subType={subType} />
         </HydrationBoundary>
       </div>
