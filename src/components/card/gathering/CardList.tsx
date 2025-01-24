@@ -4,6 +4,7 @@ import Null from '@/components/common/Null';
 import Card from './Card';
 import { useGatheringListQuery } from '@/pages/main/api/fetchGatheringList';
 import { MainType } from '@/constants/MainList';
+import Image from 'next/image';
 
 interface CardlistProps {
   mainType: MainType;
@@ -40,7 +41,18 @@ export default function CardList({ mainType, subType }: CardlistProps) {
   });
 
   if (isLoading) {
-    return <Null message="로딩중입니다." />;
+    return (
+      <Null
+        svg={
+          <Image
+            src={'/assets/image/spinner.svg'}
+            alt="로딩 스피너"
+            width={50}
+            height={50}
+          />
+        }
+      />
+    );
   }
 
   if (error) {
