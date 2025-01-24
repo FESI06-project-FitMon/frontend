@@ -48,7 +48,10 @@ export default function Card({ data }: CardProps) {
         <div className="flex gap-3">
           {tags.map((tag) => {
             return (
-              <div key={tag} className="bg-dark-200 text-[10px] md:text-sm md:py-1 md:px-2 rounded-[5px]">
+              <div
+                key={tag}
+                className="bg-dark-200 text-[10px] md:text-sm md:py-1 md:px-2 rounded-[5px]"
+              >
                 #{tag}
               </div>
             );

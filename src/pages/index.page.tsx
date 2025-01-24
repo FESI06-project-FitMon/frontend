@@ -56,7 +56,7 @@ export default function Home() {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
-      <h2 className="text-xl tmd:text-[1.75rem] font-semibold pb-[20px] md:pb-[30px]">
+      <h2 className="text-xl md:text-[1.75rem] font-semibold pb-5 md:pb-[30px]">
         지금 핫한 챌린지 🔥
       </h2>
 
@@ -98,7 +98,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="my-[20px] lg:my-[35px]">
+      <div className="my-5 lg:my-[35px]">
         {mainType !== '전체' && (
           <SubTag
             tags={LISTPAGE_SUBTYPE[mainType]}
