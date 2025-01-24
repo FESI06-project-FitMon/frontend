@@ -5,7 +5,7 @@ import GuestbookModal from '../guestbook/GuestbookModal';
 import WrittenGuestbooks from '../guestbook/WrittenGuestbooks';
 import AvailableGuestbooks from '../guestbook/AvailableGuestbooks';
 import useToastStore from '@/stores/useToastStore';
-import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook } from '@/utils/query/guestbook/myGuestbooks';
+import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook } from '@/pages/mypage/service/myGuestbooks';
 import { userGatheringChallenges, userGatherings, userGatheringStates } from '../../constants/constants';
 
 const GUESTBOOK_TABS: TabItem[] = [

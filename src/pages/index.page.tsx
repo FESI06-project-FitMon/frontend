@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import Cardlist from '@/components/card/gathering/Cardlist';
+import Cardlist from '@/components/card/gathering/CardList';
 import Button from '@/components/common/Button';
 import Tab from '@/components/common/Tab';
 import SubTag from '@/components/tag/SubTag';

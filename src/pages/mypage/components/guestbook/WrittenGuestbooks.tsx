@@ -4,7 +4,7 @@ import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { GatheringItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
 import useToastStore from '@/stores/useToastStore';
-import { useDeleteGuestbook } from '@/utils/query/guestbook/myGuestbooks';
+import { useDeleteGuestbook } from '@/pages/mypage/service/myGuestbooks';
 
 interface WrittenGuestbooksProps {
   guestbooks: GuestbookItem[];

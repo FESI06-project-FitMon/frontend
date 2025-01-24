@@ -6,7 +6,7 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import useToastStore from '@/stores/useToastStore';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import { ProfileImage } from './ProfileImage';
-import { profileEdit } from '@/utils/query/profile/profileEdit';
+import { profileEdit } from '@/pages/mypage/service/profileEdit';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
