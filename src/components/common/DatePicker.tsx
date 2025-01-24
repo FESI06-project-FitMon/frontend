@@ -11,13 +11,14 @@ interface DatePickerCalendarProps {
   minDate?: Date;
   maxDate?: Date;
 }
+
 export default function DatePickerCalendar({
   selectedDate,
   setSelectedDate,
   className,
   width = '245px',
   height,
-  minDate,
+  minDate = new Date(),
   maxDate,
 }: DatePickerCalendarProps) {
   const YEARS = Array.from(
@@ -39,21 +40,27 @@ export default function DatePickerCalendar({
     'December',
   ];
 
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      // 선택한 날짜를 UTC 기준 00:00:00으로 설정
+      const utcDate = new Date(
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+      );
+      setSelectedDate(utcDate); // 수정된 날짜를 전달
+    }
+  };
+
   return (
     <div
       className={`relative flex items-center bg-dark-400 border-[1px] border-dark-500 rounded-[8px] ${className} w-[${width}] h-[${height}]`}
     >
       <DatePicker
-        className={'datepicker'}
+        className="datepicker"
         dateFormat="yyyy-MM-dd"
-        formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
-        shouldCloseOnSelect
-        scrollableYearDropdown
         minDate={minDate}
         maxDate={maxDate}
-        yearDropdownItemNumber={50}
         selected={selectedDate}
-        onChange={(date: Date | null) => setSelectedDate(date!)}
+        onChange={handleDateChange} // 날짜 선택 시 UTC 자정으로 강제 설정
         renderCustomHeader={({
           date,
           changeYear,
@@ -62,7 +69,7 @@ export default function DatePickerCalendar({
           prevMonthButtonDisabled,
           nextMonthButtonDisabled,
         }) => (
-          <div className={`datepicker__header`}>
+          <div className="datepicker__header">
             <div className={`flex justify-between items-center w-[${width}]`}>
               <button
                 type="button"
@@ -77,10 +84,9 @@ export default function DatePickerCalendar({
                 />
               </button>
               <div className="flex my-[6.5px] gap-[5px]">
-                {' '}
                 <span className="bg-dark-500">{MONTHS[getMonth(date)]}</span>
                 <select
-                  className="bg-transparent select-none appearance-none "
+                  className="bg-transparent select-none appearance-none"
                   value={getYear(date)}
                   onChange={({ target: { value } }) => changeYear(+value)}
                 >
@@ -107,13 +113,13 @@ export default function DatePickerCalendar({
           </div>
         )}
       />
-      <div className="absolute right-0 flex items-center  px-5">
+      <div className="absolute right-0 flex items-center px-5">
         <Image
           src="/assets/image/calendar.svg"
           width={20}
           height={20}
           alt="calendar"
-          className="flex "
+          className="flex"
         />
       </div>
     </div>

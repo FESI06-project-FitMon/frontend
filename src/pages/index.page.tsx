@@ -115,7 +115,6 @@ export default function Home() {
           />
         </div>
 
-
         {showModal && (
           <CreateGathering setShowModal={() => setShowModal(false)} />
         )}

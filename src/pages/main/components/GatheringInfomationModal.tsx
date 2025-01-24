@@ -88,14 +88,15 @@ export default function GatheringInfomationModal({
       label: gu.label,
     })) || [];
 
-  const handleInputChange = (
+  const handleBlur = (
     value: string,
     field: keyof Pick<FormData, 'title' | 'description'>,
   ) => {
-    if (!value.trim()) {
+    if (!value || !value.trim()) {
       showToast('빈칸으로 넘어갈 수 없습니다.', 'error');
       return;
     }
+
     updateFormData(field, value);
   };
 
@@ -104,8 +105,8 @@ export default function GatheringInfomationModal({
       {/* 모임 정보 */}
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">모임 정보</h2>
-        <div className="flex gap-[10px]">
-          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:flex-rwo gap-[10px]">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500  h-[106px] md:h-[130px] overflow-hidden">
             <Image
               src={
                 !formData.imageUrl || formData.imageUrl === 'null'
@@ -113,9 +114,9 @@ export default function GatheringInfomationModal({
                   : formData.imageUrl
               }
               alt="이미지 미리보기"
-              width={130}
-              height={130}
-              className="rounded-[10px] object-cover"
+              width={106}
+              height={106}
+              className="rounded-[10px] object-cover md:w-[130px] md:h-[130px]"
             />
             <ImageUploadOverlay
               fileInputRef={fileInputRef}
@@ -124,13 +125,14 @@ export default function GatheringInfomationModal({
               isUploading={isUploading}
             />
           </div>
-          <div className="w-[360px]">
+          <div className="w-full md:w-[360px]">
             <ModalInput
               type="title"
-              placeholder="모임명을 입력해 주세요. (25자 제한)"
+              placeholder="모임 이름을 입력해 주세요. (25자 제한)"
               value={formData.title}
-              onChange={(value) => handleInputChange(value, 'title')}
-              className="outline-dark-700 mb-[7px]"
+              onChange={(value) => updateFormData('title', value)}
+              onBlur={(value) => handleBlur(value, 'title')}
+              className="outline-dark-500 mb-[7px]"
               maxLength={25}
               height="47px"
             />
@@ -138,8 +140,9 @@ export default function GatheringInfomationModal({
               type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
               value={formData.description}
-              onChange={(value) => handleInputChange(value, 'description')}
-              className="outline-dark-700 mb-[7px]"
+              onChange={(value) => updateFormData('description', value)}
+              onBlur={(value) => handleBlur(value, 'description')}
+              className="outline-dark-500 mb-[7px]"
               maxLength={50}
               height="76px"
             />
@@ -154,8 +157,8 @@ export default function GatheringInfomationModal({
         />
       </div>
       {/* 장소 및 최대 인원 */}
-      <div className="flex gap-[10px] mt-[20px]">
-        <div id="place">
+      <div className="flex mt-[20px] ">
+        <div id="place" className="w-full">
           <h2 className="mb-[10px]">장소</h2>
           <div className="flex">
             <Select
@@ -168,16 +171,17 @@ export default function GatheringInfomationModal({
                   subLocation: '',
                 }));
               }}
-              width="175px"
               height="47px"
-              className="mr-[10px] w-[175px]"
+              width=""
+              className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             />
             <Select
               items={placeGuItems}
               selectedItem={formData.subLocation}
               setSelectedItem={(value) => updateFormData('subLocation', value)}
-              width="175px"
+              width=""
+              className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
               height="47px"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
             />
@@ -188,29 +192,29 @@ export default function GatheringInfomationModal({
           <NumberSelect
             targetNumber={formData.totalCount}
             setTargetNumber={(value) => updateFormData('totalCount', value)}
-            width="130px"
+            className=" md:w-[130px]"
             height="47px"
             min={5}
           />
         </div>
       </div>
       {/* 날짜 선택 */}
-      <div className="flex gap-[10px] mt-[20px]">
-        <div>
+      <div className="flex flex-col md:flex-row w-full gap-[10px] mt-[20px]">
+        <div className="w-full">
           <h2 className="mb-[10px]">시작 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.startDate}
             setSelectedDate={(date) => updateFormData('startDate', date)}
-            width="245px"
+            className=" w-full md:w-[245px]"
             height="47px"
           />
         </div>
-        <div>
+        <div className="w-full">
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.endDate}
             setSelectedDate={(date) => updateFormData('endDate', date)}
-            width="245px"
+            className="w-full md:w-[245px]"
             height="47px"
             minDate={formData.startDate!}
           />

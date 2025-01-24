@@ -7,12 +7,15 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
+
 interface ChallengeInfomationModalProps {
   onChange: (data: CreateChallenge) => void;
+  gatheringEndDate: Date | null;
 }
 
 export default function ChallengeInfomationModal({
   onChange,
+  gatheringEndDate,
 }: ChallengeInfomationModalProps) {
   const DEFAULT_IMAGE_URL =
     'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
@@ -51,7 +54,45 @@ export default function ChallengeInfomationModal({
     },
   });
 
-  const handleInputChange = (
+  const isSameDateTime = (date1: Date, date2: Date) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate() &&
+      date1.getHours() === date2.getHours() &&
+      date1.getMinutes() === date2.getMinutes()
+    );
+  };
+
+  const validateEndDate = (
+    startDate: Date | null,
+    endDate: Date | null,
+    maxDate: Date | null,
+  ) => {
+    if (!startDate) {
+      showToast('시작 날짜를 먼저 선택해야 합니다.', 'caution');
+      return false;
+    }
+    if (endDate && isSameDateTime(startDate, endDate)) {
+      showToast('시작 날짜와 같은 날짜, 시간은 선택할 수 없습니다.', 'caution');
+      return false;
+    }
+    if (
+      endDate &&
+      maxDate &&
+      endDate > maxDate &&
+      !isSameDateTime(endDate, maxDate) // maxDate와 동일한 경우는 허용
+    ) {
+      showToast(
+        '챌린지 종료 날짜는 모임 종료 날짜를 초과할 수 없습니다.',
+        'caution',
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleBlur = (
     value: string,
     field: keyof Pick<CreateChallenge, 'title' | 'description'>,
   ) => {
@@ -64,11 +105,10 @@ export default function ChallengeInfomationModal({
 
   return (
     <div>
-      {/* 챌린지 정보 */}
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
-        <div className="flex gap-[10px]">
-          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[130px] w-[130px]">
+        <div className="flex-col md:flex-row flex items-start gap-[10px]">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500  h-[106px] md:h-[130px] overflow-hidden">
             <Image
               src={
                 !formData.imageUrl || formData.imageUrl === 'null'
@@ -76,9 +116,9 @@ export default function ChallengeInfomationModal({
                   : formData.imageUrl
               }
               alt="이미지 미리보기"
-              width={130}
-              height={130}
-              className="rounded-[10px] object-cover"
+              width={106}
+              height={106}
+              className="rounded-[10px] object-cover md:w-[130px] md:h-[130px]"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.onerror = null;
@@ -92,13 +132,15 @@ export default function ChallengeInfomationModal({
               isUploading={isUploading}
             />
           </div>
-          {/* 제목 및 설명 */}
           <div className="w-[360px]">
             <ModalInput
               type="title"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
               value={formData.title}
-              onChange={(value) => handleInputChange(value, 'title')}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, title: value }))
+              }
+              onBlur={(value) => handleBlur(value, 'title')}
               className="outline-dark-500 mb-[7px]"
               maxLength={25}
               height="47px"
@@ -107,8 +149,11 @@ export default function ChallengeInfomationModal({
               type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
               value={formData.description}
-              onChange={(value) => handleInputChange(value, 'description')}
-              className="outline-dark-500 mb-[7px]"
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, description: value }))
+              }
+              onBlur={(value) => handleBlur(value, 'description')}
+              className="outline-dark-500 md:mb-[7px]"
               maxLength={50}
               height="76px"
             />
@@ -116,8 +161,7 @@ export default function ChallengeInfomationModal({
         </div>
       </div>
 
-      {/* 날짜 선택 */}
-      <div className="flex gap-[10px] mt-[20px]">
+      <div className="flex flex-col md:flex-row gap-[10px] mt-[20px]">
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect
@@ -141,7 +185,11 @@ export default function ChallengeInfomationModal({
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
             selectedDate={formData.endDate}
-            setSelectedDate={(date) => updateFormData('endDate', date)}
+            setSelectedDate={(date) => {
+              if (validateEndDate(formData.startDate, date, gatheringEndDate)) {
+                updateFormData('endDate', date!);
+              }
+            }}
             width="196px"
             height="47px"
             minDate={formData.startDate!}

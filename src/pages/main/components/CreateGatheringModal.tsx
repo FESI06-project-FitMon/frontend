@@ -17,7 +17,7 @@ const initialState: CreateGatheringForm = {
   title: '',
   description: '',
   mainType: '유산소형',
-  subType: '',
+  subType: '달리기',
   imageUrl: null,
   startDate: null,
   endDate: null,
@@ -120,11 +120,11 @@ export default function CreateGathering({
 
   return (
     <Modal title={stepTitles[currentStep]} onClose={setShowModal}>
-      <div className="relative">
+      <div className="relative text-sm md:text-base">
         {/* 이전 버튼 */}
         {currentStep > 0 && (
           <div
-            className="absolute -top-10 -left-1 cursor-pointer"
+            className="fixed left-4 top-9 md:absolute md:-top-10 md:-left-1 cursor-pointer"
             onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
           >
             <Image
@@ -138,7 +138,7 @@ export default function CreateGathering({
 
         {currentStep < 3 && <Step currentStep={currentStep} />}
 
-        <div className="mt-4">
+        <div className="mt-4 overflow-y-auto overflow-x-clip flex flex-col md:flex-row justify-center max-h-[60vh] md:h-auto md:overflow-visible">
           {currentStep === 0 && (
             <ChoiceMainTypeModal
               onSelect={(mainType, subType) => {
@@ -158,13 +158,23 @@ export default function CreateGathering({
             />
           )}
           {currentStep === 2 && (
-            <ChallengeInfomationModal onChange={handleChallengeUpdate} />
+            <ChallengeInfomationModal
+              onChange={handleChallengeUpdate}
+              gatheringEndDate={formData.endDate}
+            />
           )}
           {currentStep === 3 && (
             <div className="text-center">
-              <h2 className="text-2xl font-bold">
-                🎉 모임이 성공적으로 생성되었습니다!
-              </h2>
+              <Image
+                src="/assets/image/trophy.png"
+                width={73}
+                height={73}
+                alt="트로피"
+                className="mx-auto py-4"
+              />
+              <p className="text-lg pb-4">
+                챌린지와 함께 모임 활동을 즐겨보세요!
+              </p>
             </div>
           )}
         </div>

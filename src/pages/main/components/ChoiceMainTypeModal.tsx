@@ -29,14 +29,14 @@ export default function ChoiceMainTypeModal({
   return (
     <div>
       {/* 메인 타입 선택 */}
-      <div className="flex gap-3 mb-5">
+      <div className="flex flex-col w-full gap-4 md:flex-row md:gap-3 mb-5">
         {LISTPAGE_MAINTYPE.map((type) => {
           if (type.id === '전체') return null;
 
           return (
             <div
               key={type.id}
-              className={`relative w-40 h-44 rounded-xl text-center py-5 px-2 cursor-pointer border ${
+              className={`relative w-full flex gap-6 md:gap-0 justify-center items-center md:flex-col h-[112px] md:w-40 md:h-44 rounded-xl text-center py-5 px-2 cursor-pointer border ${
                 selectedType === type.id
                   ? 'bg-dark-600 border-dark-700'
                   : 'bg-dark-400 border-transparent'
@@ -62,14 +62,16 @@ export default function ChoiceMainTypeModal({
                 height={72}
                 src={images[type.id] || '/assets/image/default.png'}
                 alt={`${type.label} 이미지`}
-                className="mx-auto"
+                className="md:mx-auto"
               />
-              <h3 className="font-bold text-lg pt-3.5">{type.label}</h3>
-              <p className="text-sm pt-[5px]">
-                {type.id === '유산소형' && '달리기, 수영, 자전거, 기타'}
-                {type.id === '헬스형' && '헬스, 기타'}
-                {type.id === '경기형' && '축구, 배드민턴, 풋살, 기타'}
-              </p>
+              <div className="text-left md:text-center w-36">
+                <h3 className="font-bold text-lg md:pt-3.5">{type.label}</h3>
+                <p className="text-sm pt-[5px]">
+                  {type.id === '유산소형' && '달리기, 수영, 자전거, 기타'}
+                  {type.id === '헬스형' && '헬스, 기타'}
+                  {type.id === '경기형' && '축구, 배드민턴, 풋살, 기타'}
+                </p>
+              </div>
             </div>
           );
         })}
