@@ -6,7 +6,7 @@ import useLayoutStore from '@/stores/useLayoutStore';
 import UserProfile from './UserProfile';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import getMe from '@/pages/login/components/getMe';
+import getMe from '@/pages/login/components/service/getMe';
 import Alert from '../dialog/Alert';
 import Loading from '../dialog/Loading';
 
@@ -95,7 +95,10 @@ export default function Navigation() {
                 height="20"
               />
             </div>
-            <Link href="/" className="text-primary font-bold text-2xl pl-[24px] md:pl-0">
+            <Link
+              href="/"
+              className="text-primary font-bold text-2xl pl-[24px] md:pl-0"
+            >
               FitMon
             </Link>
           </h1>
