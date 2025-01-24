@@ -19,11 +19,10 @@ import CreateGathering from './main/components/CreateGatheringModal';
 import useMemberStore from '@/stores/useMemberStore';
 import Alert from '@/components/dialog/Alert';
 import { useRouter } from 'next/router';
-import { prefetchGatheringList } from './main/api/queryPrefetcher';
+import { prefetchGatheringList } from './main/api/fetchGatheringList';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();
-
   await prefetchGatheringList(queryClient, '전체', '전체', 6);
 
   return {
