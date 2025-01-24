@@ -15,37 +15,16 @@ import {
   dehydrate,
   HydrationBoundary,
 } from '@tanstack/react-query';
-import { GatheringList } from '@/types';
-import apiRequest from '@/utils/apiRequest';
 import CreateGathering from './main/components/CreateGatheringModal';
 import useMemberStore from '@/stores/useMemberStore';
 import Alert from '@/components/dialog/Alert';
 import { useRouter } from 'next/router';
+import { prefetchGatheringList } from './main/api/queryPrefetcher';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const pageSize = 6; // 한 페이지당 불러올 데이터 수
-  const apiEndpoint = '/api/v1/gatherings';
-
   const queryClient = new QueryClient();
 
-  const queryParams = {
-    sortBy: 'deadline',
-    sortDirection: 'ASC',
-    page: '0',
-    pageSize: String(pageSize),
-  };
-
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: ['gatheringList', '전체', '전체'],
-    queryFn: async ({ pageParam = 0 }) => {
-      const queryParamsWithPage = { ...queryParams, page: String(pageParam) };
-      const paramWithPage = `${apiEndpoint}?${new URLSearchParams(
-        queryParamsWithPage,
-      ).toString()}`;
-      return await apiRequest<GatheringList>({ param: paramWithPage });
-    },
-    initialPageParam: 0,
-  });
+  await prefetchGatheringList(queryClient, '전체', '전체', 6);
 
   return {
     props: {
