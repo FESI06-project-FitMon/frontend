@@ -1,14 +1,9 @@
-import Button from '@/components/common/Button';
-import Modal from '@/components/dialog/Modal';
 import useGatheringStore from '@/stores/useGatheringStore';
-import useToastStore from '@/stores/useToastStore';
-import { AxiosError } from 'axios';
-import { useState } from 'react';
-import ChallengeCertificationModal from './ChallengeCertificationModal';
 import Popover from '@/components/common/Popover';
 import Image from 'next/image';
 import BarChart from '@/components/chart/BarChart';
 import { ChallengeProps } from '@/types';
+import ChallengeCardButton from './ChallengeCardButton';
 
 export default function GatheringChallengeCard({
   challenge,
@@ -17,82 +12,7 @@ export default function GatheringChallengeCard({
   challenge: ChallengeProps;
   inProgress: boolean;
 }) {
-  const [openModal, setOpenModal] = useState(false);
-  const { participantChallenge } = useGatheringStore();
-  const showToast = useToastStore((state) => state.show);
-
-  const handleGatheringButtonClick = () => {
-    setOpenModal(true);
-  };
-
-  const handleParticipantChallengeButtonClick = async () => {
-    try {
-      await participantChallenge(challenge.challengeId);
-      showToast('챌린지에 참가하였습니다.', 'check');
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      if (axiosError.response?.data?.message) {
-        showToast(axiosError.response.data.message, 'error');
-      }
-    }
-  };
-
   const handleChallengeDeleteButtonClick = () => {};
-
-  const button = () => {
-    if (!inProgress) {
-      return (
-        <Button
-          style="disabled"
-          name="마감된 챌린지"
-          className="w-40 h-10 font-semibold text-base"
-        />
-      );
-    }
-    if (!challenge.participantStatus) {
-      return (
-        <Button
-          style="custom"
-          name="참여하기"
-          className="w-40 h-10 font-semibold text-base"
-          handleButtonClick={() => {
-            handleParticipantChallengeButtonClick();
-          }}
-        />
-      );
-    }
-
-    if (!challenge.verificationStatus) {
-      return (
-        <>
-          <Button
-            style="custom"
-            name="인증하기"
-            className="w-40 h-10 font-semibold text-base"
-            handleButtonClick={() => handleGatheringButtonClick()}
-          />
-          <>
-            {openModal && (
-              <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
-                <ChallengeCertificationModal
-                  challengeId={challenge.challengeId}
-                  setOpenModal={setOpenModal}
-                />
-              </Modal>
-            )}
-          </>
-        </>
-      );
-    }
-
-    return (
-      <Button
-        style="disabled"
-        name="인증완료"
-        className="bg-dark-700 w-40 h-10 font-semibold text-base "
-      />
-    );
-  };
 
   if (!challenge) return;
 
@@ -167,7 +87,12 @@ export default function GatheringChallengeCard({
               />
             </div>
             {/* 참여했다면 인증하기 버튼, 참여하지 않았다면 참여하기 버튼 */}
-            {button()}
+            <ChallengeCardButton
+              inProgress={inProgress}
+              challengeId={challenge.challengeId}
+              participantStatus={challenge.participantStatus}
+              verificationStatus={challenge.verificationStatus}
+            />
           </div>
         </div>
       </div>
