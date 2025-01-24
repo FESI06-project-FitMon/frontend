@@ -6,12 +6,12 @@ import { useGatheringListQuery } from '@/pages/main/api/fetchGatheringList';
 import { MainType } from '@/constants/MainList';
 import Image from 'next/image';
 
-interface CardlistProps {
+interface CardListProps {
   mainType: MainType;
   subType: string;
 }
 
-export default function CardList({ mainType, subType }: CardlistProps) {
+export default function CardList({ mainType, subType }: CardListProps) {
   const pageSize = 6;
 
   const { queryKey, queryFn, getNextPageParam } = useGatheringListQuery(
