@@ -44,8 +44,6 @@ export default function CreateGathering({
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<CreateGatheringForm>(initialState);
 
-  console.log(formData);
-
   const stepTitles = [
     '모임에 오신 걸 환영해요! 🎉',
     '모임 정보를 입력해주세요.',
