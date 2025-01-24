@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import Cardlist from '@/components/card/gathering/Cardlist';
+import CardList from '@/components/card/gathering/CardList';
 import Button from '@/components/common/Button';
 import Tab from '@/components/common/Tab';
 import SubTag from '@/components/tag/SubTag';
@@ -111,7 +111,7 @@ export default function Home() {
 
       <div className="pb-20">
         <HydrationBoundary>
-          <Cardlist mainType={mainType} subType={subType} />
+          <CardList mainType={mainType} subType={subType} />
         </HydrationBoundary>
       </div>
 
