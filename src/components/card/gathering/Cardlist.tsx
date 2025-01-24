@@ -11,7 +11,7 @@ interface CardlistProps {
   subType: string;
 }
 
-export default function Cardlist({ mainType, subType }: CardlistProps) {
+export default function CardList({ mainType, subType }: CardlistProps) {
   const pageSize = 6; // 한 페이지당 아이템 수
 
   // 데이터 페치 함수
