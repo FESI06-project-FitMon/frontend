@@ -12,12 +12,10 @@ interface CardListProps {
 }
 
 export default function CardList({ mainType, subType }: CardListProps) {
-  const pageSize = 6;
-
   const { queryKey, queryFn, getNextPageParam } = useGatheringListQuery(
     mainType,
     subType,
-    pageSize,
+    6,
   );
 
   const {
