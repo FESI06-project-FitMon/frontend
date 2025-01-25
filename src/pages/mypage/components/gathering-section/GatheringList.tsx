@@ -26,6 +26,7 @@ export default function GatheringList({
   const router = useRouter(); // useRouter 추가
 
   const handleToggleChallenge = (gatheringId: number) => {
+    console.log(`Toggling challenges for gatheringId: ${gatheringId}`);
     setOpenChallenges((prev) => ({
       ...prev,
       [gatheringId]: !prev[gatheringId],
@@ -36,8 +37,10 @@ export default function GatheringList({
     const target = event.target as HTMLElement;
     // 참여 취소 버튼 클릭 시 리다이렉션 방지
     if (target.tagName === 'BUTTON' || target.closest('button')) {
+      console.log(`Button clicked inside card of gatheringId: ${gatheringId}, preventing redirection.`);
       return;
     }
+    console.log(`Navigating to details page for gatheringId: ${gatheringId}`);
     router.push(`/detail/${gatheringId}`); // 상세 페이지로 이동
   };
 
@@ -46,9 +49,11 @@ export default function GatheringList({
     return <Null message={emptyMessage} />;
   }
 
+  console.log('Gatherings data received:', gatherings);
+
   return (
     <div className="space-y-6 pb-[50px]">
-      {gatherings.map((gathering) => { // sortedGatherings 대신 gatherings 그대로 사용
+      {gatherings.map((gathering) => {
         if (!gathering.gatheringId) {
           console.error('Invalid gathering object:', gathering);
           return null;
@@ -58,7 +63,7 @@ export default function GatheringList({
         const isOpen = openChallenges[gathering.gatheringId];
 
         console.log('Rendering gathering:', gathering);
-        console.log('Challenges for this gatheringId:', challenges);
+        console.log(`Challenges for gatheringId ${gathering.gatheringId}:`, challenges);
 
         const cancelProps =
           cancelActionType === 'gathering'
@@ -91,6 +96,7 @@ export default function GatheringList({
                 gatheringJoinedPeopleCount={gathering.participantCount}
                 isReservationCancellable={true}
                 onOverlay={() => {
+                  console.log(`Closing challenges for canceled gatheringId: ${gathering.gatheringId}`);
                   setOpenChallenges((prev) => ({
                     ...prev,
                     [gathering.gatheringId]: false,

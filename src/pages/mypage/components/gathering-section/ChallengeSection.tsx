@@ -16,10 +16,12 @@ export default function ChallengeSection({
   isOpen,
   onToggle,
 }: ChallengeSectionProps) {
+  console.log('ChallengeSection rendering:', { challenges, gathering, isOpen });
+
   if (!gathering) {
+    console.error('No gathering provided to ChallengeSection');
     return null; // gathering이 없는 경우 아무것도 렌더링하지 않음
   }
-
   // 상태에 따른 텍스트와 스타일 반환
   const getStatusInfo = (challenge: ChallengeType) => {
     if (gathering.captainStatus) {

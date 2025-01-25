@@ -20,11 +20,16 @@ export default function MainCard({
   gathering,
   cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
+  console.log('MainCard rendering with gathering:', gathering);
+
+  if (!gathering) {
+    console.error('No gathering provided to MainCard');
+    return null;
+  }
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // API 호출 상태 관리
   const showToast = useToastStore((state) => state.show);
 
-  if (!gathering) return null;
 
   const handleCancelClick = () => setShowAlert(true);
 

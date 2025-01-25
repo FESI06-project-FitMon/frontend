@@ -1,4 +1,4 @@
-import { useParticipatingGatherings, useCancelParticipation } from '@/pages/mypage/service/joinGathering';
+import { useParticipatingGatherings, useCancelParticipation } from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
 import Null from '@/components/common/Null';
 
