@@ -8,20 +8,24 @@ import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
-import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
+// import useGatheringStore from '@/stores/useGatheringStore';
 import cityData from '@/constants/city';
 import uploadImage from '@/utils/uploadImage';
+import { GatheringDetailType } from '@/types';
+import Null from '@/components/common/Null';
+import { useGatheringUpdate } from '../service/gatheringService';
+import { QueryClient } from '@tanstack/react-query';
 
 export default function GatheringEditModal({
   information,
   gatheringId,
   setIsModalOpen,
 }: {
-  information: GatheringDetail;
+  information: GatheringDetailType;
   gatheringId: number;
   setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
-  const { updateGathering } = useGatheringStore();
+  // const { updateGathering } = useGatheringStore();
   const [title, setTitle] = useState(information.title);
   const [description, setDescription] = useState(information.description);
   const [newTag, setNewTag] = useState('');
@@ -103,8 +107,8 @@ export default function GatheringEditModal({
       tags: tags,
     };
 
-    updateGathering(editedInformation, gatheringId);
-
+    // updateGathering(editedInformation, gatheringId);
+    mutate(editedInformation);
     // 모달을 닫는다.
     setIsModalOpen(false);
   };
@@ -131,7 +135,11 @@ export default function GatheringEditModal({
   const handleImageDeleteButtonClick = () => {
     setImageUrl('');
   };
+  const queryClient = new QueryClient();
 
+  const { mutate, isPending } = useGatheringUpdate(gatheringId, queryClient);
+
+  if (isPending) return <Null message="로딩중입니다" />;
   return (
     <div>
       {/* 모임 정보 */}

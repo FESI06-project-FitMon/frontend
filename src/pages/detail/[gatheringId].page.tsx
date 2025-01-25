@@ -1,92 +1,54 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import GatheringInformation from './components/GatheringInformation';
 import GatheringChallenge from './components/GatheringChallenge';
 import GatheringGuestbook from './components/GatheringGuestbook';
 import GatheringState from './components/GatheringState';
-import Tab from '@/components/common/Tab';
-import Modal from '@/components/dialog/Modal';
-import ChallengeAddModal from './components/ChallengeAddModal';
-import useGatheringStore from '@/stores/useGatheringStore';
 import { usePathname } from 'next/navigation';
-
+import { useQuery } from '@tanstack/react-query';
+import GatheringDetailTab from './components/GatheringDetailTab';
+import { GatheringQueries } from './service/gatheringQueries';
 export default function GatheringDetail() {
-  const { fetchGathering, gathering } = useGatheringStore();
   const pathname = usePathname();
-  let gatheringId = pathname
+  const gatheringId = pathname
     ? parseInt(pathname.split('/')[pathname.split('/').length - 1])
     : 1;
-  useEffect(() => {
-    fetchGathering(gatheringId);
-    gatheringId = pathname
-      ? parseInt(pathname.split('/')[pathname.split('/').length - 1])
-      : 1;
-  }, [gatheringId]);
-
-  const [showModal, setShowModal] = useState(false);
-  const gatheringTabItems = [
-    {
-      id: 'challenge',
-      label: '챌린지',
-    },
-    {
-      id: 'guestbook',
-      label: '방명록',
-    },
-  ];
   const [currentTab, setCurrentTab] = useState('challenge');
+  const { data, error, isLoading } = useQuery(
+    GatheringQueries.getGatheringQuery(gatheringId),
+  );
 
-  const handleChallengeAddButtonClick = () => {
-    setShowModal(true);
-  };
-
-  if (!gathering) {
-    return <div>Loading...</div>;
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+  if (isLoading) {
+    return <div>{'Loading...'}</div>;
   }
 
+  if (!data) {
+    return <div>{'데이터 없음...'}</div>;
+  }
   return (
     <div className="w-[1200px] flex flex-col place-self-center ">
-      <GatheringInformation gathering={gathering} />
-      <GatheringState gatheringId={gatheringId} />
-      <div className="flex mt-[50px] w-full h-[49px] relative items-center justify-center">
-        <Tab
-          items={gatheringTabItems}
-          currentTab={currentTab}
-          onTabChange={(newTab) => setCurrentTab(newTab)}
-          className="w-full absolute flex text-lg font-bold z-20"
-          rightElement={
-            gathering.captainStatus && (
-              <button
-                onClick={() => handleChallengeAddButtonClick()}
-                className="text-lg hover:cursor-pointer"
-              >
-                {'+ 챌린지 추가하기'}
-              </button>
-            )
-          }
-        />
-      </div>
-      {/* 모달 */}
-      {showModal && (
-        <Modal
-          title="챌린지 정보를 입력해주세요."
-          onClose={() => setShowModal(false)}
-        >
-          <ChallengeAddModal
-            onClose={() => setShowModal(false)}
-            gatheringId={gatheringId}
-          />
-        </Modal>
-      )}
-
+      <GatheringInformation gathering={data} />
+      <GatheringState
+        participantStatus={data.participantStatus}
+        gatheringId={gatheringId}
+      />
+      <GatheringDetailTab
+        gatheringId={gatheringId}
+        captainStatus={data.captainStatus}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+      />
       {currentTab === 'challenge' ? (
         <GatheringChallenge
           gatheringId={gatheringId}
-          captainStatus={gathering.captainStatus ?? false}
+          captainStatus={data.captainStatus}
         />
       ) : (
         <GatheringGuestbook
           gatheringId={gatheringId}
-          gatheringGuestbookCount={gathering.guestBookCount}
+          gatheringGuestbookCount={data.guestBookCount}
         />
       )}
     </div>

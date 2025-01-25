@@ -1,30 +1,11 @@
-import GatheringDetail from '@/pages/detail/[gatheringId].page';
-import { ChallengeType, GuestbookItem } from '@/types';
+import {
+  ChallengeType,
+  GatheringDetailType,
+  GatheringStateType,
+  GuestbookItem,
+} from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import { create } from 'zustand';
-
-export interface GatheringDetail {
-  gatheringId: number;
-  captainStatus: boolean;
-  participantStatus: boolean;
-  title: string;
-  description: string;
-  mainType: string;
-  subType: string;
-  imageUrl: string;
-  startDate: string;
-  endDate: string;
-  mainLocation: string;
-  subLocation: string;
-  minCount: number;
-  totalCount: number;
-  participantCount: number;
-  status: string;
-  tags: Array<string>;
-  participants: Array<GatheringParticipants>;
-  averageRating: number;
-  guestBookCount: number;
-}
 
 interface GatheringUpdateRequest {
   title: string;
@@ -47,25 +28,9 @@ interface ChallengeCreateRequest {
   endDate: string;
 }
 
-interface GatheringParticipants {
-  memberId: number;
-  nickName: string;
-  profileImageUrl: string;
-}
-
-export interface GatheringStatus {
-  participants: Array<GatheringParticipants>;
-  minCount: number;
-  totalCount: number;
-  participantCount: number;
-  status: string;
-  averageRating: number;
-  guestBookCount: number;
-}
-
 interface GatheringState {
-  gathering?: GatheringDetail;
-  gatheringStatus?: GatheringStatus;
+  gathering?: GatheringDetailType;
+  gatheringStatus?: GatheringStateType;
   challenges?: Array<ChallengeType>;
   guestbooks?: Array<GuestbookItem>;
   hasNextPage: boolean;
@@ -74,7 +39,7 @@ interface GatheringState {
   setCurrentChallengePage: (page: number) => void;
   setIsStatusChanged: (status: boolean) => void;
   setHasNextPage: (hasNextPage: boolean) => void;
-  fetchGathering: (gatheringId: number) => void;
+  fetchGatheringInformation: (gatheringId: number) => void;
   fetchGatheringStatus: (gatheringId: number) => void;
   fetchGatheringChallenges: (
     gatheringId: number,
@@ -118,13 +83,12 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   setIsStatusChanged: (status: boolean) => set({ isStatusChanged: status }),
   setHasNextPage: (hasNextPage: boolean) => set({ hasNextPage: hasNextPage }),
   // 모임 정보 불러오기 API
-  fetchGathering: async (gatheringId: number) => {
+  fetchGatheringInformation: async (gatheringId: number) => {
     try {
-      const response = await apiRequest<GatheringDetail>({
+      const response = await apiRequest<GatheringDetailType>({
         param: '/api/v1/gatherings/' + gatheringId,
         method: 'get',
       });
-      console.log('response', response);
       set({ gathering: response });
     } catch (error) {
       throw error;
@@ -134,7 +98,7 @@ const useGatheringStore = create<GatheringState>((set, get) => ({
   // 모임 상태 불러오기 API
   fetchGatheringStatus: async (gatheringId: number) => {
     try {
-      const response = await apiRequest<GatheringStatus>({
+      const response = await apiRequest<GatheringStateType>({
         param: '/api/v1/gatherings/' + gatheringId + '/status',
         method: 'get',
       });

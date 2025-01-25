@@ -2,7 +2,6 @@ import BarChart from '@/components/chart/BarChart';
 import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
-import useGatheringStore from '@/stores/useGatheringStore';
 import useToastStore from '@/stores/useToastStore';
 import {
   addGatheringId,
@@ -12,31 +11,33 @@ import {
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useGatheringStatus } from '../service/gatheringService';
+import Null from '@/components/common/Null';
 
 export default function GatheringState({
   gatheringId,
+  participantStatus,
 }: {
   gatheringId: number;
+  participantStatus: boolean;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
   const {
-    fetchGatheringStatus,
-    gatheringStatus,
-    gathering,
-    participantGathering,
-  } = useGatheringStore();
+    data: gatheringStatus,
+    isLoading,
+    error,
+  } = useGatheringStatus(gatheringId);
 
-  // 초기 상태 세팅
+  // 좋아요 초기 상태 세팅
   useEffect(() => {
-    fetchGatheringStatus(gatheringId);
     setHeart(gatheringIdInLikes(gatheringId));
   }, [gatheringId]);
 
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = async () => {
     try {
-      await participantGathering(gatheringId);
+      // await participantGathering(gatheringId);
       showToast('참여하기 완료되었습니다.', 'check');
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -57,6 +58,8 @@ export default function GatheringState({
 
     addGatheringId(gatheringId);
   };
+
+  // 공유 버튼 클릭 핸들러
   const handleShareButtonClick = () => {
     const url = window.location.href;
     navigator.clipboard
@@ -65,8 +68,12 @@ export default function GatheringState({
       .catch(() => showToast('URL 복사를 실패했습니다.', 'error'));
   };
 
-  if (!gatheringStatus) {
-    return <div>{'Loading..'}</div>;
+  if (isLoading || !gatheringStatus) {
+    return <Null message="로딩중입니다." />;
+  }
+
+  if (error) {
+    return <div>error</div>;
   }
 
   return (
@@ -138,7 +145,7 @@ export default function GatheringState({
           </div>
         </div>
         <div className="flex mb-auto h-[56px]" id="buttons">
-          {gathering?.participantStatus ? (
+          {participantStatus ? (
             <Button
               className="ml-[25px] w-[242px]"
               style="disabled"

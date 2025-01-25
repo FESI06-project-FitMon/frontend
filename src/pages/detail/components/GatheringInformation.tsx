@@ -5,15 +5,16 @@ import { useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
-import useGatheringStore, { GatheringDetail } from '@/stores/useGatheringStore';
+import useGatheringStore from '@/stores/useGatheringStore';
 import getDatePart from '@/utils/getDatePart';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';
+import { GatheringDetailType } from '@/types';
 
 export default function GatheringInformation({
   gathering,
 }: {
-  gathering: GatheringDetail;
+  gathering: GatheringDetailType;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
@@ -21,7 +22,11 @@ export default function GatheringInformation({
   const { deleteGathering } = useGatheringStore();
 
   if (!gathering) {
-    return <div>{'Loading..'}</div>;
+    return (
+      <div className="h-[480px]">
+        <p>Loading..</p>
+      </div>
+    );
   }
 
   const popoverItems = [
