@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { sortGatheringsByDate } from '@/utils/sortGatherings';
+import { useRouter } from 'next/router'; // useRouter 추가
 import ChallengeSection from '../gathering-section/ChallengeSection';
 import MainCard from '../gathering-section/MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
@@ -17,13 +17,13 @@ interface GatheringListProps {
 
 export default function GatheringList({
   gatherings,
-  gatheringStates,
   gatheringChallenges,
   emptyMessage,
   onCancelAction,
   cancelActionType,
 }: GatheringListProps) {
   const [openChallenges, setOpenChallenges] = useState<{ [key: number]: boolean }>({});
+  const router = useRouter(); // useRouter 추가
 
   const handleToggleChallenge = (gatheringId: number) => {
     setOpenChallenges((prev) => ({
@@ -32,36 +32,47 @@ export default function GatheringList({
     }));
   };
 
+  const handleCardClick = (gatheringId: number, event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    // 참여 취소 버튼 클릭 시 리다이렉션 방지
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      return;
+    }
+    router.push(`/detail/${gatheringId}`); // 상세 페이지로 이동
+  };
+
   if (!gatherings || gatherings.length === 0) {
     console.log('No gatherings available:', gatherings);
     return <Null message={emptyMessage} />;
   }
 
-  const sortedGatherings = sortGatheringsByDate(gatherings);
-
   return (
     <div className="space-y-6 pb-[50px]">
-      {sortedGatherings.map((gathering) => {
+      {gatherings.map((gathering) => { // sortedGatherings 대신 gatherings 그대로 사용
         if (!gathering.gatheringId) {
           console.error('Invalid gathering object:', gathering);
           return null;
         }
-  
+
         const challenges = gatheringChallenges[gathering.gatheringId] || null;
         const isOpen = openChallenges[gathering.gatheringId];
-  
+
         console.log('Rendering gathering:', gathering);
         console.log('Challenges for this gatheringId:', challenges);
-  
+
         const cancelProps =
           cancelActionType === 'gathering'
             ? { onCancelGathering: onCancelAction }
             : { onCancelParticipation: onCancelAction };
-  
+
         return (
-          <div key={gathering.gatheringId} className="relative rounded-lg overflow-hidden mb-[50px]">
+          <div
+            key={gathering.gatheringId}
+            className="relative rounded-lg overflow-hidden mb-[50px] cursor-pointer"
+            onClick={(e) => handleCardClick(gathering.gatheringId, e)} // 카드 클릭 이벤트 추가
+          >
             <MainCard gathering={gathering} cancelProps={cancelProps} />
-  
+
             {/* 챌린지 섹션 렌더링 조건 */}
             {challenges && (
               <ChallengeSection
@@ -71,7 +82,7 @@ export default function GatheringList({
                 onToggle={() => handleToggleChallenge(gathering.gatheringId)}
               />
             )}
-  
+
             {/* 취소된 모임 처리 */}
             {gathering.status === '취소됨' && (
               <CanceledGathering

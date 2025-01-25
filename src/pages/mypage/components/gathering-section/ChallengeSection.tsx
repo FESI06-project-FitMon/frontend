@@ -1,10 +1,11 @@
 import Image from 'next/image';
-import { ChallengeType, GatheringChallengeType, GatheringItem } from '@/types';
+import { ChallengeType, GatheringChallengeType, GatheringListItem } from '@/types';
 import Null from '@/components/common/Null';
+import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
 
 interface ChallengeSectionProps {
   challenges: GatheringChallengeType;
-  gathering: GatheringItem;
+  gathering: GatheringListItem;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -130,8 +131,7 @@ export default function ChallengeSection({
                           </h4>
                         </div>
                         <h5 className="text-dark-700 text-sm font-normal">
-                          {gathering.gatheringStartDate} ~{' '}
-                          {gathering.gatheringEndDate}
+                          {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
                         </h5>
                       </div>
                     </div>

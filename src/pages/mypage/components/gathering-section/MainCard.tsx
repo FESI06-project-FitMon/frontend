@@ -6,18 +6,19 @@ import Button from '@/components/common/Button';
 import Alert from '@/components/dialog/Alert';
 import { GatheringListItem } from '@/types';
 import useToastStore from '@/stores/useToastStore';
+import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
 
 interface MainCardProps {
   gathering: GatheringListItem;
   cancelProps: {
     onCancelGathering?: (gatheringId: number) => void;
     onCancelParticipation?: (gatheringId: number) => void;
-  }
+  };
 }
 
 export default function MainCard({
   gathering,
-  cancelProps: { onCancelGathering, onCancelParticipation }
+  cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // API 호출 상태 관리
@@ -76,7 +77,9 @@ export default function MainCard({
         </h3>
         <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.title}</h2>
         <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
-          <h4>{gathering.startDate} ~ {gathering.endDate}</h4>
+          <h4>
+            {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+          </h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
               src="/assets/image/person.svg"
@@ -90,11 +93,13 @@ export default function MainCard({
         </div>
         <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
           <Button
-            name={gathering.captainStatus ? "모임 취소하기" : "참여 취소하기"}
-            style={gathering.captainStatus ? "custom" : "cancel"}
-            className={gathering.captainStatus
-              ? "w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base"
-              : "w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold"}
+            name={gathering.captainStatus ? '모임 취소하기' : '참여 취소하기'}
+            style={gathering.captainStatus ? 'custom' : 'cancel'}
+            className={
+              gathering.captainStatus
+                ? 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base'
+                : 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold'
+            }
             handleButtonClick={handleCancelClick}
           />
         </div>
@@ -103,9 +108,11 @@ export default function MainCard({
       <Alert
         isOpen={showAlert}
         type="select"
-        message={gathering.captainStatus
-          ? '모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다.'
-          : '참여를 취소하시겠습니까?'}
+        message={
+          gathering.captainStatus
+            ? '모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다.'
+            : '참여를 취소하시겠습니까?'
+        }
         onConfirm={handleCancelConfirm}
         onCancel={handleCancelDeny}
       />
