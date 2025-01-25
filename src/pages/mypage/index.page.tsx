@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Tab from '@/components/common/Tab';
 import Profile from './components/profile/Profile';
 import JoinGathering from './components/join-gathering/JoinGathering';
-import MyGathering from './components/my-gathering/MyGathering';
+// import MyGathering from './components/my-gathering/MyGathering';
 import Guestbook from './components/guestbook/Guestbook';
 import Calendar from './components/calendar/Calendar';
 import { useEffect, useState } from 'react';
@@ -66,13 +66,13 @@ export default function MyPage() {
         );
       case 'guestbook':
         return <Guestbook />;
-      case 'myGathering':
-        return (
-          <MyGathering
-            onGatheringClick={handleGatheringClick}
-            onCancelGathering={handleCancelGathering}
-          />
-        );
+      // case 'myGathering':
+      //   return (
+      //     // <MyGathering
+      //     //   onGatheringClick={handleGatheringClick}
+      //     //   onCancelGathering={handleCancelGathering}
+      //     // />
+      //   );
       case 'calendar':
         return <Calendar />;
       default:

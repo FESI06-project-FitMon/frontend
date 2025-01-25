@@ -15,8 +15,9 @@ export default function ChallengeSection({
   onToggle,
 }: ChallengeSectionProps) {
   if (!gathering) {
-    return null; // gathering이 없는 경우 아무것도 렌더링하지 않음
+    return null;
   }
+
   // 상태에 따른 텍스트와 스타일 반환
   const getStatusInfo = (challenge: ChallengeType) => {
     if (gathering.captainStatus) {
@@ -35,23 +36,24 @@ export default function ChallengeSection({
   };
 
   // 필터링된 챌린지
-  const filteredChallenges: ChallengeType[] = gathering.captainStatus
-    ? (challenges?.inProgressChallenges ?? [])
-    : (challenges?.inProgressChallenges?.filter(
-      (c: ChallengeType) => c.participantStatus,
-    ) ?? []);
+  const filteredChallenges = gathering.captainStatus
+    ? challenges?.inProgressChallenges || []
+    : challenges?.inProgressChallenges?.filter((c) => c.participantStatus) || [];
+
   return (
     <>
       {/* 챌린지 헤더 */}
       <div
-        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
-          }`}
+        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${
+          isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
+        }`}
         onClick={onToggle}
       >
         <span className="flex items-center gap-2 text-sm md:text-base font-semibold">
           <div
-            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${isOpen ? 'rotate-90' : ''
-              }`}
+            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${
+              isOpen ? 'rotate-90' : ''
+            }`}
           >
             <Image
               src="/assets/image/toggle.svg"
@@ -66,13 +68,10 @@ export default function ChallengeSection({
       </div>
 
       {/* 챌린지 리스트 */}
-      {isOpen && filteredChallenges?.length > 0 && (
-        <div
-          className="grid gap-2 md:gap-2.5 px-4 md:px-5 lg:px-8 py-2.5 md:py-[30px] max-h-[443px] overflow-y-auto bg-dark-200
-          grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-        >
+      {isOpen && filteredChallenges.length > 0 && (
+        <div className="grid gap-2 md:gap-2.5 px-4 md:px-5 lg:px-8 py-2.5 md:py-[30px] max-h-[443px] overflow-y-auto bg-dark-200 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredChallenges.map((challenge) => {
-            const status = getStatusInfo(challenge); // 상태 정보 가져오기
+            const status = getStatusInfo(challenge);
             return (
               <div
                 key={challenge.challengeId}
@@ -129,8 +128,7 @@ export default function ChallengeSection({
                         </h4>
                       </div>
                       <h5 className="text-dark-700 text-sm font-normal">
-                        {gathering.gatheringStartDate} ~{' '}
-                        {gathering.gatheringEndDate}
+                        {gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}
                       </h5>
                     </div>
                   </div>
