@@ -1,26 +1,7 @@
-import {
-  GatheringDetailType,
-  GatheringStateType,
-  GuestbookItem,
-} from '@/types';
+import { GatheringDetailType, GatheringStateType } from '@/types';
 import apiRequest from '@/utils/apiRequest';
-
-interface GatheringGuestbookResponse {
-  content: Array<GuestbookItem>;
-  hasNext: boolean;
-}
-
-interface GatheringUpdateRequest {
-  title: string;
-  description: string;
-  imageUrl: string;
-  startDate: string;
-  endDate: string;
-  mainLocation: string;
-  subLocation: string;
-  tags: Array<string>;
-  totalCount: number;
-}
+import { GatheringGuestbookResponse } from '../dto/responseDto';
+import { GatheringUpdateRequest } from '../dto/requestDto';
 
 // 모임 정보 불러오기 API
 export const fetchGathering = async (gatheringId: number) => {
@@ -51,7 +32,7 @@ export const fetchGatheringGuestbooks = async (
   gatheringId: number,
   page: number = 0,
   pageSize: number = 4,
-) => {
+): Promise<GatheringGuestbookResponse> => {
   try {
     return await apiRequest<GatheringGuestbookResponse>({
       param: `/api/v1/gatherings/${gatheringId}/guestbooks?page=${page}&pageSize=${pageSize}`,
