@@ -1,4 +1,3 @@
-import useGatheringStore from '@/stores/useGatheringStore';
 import Popover from '@/components/common/Popover';
 import Image from 'next/image';
 import BarChart from '@/components/chart/BarChart';
