@@ -20,20 +20,29 @@ export default function MainCard({
   cancelProps: { onCancelGathering, onCancelParticipation }
 }: MainCardProps) {
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // API 호출 상태 관리
   const showToast = useToastStore((state) => state.show);
 
   if (!gathering) return null;
 
   const handleCancelClick = () => setShowAlert(true);
 
-  const handleCancelConfirm = () => {
-    if (gathering.captainStatus) {
-      onCancelGathering?.(gathering.gatheringId);
-    } else {
-      onCancelParticipation?.(gathering.gatheringId);
+  const handleCancelConfirm = async () => {
+    setIsLoading(true); // 로딩 상태 시작
+    try {
+      if (gathering.captainStatus) {
+        await onCancelGathering?.(gathering.gatheringId); // 모임 취소 API 호출
+      } else {
+        await onCancelParticipation?.(gathering.gatheringId); // 참여 취소 API 호출
+      }
+      showToast('취소되었습니다.', 'check');
+    } catch (error) {
+      console.error('취소 실패:', error);
+      showToast('취소에 실패했습니다. 다시 시도해주세요.', 'error');
+    } finally {
+      setIsLoading(false); // 로딩 상태 종료
+      setShowAlert(false);
     }
-    setShowAlert(false);
-    showToast('취소되었습니다.', 'check');
   };
 
   const handleCancelDeny = () => {

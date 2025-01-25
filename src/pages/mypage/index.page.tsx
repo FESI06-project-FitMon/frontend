@@ -45,10 +45,6 @@ export default function MyPage() {
     console.log('모임 클릭:', gatheringId);
   };
 
-  const handleCancelGathering = async (gatheringId: number) => {
-    console.log('모임 취소:', gatheringId);
-  };
-
   const handleCancelParticipation = async (gatheringId: number) => {
     console.log('참여 취소:', gatheringId);
   };
@@ -60,8 +56,6 @@ export default function MyPage() {
       case 'gathering':
         return (
           <JoinGathering
-            onGatheringClick={handleGatheringClick}
-            onCancelParticipation={handleCancelParticipation}
           />
         );
       case 'guestbook':

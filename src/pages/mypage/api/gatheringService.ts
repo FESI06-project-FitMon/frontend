@@ -14,31 +14,5 @@ export const gatheringService = {
       param: `api/v1/gatherings/${gatheringId}/cancel`,
       method: 'delete',
     });
-  },
-
-  getGatheringChallenges: async (gatheringId: number, status: 'IN_PROGRESS' | 'CLOSED', page = 0, pageSize = 5) => {
-    return await apiRequest<ChallengeResponse>({
-      param: `api/v1/gatherings/${gatheringId}/challenges?status=${status}&page=${page}&pageSize=${pageSize}`,
-      method: 'get',
-    });
-  },
-};
-
-interface ChallengeResponse {
-  content: ChallengeType[];
-  hasNext: boolean;
-}
-
-interface ChallengeType {
-  gatheringId: number;
-  challengeId: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  participantCount: number;
-  successParticipantCount: number;
-  participantStatus: boolean;
-  verificationStatus: boolean;
-  startDate: string;
-  endDate: string;
+  }
 }

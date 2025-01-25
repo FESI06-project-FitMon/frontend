@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { gatheringService } from '../api/gatheringService';
+import { gatheringService } from '@/pages/mypage/api/gatheringService';
 
 export const GATHERING_KEYS = {
   participants: () => ['gatherings', 'participants'] as const,
@@ -18,7 +18,7 @@ export function useParticipatingGatherings(page = 0) {
 
 export function useCancelParticipation() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: gatheringService.cancelParticipation,
     onSuccess: () => {
