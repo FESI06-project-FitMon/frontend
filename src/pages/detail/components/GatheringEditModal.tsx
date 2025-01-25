@@ -14,7 +14,14 @@ import uploadImage from '@/utils/uploadImage';
 import { GatheringDetailType } from '@/types';
 import Null from '@/components/common/Null';
 import { useGatheringUpdate } from '../service/gatheringService';
-import { QueryClient } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryFunctionContext,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { GatheringUpdateRequest } from '../dto/requestDto';
+import { updateGathering } from '../api/gatheringApi';
 
 export default function GatheringEditModal({
   information,
@@ -135,8 +142,7 @@ export default function GatheringEditModal({
   const handleImageDeleteButtonClick = () => {
     setImageUrl('');
   };
-  const queryClient = new QueryClient();
-
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useGatheringUpdate(gatheringId, queryClient);
 
   if (isPending) return <Null message="로딩중입니다" />;

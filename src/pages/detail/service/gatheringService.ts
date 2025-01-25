@@ -40,51 +40,9 @@ export const useGatheringUpdate = (
   gatheringId: number,
   queryClient: QueryClient,
 ) => {
-  // const queryOptions = GatheringQueries.updateGatheringQuery(
-  //   gatheringId,
-  //   queryClient,
-  // );
-  return useMutation({
-    mutationFn: (newGathering: GatheringUpdateRequest) => {
-      return updateGathering(newGathering, gatheringId);
-    },
-    onMutate: (newGathering: GatheringUpdateRequest) => {
-      queryClient.cancelQueries({
-        queryKey: [`gathering`, gatheringId],
-      });
-
-      const previousGathering = queryClient.getQueryData<GatheringDetailType>([
-        `gathering`,
-        gatheringId,
-      ]);
-
-      console.log(previousGathering, queryClient);
-
-      if (previousGathering) {
-        queryClient.setQueryData<GatheringDetailType>(
-          ['gathering', gatheringId],
-          {
-            ...previousGathering,
-            ...newGathering,
-          },
-        );
-      }
-
-      return { previousGathering };
-    },
-
-    onSuccess: (newGathering: GatheringUpdateRequest) => {
-      console.log(newGathering);
-      queryClient.invalidateQueries({
-        queryKey: ['gathering', gatheringId],
-      });
-    },
-
-    onError: (error: Error, context: QueryFunctionContext) => {
-      console.error(error);
-      if (context) {
-        queryClient.setQueryData(['gathering', gatheringId], context);
-      }
-    },
-  });
+  const queryOptions = GatheringQueries.updateGatheringQuery(
+    gatheringId,
+    queryClient,
+  );
+  return useMutation(queryOptions);
 };
