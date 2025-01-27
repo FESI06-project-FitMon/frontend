@@ -8,7 +8,7 @@ interface FormFieldProps<
   E extends Record<string, boolean>,
 > {
   label: string;
-  type: 'text' | 'email' | 'password';
+  type?: 'text' | 'email' | 'password';
   name: Extract<keyof T, string>;
   value: string;
   placeholder: string;
@@ -26,7 +26,7 @@ export default function FormField<
   E extends Record<string, boolean>,
 >({
   label,
-  type,
+  type = 'text',
   name,
   value,
   placeholder,
