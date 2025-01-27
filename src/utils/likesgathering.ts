@@ -1,10 +1,11 @@
 // 모임 ID 있는지 확인
 export const gatheringIdInLikes = (gatheringId: number) => {
+  if (typeof window === 'undefined') return false;
+
   const existingLikes = localStorage.getItem('likes');
-
   if (!existingLikes) return false;
-  const likesSet = new Set(JSON.parse(existingLikes));
 
+  const likesSet = new Set(JSON.parse(existingLikes));
   return likesSet.has(gatheringId);
 };
 
