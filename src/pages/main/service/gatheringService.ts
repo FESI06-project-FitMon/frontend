@@ -3,8 +3,11 @@ import {
   QueryFunctionContext,
   useInfiniteQuery,
 } from '@tanstack/react-query';
-import { fetchGatheringList } from '@/pages/main/api/gatheringApi';
-import { GatheringList } from '@/types';
+import {
+  fetchGatheringList,
+  postGathering,
+} from '@/pages/main/api/gatheringApi';
+import { GatheringList, CreateGatheringForm } from '@/types';
 
 // Query Keys
 export const queryKeys = {
@@ -46,4 +49,13 @@ export const useGatheringListQuery = (
       lastPage.content.length > 0 ? allPages.length : undefined,
     initialPageParam: 0, // 초기 페이지 설정
   });
+};
+
+export const createGathering = async (formData: CreateGatheringForm) => {
+  try {
+    const response = await postGathering(formData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

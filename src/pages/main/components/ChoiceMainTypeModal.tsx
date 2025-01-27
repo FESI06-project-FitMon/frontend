@@ -10,7 +10,7 @@ export default function ChoiceMainTypeModal({
   onSelect,
 }: ChoiceMainTypeModalProps) {
   const [selectedType, setSelectedType] = useState<string>('유산소형');
-  const [selectedSubType, setSelectedSubType] = useState<string>('달리기');
+  const [selectedSubType, setSelectedSubType] = useState<string>('런닝');
 
   // 이미지 매핑
   const images: { [key: string]: string } = {
@@ -21,7 +21,7 @@ export default function ChoiceMainTypeModal({
 
   // 서브타입 매핑
   const subTypes: { [key: string]: string[] } = {
-    유산소형: ['달리기', '수영', '자전거', '기타'],
+    유산소형: ['런닝', '수영', '자전거', '기타'],
     헬스형: ['헬스', '기타'],
     경기형: ['축구', '배드민턴', '풋살', '기타'],
   };
@@ -67,7 +67,7 @@ export default function ChoiceMainTypeModal({
               <div className="text-left md:text-center w-36">
                 <h3 className="font-bold text-lg md:pt-3.5">{type.label}</h3>
                 <p className="text-sm pt-[5px]">
-                  {type.id === '유산소형' && '달리기, 수영, 자전거, 기타'}
+                  {type.id === '유산소형' && '런닝, 수영, 자전거, 기타'}
                   {type.id === '헬스형' && '헬스, 기타'}
                   {type.id === '경기형' && '축구, 배드민턴, 풋살, 기타'}
                 </p>
