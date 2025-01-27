@@ -1,19 +1,15 @@
 import Button from "@/components/common/Button";
 import Null from "@/components/common/Null";
-import { GatheringItem, GatheringStateType } from "@/types";
+import { GatheringListItem } from "@/types";
 import Image from 'next/image';
+import getDatePart from '@/utils/getDatePart';
 
 interface AvailableGuestbooksProps {
-  gatherings: GatheringItem[];
-  gatheringStates: { [key: number]: GatheringStateType };
+  gatherings: GatheringListItem[];
   onWriteClick: (gatheringId: number) => void;
 }
 
-export default function AvailableGuestbooks({
-  gatherings,
-  gatheringStates,
-  onWriteClick
-}: AvailableGuestbooksProps) {
+export default function AvailableGuestbooks({ gatherings, onWriteClick }: AvailableGuestbooksProps) {
   if (gatherings.length === 0) {
     return <Null message="작성 가능한 방명록이 없습니다." />;
   }
@@ -21,19 +17,15 @@ export default function AvailableGuestbooks({
   return (
     <div className="space-y-4 md:space-y-6">
       {gatherings.map((gathering) => (
-        <div 
-          key={gathering.gatheringId} 
+        <div
+          key={gathering.gatheringId}
           className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-[10px] md:gap-[24px] lg:gap-[30px]"
         >
-          {/* 이미지 영역 */}
+
           <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
             <Image
-            src={
-              gathering.gatheringImage === 'null' || !gathering.gatheringImage
-                ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-                : gathering.gatheringImage
-            }
-              alt={gathering.gatheringTitle}
+              src={gathering.imageUrl || '/assets/image/default_img.png'}
+              alt={gathering.title}
               width={300}
               height={200}
               className="w-full h-full object-cover"
@@ -45,16 +37,17 @@ export default function AvailableGuestbooks({
             />
           </div>
 
-          {/* 정보 영역 */}
           <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px]">
             <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
-              {gathering.gatheringSubType} | {gathering.gatheringSi} {gathering.gatheringGu}
+              {gathering.subType} | {gathering.mainLocation} {gathering.subLocation}
             </h3>
             <h2 className="text-sm md:text-xl font-bold mb-3.5">
-              {gathering.gatheringTitle}
+              {gathering.title}
             </h2>
             <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
-              <h4>{gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}</h4>
+              <h4>
+                {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+              </h4>
               <div className="flex items-center font-normal gap-2 text-white">
                 <Image
                   src="/assets/image/person.svg"
@@ -64,8 +57,7 @@ export default function AvailableGuestbooks({
                   className="w-4 h-4 md:w-[18px] md:h-[18px]"
                 />
                 <span>
-                  {gatheringStates[gathering.gatheringId]?.gatheringJoinedPeopleCount}/
-                  {gatheringStates[gathering.gatheringId]?.gatheringMaxPeopleCount}
+                  {gathering.participantCount}/{gathering.totalCount}
                 </span>
               </div>
             </div>

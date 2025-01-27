@@ -1,24 +1,21 @@
+import { useMyHostedGatherings, useCancelGathering, useGatheringChallenges } from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
-import { GatheringItem, GatheringStateType, GatheringChallengeType } from '@/types';
-import {
-  hostedGatherings,
-  hostedGatheringStates,
-  hostedGatheringChallenges
-} from '@/pages/mypage/constants/constants';
+import Null from '@/components/common/Null';
 
-interface MyGatheringProps {
-  onGatheringClick: (gatheringId: number) => void;
-  onCancelGathering: (gatheringId: number) => void;
-}
+export default function MyGathering() {
+  const { data: hostedGatheringsData, isLoading } = useMyHostedGatherings();
+  const { mutateAsync: cancelGathering } = useCancelGathering();
+  const { data: gatheringChallenges = {} } = useGatheringChallenges(hostedGatheringsData);
 
-export default function MyGathering({ onCancelGathering }: MyGatheringProps) {
+  if (isLoading) return <div>Loading...</div>;
+  if (!hostedGatheringsData?.content?.length) return <Null message="아직 생성한 모임이 없습니다." />;
+
   return (
     <GatheringList
-      gatherings={hostedGatherings as GatheringItem[]}
-      gatheringStates={hostedGatheringStates as { [key: number]: GatheringStateType }}
-      gatheringChallenges={hostedGatheringChallenges as { [key: number]: GatheringChallengeType }}
-      emptyMessage="아직 생성한 모임이 없습니다."
-      onCancelAction={onCancelGathering}
+      gatherings={hostedGatheringsData.content}
+      gatheringChallenges={gatheringChallenges}
+      emptyMessage="생성한 모임이 없습니다."
+      onCancelAction={cancelGathering}
       cancelActionType="gathering"
     />
   );

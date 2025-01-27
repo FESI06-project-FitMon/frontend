@@ -41,18 +41,6 @@ export default function MyPage() {
     setIsInitialized(true);
   }, [router, setIsLogin]);
 
-  const handleGatheringClick = (gatheringId: number) => {
-    console.log('모임 클릭:', gatheringId);
-  };
-
-  const handleCancelGathering = async (gatheringId: number) => {
-    console.log('모임 취소:', gatheringId);
-  };
-
-  const handleCancelParticipation = async (gatheringId: number) => {
-    console.log('참여 취소:', gatheringId);
-  };
-
   if (!isInitialized) return null;
 
   const renderContent = () => {
@@ -60,8 +48,6 @@ export default function MyPage() {
       case 'gathering':
         return (
           <JoinGathering
-            onGatheringClick={handleGatheringClick}
-            onCancelParticipation={handleCancelParticipation}
           />
         );
       case 'guestbook':
@@ -69,8 +55,6 @@ export default function MyPage() {
       case 'myGathering':
         return (
           <MyGathering
-            onGatheringClick={handleGatheringClick}
-            onCancelGathering={handleCancelGathering}
           />
         );
       case 'calendar':

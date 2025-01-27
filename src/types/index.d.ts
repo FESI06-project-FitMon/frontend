@@ -10,23 +10,6 @@ export interface UserProfile {
   profileImageUrl: string;
 }
 
-export interface GatheringItem {
-  gatheringId: number;
-  gatheringTitle: string;
-  gatheringImage: string;
-  gatheringStatus: '시작전' | '진행중' | '종료됨' | '취소됨';
-  gatheringMainType: string;
-  gatheringSubType: string;
-  gatheringStartDate: string;
-  gatheringEndDate: string;
-  gatheringSi: string;
-  gatheringGu: string;
-  gatheringDescription: string;
-  gatheringTags: string[];
-  captainStatus: boolean | undefined;
-  isReservationCancellable: boolean?;
-}
-
 export interface GatheringStateType {
   gatheringJoinedFivePeopleImages: string[]?;
   gatheringAverageRating: double;
@@ -110,9 +93,11 @@ export interface GatheringList {
 
 export interface GatheringListItem {
   gatheringId: number;
+  captainStatus: boolean;
+  participantStatus: boolean;
   title: string;
   description: string;
-  mainType: '전체' | '유산소형' | '무산소형' | '경기형';
+  mainType: '유산소형' | '무산소형' | '경기형';
   subType: string;
   imageUrl: string;
   startDate: string;
@@ -124,6 +109,15 @@ export interface GatheringListItem {
   participantCount: number;
   status: '시작전' | '진행중' | '종료됨' | '취소됨';
   tags: string[];
+  participants: Participant[];
+  averageRating: number;
+  guestBookCount: number;
+}
+
+export interface Participant {
+  memberId: number;
+  nickName: string;
+  profileImageUrl: string;
 }
 
 export interface CreateChallenge {
@@ -156,4 +150,23 @@ export interface PageResponse<T> {
   currentPage: number;
   totalElements: number;
   totalPages: number;
+}
+
+interface GuestbookRequest {
+  rating: number;
+  content: string;
+}
+
+interface CalendarGathering {
+  gatheringId: number;
+  captainStatus: boolean;
+  participantStatus: boolean;
+  title: string;
+  description: string;
+  mainType: string;
+  subType: string;
+  imageUrl: string;
+  startDate: string;
+  endDate: string;
+  status: string;
 }

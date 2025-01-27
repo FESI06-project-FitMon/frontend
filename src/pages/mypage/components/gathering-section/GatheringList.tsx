@@ -1,17 +1,15 @@
-// components/gathering/GatheringList.tsx
 import { useState } from 'react';
-import { sortGatheringsByDate } from '@/utils/sortGatherings';
+import { useRouter } from 'next/router'; // useRouter 추가
 import ChallengeSection from '../gathering-section/ChallengeSection';
 import MainCard from '../gathering-section/MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
 import Null from '@/components/common/Null';
-import Preparing from '@/components/common/Preparing';
-import { GatheringItem, GatheringStateType, GatheringChallengeType } from '@/types';
+import { GatheringListItem, ChallengeType } from '@/types';
+import Pagination from '@/components/common/Pagination';
 
 interface GatheringListProps {
-  gatherings: GatheringItem[];
-  gatheringStates: { [key: number]: GatheringStateType };
-  gatheringChallenges: { [key: number]: GatheringChallengeType };
+  gatherings: GatheringListItem[];
+  gatheringChallenges: { [key: number]: { inProgressChallenges: ChallengeType[]; doneChallenges: ChallengeType[] } };
   emptyMessage: string;
   onCancelAction?: (gatheringId: number) => void;
   cancelActionType: 'gathering' | 'participation';
@@ -19,100 +17,98 @@ interface GatheringListProps {
 
 export default function GatheringList({
   gatherings,
-  gatheringStates,
   gatheringChallenges,
   emptyMessage,
   onCancelAction,
   cancelActionType,
 }: GatheringListProps) {
   const [openChallenges, setOpenChallenges] = useState<{ [key: number]: boolean }>({});
+  const router = useRouter();
+  const [page, setPage] = useState(0);
+  const countPerPage = 10;
 
-  const handleToggleChallenge = (gatheringId: number) => {
-    setOpenChallenges(prev => ({
+  const handleToggleChallenge = (gatheringId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
+    setOpenChallenges((prev) => ({
       ...prev,
-      [gatheringId]: !prev[gatheringId]
+      [gatheringId]: !prev[gatheringId],
     }));
   };
 
-  const validGatherings = gatherings.filter(gathering => {
-    const state = gatheringStates[gathering?.gatheringId];
-    return gathering && state;
-  });
+  const handleCardClick = (gatheringId: number, event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    // 참여 취소 버튼 클릭 시 리다이렉션 방지
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      return;
+    }
+    router.push(`/detail/${gatheringId}`); // 상세 페이지로 이동
+  };
 
-  if (validGatherings.length === 0) {
+  if (!gatherings || gatherings.length === 0) {
     return <Null message={emptyMessage} />;
   }
 
-  const sortedGatherings = sortGatheringsByDate(validGatherings);
+  const paginatedGatherings = gatherings.slice(
+    page * countPerPage,
+    (page + 1) * countPerPage
+  );
 
   return (
-    <div className="space-y-6 pb-[50px]">
-      {sortedGatherings.map((gathering) => {
-        const state = gatheringStates[gathering.gatheringId];
-        if (!state) return null;
+    <>
+      <div className="space-y-6 pb-[50px]">
+        {paginatedGatherings.map((gathering) => {
+          if (!gathering.gatheringId) return null;
 
-        const challenges = gatheringChallenges[gathering.gatheringId];
-        const isOpen = openChallenges[gathering.gatheringId];
+          const challenges = gatheringChallenges[gathering.gatheringId] || null;
+          const isOpen = openChallenges[gathering.gatheringId];
+          const cancelProps = cancelActionType === 'gathering'
+            ? { onCancelGathering: onCancelAction }
+            : { onCancelParticipation: onCancelAction };
 
-        const cancelProps = cancelActionType === 'gathering'
-          ? { onCancelGathering: onCancelAction }
-          : { onCancelParticipation: onCancelAction };
+          return (
+            <div
+              key={gathering.gatheringId}
+              className="relative rounded-lg overflow-hidden mb-[50px]"
+            >
+              <div className="cursor-pointer" onClick={(e) => handleCardClick(gathering.gatheringId, e)}>
+                <MainCard gathering={gathering} cancelProps={cancelProps} />
+              </div>
 
-        return (
-          <div
-            key={gathering.gatheringId}
-            className="relative rounded-lg overflow-hidden mb-[50px]"
-          >
-            <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
+              {challenges && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ChallengeSection
+                    challenges={challenges}
+                    gathering={gathering}
+                    isOpen={isOpen}
+                    onToggle={(e) => handleToggleChallenge(gathering.gatheringId, e)}
+                  />
+                </div>
+              )}
 
-            <MainCard
-              gathering={{
-                ...gathering,
-                gatheringMainType: gathering.gatheringMainType,
-                gatheringSubType: gathering.gatheringSubType,
-                gatheringSi: gathering.gatheringSi,
-                gatheringGu: gathering.gatheringGu,
-                captainStatus: gathering.captainStatus,
-                isReservationCancellable: gathering.isReservationCancellable
-              }}
-              state={{
-                ...state,
-                gatheringJoinedFivePeopleImages: state.gatheringJoinedFivePeopleImages || [],
-                gatheringAverageRating: state.gatheringAverageRating,
-                gatheringGuestbookCount: state.gatheringGuestbookCount,
-                gatheringMaxPeopleCount: state.gatheringMaxPeopleCount,
-                gatheringMinPeopleCount: state.gatheringMinPeopleCount
-              }}
-              {...cancelProps}
-            />
-
-            {challenges && (
-              <ChallengeSection
-                challenges={{
-                  inProgressChallenges: challenges.inProgressChallenges || [],
-                  doneChallenges: challenges.doneChallenges || []
-                }}
-                gathering={gathering}
-                isOpen={isOpen}
-                onToggle={() => handleToggleChallenge(gathering.gatheringId)}
-              />
-            )}
-
-            <CanceledGathering
-              type="gathering"
-              gatheringStartDate={gathering.gatheringStartDate}
-              gatheringJoinedPeopleCount={state.gatheringJoinedPeopleCount}
-              isReservationCancellable={gathering.isReservationCancellable || false}
-              onOverlay={() => {
-                setOpenChallenges(prev => ({
-                  ...prev,
-                  [gathering.gatheringId]: false
-                }));
-              }}
-            />
-          </div>
-        );
-      })}
-    </div>
+              {gathering.status === '취소됨' && (
+                <CanceledGathering
+                  type="gathering"
+                  gatheringStartDate={gathering.startDate}
+                  gatheringJoinedPeopleCount={gathering.participantCount}
+                  isReservationCancellable={true}
+                  onOverlay={() => {
+                    setOpenChallenges((prev) => ({
+                      ...prev,
+                      [gathering.gatheringId]: false,
+                    }));
+                  }}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <Pagination
+        page={page}
+        setPage={setPage}
+        totalNumber={gatherings.length}
+        countPerPage={countPerPage}
+      />
+    </>
   );
 }
