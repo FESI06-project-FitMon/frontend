@@ -73,17 +73,17 @@ export function useGatheringChallenges(gatheringsData: PageResponse<GatheringLis
     queryKey: [...GATHERING_KEYS.challenges(), isCaptain],
     queryFn: async () => {
       if (!gatheringsData?.content) return {};
-      
-      const challengesMap: Record<number, { 
+
+      const challengesMap: Record<number, {
         inProgressChallenges: ChallengeType[];
-        doneChallenges: ChallengeType[]; 
+        doneChallenges: ChallengeType[];
       }> = {};
- 
+
       await Promise.all(
         gatheringsData.content.map(async ({ gatheringId }) => {
           const inProgressResponse = await gatheringService.getChallenges(gatheringId, 'IN_PROGRESS');
           const closedResponse = await gatheringService.getChallenges(gatheringId, 'CLOSED');
- 
+
           // 내가 참여한 모임일 경우 참여한 챌린지만 필터링
           if (!isCaptain) {
             challengesMap[gatheringId] = {
@@ -102,4 +102,4 @@ export function useGatheringChallenges(gatheringsData: PageResponse<GatheringLis
     },
     enabled: !!gatheringsData?.content
   });
- }
+}

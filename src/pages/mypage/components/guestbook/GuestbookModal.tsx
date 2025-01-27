@@ -5,7 +5,6 @@ import Heart from '@/components/common/Heart';
 import ModalInput from '@/components/common/ModalInput';
 import { GuestbookItem } from '@/types';
 import { useCreateGuestbook, useUpdateGuestbook } from '@/pages/mypage/service/myGuestbooks';
-import Preparing from '@/components/common/Preparing';
 
 
 interface GuestbookModalProps {
@@ -114,10 +113,6 @@ export default function GuestbookModal({
             />
           </div>
         </form>
-        {/* Preparing 컴포넌트를 absolute로 배치 */}
-        <div className="absolute inset-0 z-[9999] pointer-events-none">
-          <Preparing isVisible={true} message="api 준비 중인 서비스입니다..." />
-        </div>
       </div>
     </Modal>
   );
