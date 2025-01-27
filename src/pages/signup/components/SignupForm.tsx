@@ -90,7 +90,7 @@ export default function SignupForm() {
       onSubmit={handleSignupSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField<SignupFields>
+      <FormField
         label="닉네임"
         type="text"
         name="nickName"
@@ -103,7 +103,7 @@ export default function SignupForm() {
         hasError={signupFormError.nickName}
         errorMessage="닉네임은 2자 이상 10자 이하로 입력해주세요."
       />
-      <FormField<SignupFields>
+      <FormField
         label="이메일"
         type="text"
         name="email"
@@ -116,7 +116,7 @@ export default function SignupForm() {
         hasError={signupFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
-      <FormField<SignupFields>
+      <FormField
         label="비밀번호"
         type="password"
         name="password"
@@ -129,7 +129,7 @@ export default function SignupForm() {
         hasError={signupFormError.password}
         errorMessage="비밀번호는 최소 8자 이상이어야 합니다."
       />
-      <FormField<SignupFields>
+      <FormField
         label="비밀번호 확인"
         type="password"
         name="passwordCheck"
