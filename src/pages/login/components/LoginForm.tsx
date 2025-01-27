@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import Button from '@/components/common/Button';
-import postLogin, {
-  postLoginProps,
-  postLoginResponse,
-} from './service/postLogin';
+import { useLoginMutation } from './service/postLogin';
 import router from 'next/router';
 import FormField from '@/pages/signup/components/FormField';
-import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
 import FormRedirect from '@/pages/signup/components/FormRedirect';
@@ -35,31 +31,7 @@ export default function LoginForm() {
   });
 
   // 로그인 요청 Mutation 함수
-  const useLoginMutation = useMutation<
-    postLoginResponse,
-    Error,
-    postLoginProps,
-    unknown
-  >({
-    mutationFn: postLogin,
-    onSuccess: (data: postLoginResponse) => {
-      if (data.email) {
-        setConfirmAlert({
-          message: '로그인에 성공했습니다.',
-          show: true,
-        });
-      }
-    },
-    onError: (error: Error) => {
-      console.log(error);
-      if (error.message === 'Request failed with status code 401') {
-        setConfirmAlert({
-          message: '이메일 또는 비밀번호가 일치하지 않습니다.',
-          show: true,
-        });
-      }
-    },
-  });
+  const { mutate: loginMutation } = useLoginMutation({ setConfirmAlert });
 
   // 로그인 요청
   const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,7 +39,7 @@ export default function LoginForm() {
 
     const isValid = Object.values(loginFormError).every((error) => !error);
     if (isValid) {
-      useLoginMutation.mutate({
+      loginMutation({
         email: loginForm.email.trim(),
         password: loginForm.password.trim(),
       });
@@ -99,7 +71,7 @@ export default function LoginForm() {
     >
       <FormField
         label="이메일"
-        type="text"
+        type="email"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
