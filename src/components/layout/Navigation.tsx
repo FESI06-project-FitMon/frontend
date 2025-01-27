@@ -99,7 +99,7 @@ export default function Navigation() {
             </div>
             <Link
               href="/"
-              className="text-primary font-bold text-2xl pl-[24px] md:pl-0"
+              className="text-primary font-bold text-2xl pl-6 md:pl-0"
             >
               FitMon
             </Link>
