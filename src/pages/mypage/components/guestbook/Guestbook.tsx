@@ -8,7 +8,7 @@ import useToastStore from '@/stores/useToastStore';
 import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGuestbooks } from '@/pages/mypage/service/myGuestbooks';
 import { useParticipatingGatherings } from '../../service/myGathering';
 
-export default function GuestbookTab() {
+export default function Guestbook() {
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     isEditMode: boolean;

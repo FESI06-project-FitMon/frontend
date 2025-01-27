@@ -1,14 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import {
-  hostedGatherings, // 호스트로 참여한 모임 데이터
-  userGatherings // 유저로 참여한 모임 데이터
-} from '@/pages/mypage/constants/constants';
-import Preparing from '@/components/common/Preparing';
+import { useCalendarGatherings } from '../../service/useCalendar';
 
 export default function CalendarTab() {
+  const { data: calendarData } = useCalendarGatherings();
+
   // FullCalendar 컴포넌트의 레퍼런스를 저장하기 위한 useRef
   const calendarRef = useRef<FullCalendar | null>(null);
 
@@ -61,39 +59,21 @@ export default function CalendarTab() {
   };
 
   // 호스트 및 유저 모임 데이터를 이벤트 형식으로 병합
-  const events = [
-    ...hostedGatherings.map((gathering) => ({
-      gatheringId: gathering.gatheringId,
-      gatheringTitle: gathering.gatheringTitle,
-      startDate: gathering.gatheringStartDate,
-      endDate: gathering.gatheringEndDate,
-      isHost: true, // 호스트 여부
-      gatheringMainType: gathering.gatheringMainType, // 모임 타입
-    })),
-    ...userGatherings.map((gathering) => ({
-      gatheringId: gathering.gatheringId,
-      gatheringTitle: gathering.gatheringTitle,
-      startDate: gathering.gatheringStartDate,
-      endDate: gathering.gatheringEndDate,
-      isHost: false, // 유저 참여 여부
-      gatheringMainType: gathering.gatheringMainType, // 모임 타입
-    })),
-  ];
+  const events = useMemo(() => 
+    calendarData?.content?.map(gathering => ({
+      id: gathering.gatheringId.toString(),
+      start: gathering.startDate,
+      end: gathering.endDate,
+      title: gathering.title,
+      backgroundColor: getEventColor(gathering.mainType),
+      borderColor: getEventColor(gathering.mainType),
+      textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
+      extendedProps: {
+        isHost: gathering.captainStatus,
+        type: gathering.mainType
+      }
+    })) ?? [], [calendarData]);
 
-  // FullCalendar에 사용할 이벤트 데이터 생성
-  const calendarEvents = events.map(event => ({
-    id: event.gatheringId.toString(), // 이벤트 ID
-    start: new Date(event.startDate).toISOString(), // 이벤트 시작 날짜
-    end: new Date(event.endDate).toISOString(), // 이벤트 종료 날짜
-    title: event.gatheringTitle, // 이벤트 제목
-    backgroundColor: getEventColor(event.gatheringMainType), // 배경 색상
-    borderColor: getEventColor(event.gatheringMainType), // 테두리 색상
-    textColor: event.gatheringMainType === '유산소형' ? '#000000' : '#FFFFFF', // 텍스트 색상
-    extendedProps: { // 추가 속성
-      isHost: event.isHost, // 호스트 여부
-      type: event.gatheringMainType, // 모임 타입
-    }
-  }));
 
   return (
     <div className="space-y-6 pb-[50px]">
@@ -117,7 +97,7 @@ export default function CalendarTab() {
             ref={calendarRef} // FullCalendar 레퍼런스 설정
             plugins={[dayGridPlugin]} // FullCalendar 플러그인 (dayGrid 사용)
             initialView="dayGridMonth" // 기본 뷰 설정 (월별 보기)
-            events={calendarEvents} // 캘린더 이벤트 데이터
+            events={events} // 캘린더 이벤트 데이터
             locale="en" // 언어 설정
             height="auto" // 높이 자동 설정
             editable={false} // 이벤트 수정 불가능
@@ -178,7 +158,22 @@ export default function CalendarTab() {
           background-color: transparent;
           min-height: 64px;
         }
-
+/* 이벤트 높이 조절 */
+  .fc-daygrid-event {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 1px 0 !important;
+  }
+  
+  .fc-daygrid-dot-event:hover {
+    background: transparent !important;
+  }
+  
+  .fc .fc-daygrid-day-events {
+    margin-top: 1px !important;
+  }
+        
         .fc-daygrid-day.fc-day-today {
           background-color: rgba(255, 33, 64) !important; // 오늘 날짜 배경색
         }
