@@ -104,19 +104,50 @@ export default function CalendarTab() {
             selectable={false} // 날짜 선택 불가능
             headerToolbar={false} // 기본 헤더 비활성화
             eventContent={({ event }) => (
-              // 이벤트 커스터마이즈 렌더링
-              <div className="flex items-center justify-center gap-1 px-1 py-0.5 rounded text-[0.5rem] md:text-xs" style={{ color: event.textColor }}>
-                {event.extendedProps.isHost && (
-                  <Image
-                    src="/assets/image/crown.svg"
-                    alt="host"
-                    width={12}
-                    height={12}
-                  />
-                )}
-                <span>{event.title}</span>
+              <div
+                className="event-container flex items-center justify-between"
+              >
+                {/* 왼쪽 선 */}
+                <div
+                  style={{
+                    width: '45%',
+                    height: '2px',
+                    backgroundColor: event.backgroundColor,
+                  }}
+                ></div>
+            
+                {/* 텍스트와 호스트 이미지 */}
+                <div
+                  className="flex items-center justify-center gap-1"
+                  style={{
+                    fontSize: '0.75rem', // 텍스트 크기
+                    fontWeight: 'bold', // 텍스트 굵기
+                    color: event.textColor || '#FFFFFF',
+                  }}
+                >
+                  {event.extendedProps.isHost && (
+                    <Image
+                      src="/assets/image/crown.svg"
+                      alt="Host"
+                      width={12}
+                      height={12}
+                      style={{ marginRight: '4px' }}
+                    />
+                  )}
+                  <span>{event.title}</span>
+                </div>
+            
+                {/* 오른쪽 선 */}
+                <div
+                  style={{
+                    width: '45%',
+                    height: '2px',
+                    backgroundColor: event.backgroundColor,
+                  }}
+                ></div>
               </div>
             )}
+            
             dayHeaderClassNames="bg-dark-300 text-white text-base font-medium py-4" // 날짜 헤더 스타일
             dayHeaderContent={({ date }) => (
               <span className="flex justify-center">
@@ -158,22 +189,26 @@ export default function CalendarTab() {
           background-color: transparent;
           min-height: 64px;
         }
-/* 이벤트 높이 조절 */
-  .fc-daygrid-event {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 1px 0 !important;
-  }
-  
-  .fc-daygrid-dot-event:hover {
-    background: transparent !important;
-  }
-  
-  .fc .fc-daygrid-day-events {
-    margin-top: 1px !important;
-  }
+         /* 이벤트 높이 조절 */  
+        .fc-daygrid-event {
+          background: transparent !important;
+          border: none !important;
+        }
         
+        .fc-daygrid-event .event-container {
+          min-height: 18px;
+        }
+        
+        .fc .fc-daygrid-day-events {
+          margin-top: 4px !important;
+        }
+
+        .fc-event-title {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+              
         .fc-daygrid-day.fc-day-today {
           background-color: rgba(255, 33, 64) !important; // 오늘 날짜 배경색
         }
