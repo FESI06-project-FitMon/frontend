@@ -1,6 +1,6 @@
 import Button from '@/components/common/Button';
 import { useState } from 'react';
-import { useSignupMutation } from '@/pages/signup/components/service/postSignup';
+import { useSignupMutation } from '@/pages/signup/service/postSignup';
 import router from 'next/router';
 import FormField from './FormField';
 import Alert from '@/components/dialog/Alert';

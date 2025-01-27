@@ -6,10 +6,10 @@ import useLayoutStore from '@/stores/useLayoutStore';
 import UserProfile from './UserProfile';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import getMe from '@/pages/login/components/service/getMe';
+import getMe from '@/pages/login/service/getMe';
 import Alert from '../dialog/Alert';
 import Loading from '../dialog/Loading';
-import { useLogoutMutation } from '@/pages/login/components/service/postLogout';
+import { useLogoutMutation } from '@/pages/login/service/postLogout';
 
 export default function Navigation() {
   const router = useRouter();

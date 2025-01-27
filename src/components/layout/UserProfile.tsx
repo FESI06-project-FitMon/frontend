@@ -1,4 +1,4 @@
-import { useLogoutMutation } from '@/pages/login/components/service/postLogout';
+import { useLogoutMutation } from '@/pages/login/service/postLogout';
 import Popover from '../common/Popover';
 import router from 'next/router';
 
