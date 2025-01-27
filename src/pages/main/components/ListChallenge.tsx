@@ -1,4 +1,4 @@
-import { useChallengeListQuery } from '@/pages/main/api/useChallengeListQuery';
+import { useChallengeListQuery } from '@/pages/main/service/challengeService'; // Service에서 가져오기
 import Loading from '@/components/dialog/Loading';
 import Null from '@/components/common/Null';
 import ChallengeCard from './ChallengeCard';
