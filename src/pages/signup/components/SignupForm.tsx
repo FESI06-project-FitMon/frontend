@@ -1,12 +1,8 @@
 import Button from '@/components/common/Button';
 import { useState } from 'react';
-import postSignup, {
-  postSignupProps,
-  postSignupResponse,
-} from '@/pages/signup/components/service/postSignup';
+import { useSignupMutation } from '@/pages/signup/service/postSignup';
 import router from 'next/router';
 import FormField from './FormField';
-import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import FormRedirect from './FormRedirect';
 
@@ -36,30 +32,13 @@ export default function SignupForm() {
   });
 
   // 회원가입 성공, 실패 메시지 및 표시
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-
-  // 회원가입 요청
-  const useSignupMutation = useMutation<
-    postSignupResponse,
-    Error,
-    postSignupProps
-  >({
-    mutationFn: postSignup,
-    onSuccess: (data: postSignupResponse) => {
-      if (data.message === '사용자 생성 성공') {
-        setAlertMessage('회원가입이 완료되었습니다.');
-        setShowConfirmAlert(true);
-      }
-    },
-    onError: (error: Error) => {
-      if (error.message === 'Request failed with status code 400') {
-        // console.log('이미 존재하는 이메일입니다.');
-        setShowConfirmAlert(true);
-        setAlertMessage('이미 존재하는 이메일입니다.');
-      }
-    },
+  const [confirmAlert, setConfirmAlert] = useState({
+    message: '',
+    show: false,
   });
+
+  // 회원가입 요청 Mutation 함수
+  const { mutate: signupMutation } = useSignupMutation({ setConfirmAlert });
 
   // 회원가입 요청
   const handleSignupSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,7 +46,7 @@ export default function SignupForm() {
 
     const isValid = Object.values(signupFormError).every((error) => !error);
     if (isValid) {
-      useSignupMutation.mutate({
+      signupMutation({
         email: signupForm.email,
         nickName: signupForm.nickName,
         password: signupForm.password,
@@ -77,11 +56,17 @@ export default function SignupForm() {
 
   // 회원가입 성공 여부 표시
   const handleConfirm = () => {
-    if (alertMessage === '회원가입이 완료되었습니다.') {
-      setShowConfirmAlert(false);
+    if (confirmAlert.message === '회원가입이 완료되었습니다.') {
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
       router.push('/login');
     } else {
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
     }
   };
 
@@ -90,9 +75,8 @@ export default function SignupForm() {
       onSubmit={handleSignupSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField<SignupFields>
+      <FormField
         label="닉네임"
-        type="text"
         name="nickName"
         value={signupForm.nickName}
         placeholder="닉네임을 입력해주세요"
@@ -103,9 +87,9 @@ export default function SignupForm() {
         hasError={signupFormError.nickName}
         errorMessage="닉네임은 2자 이상 10자 이하로 입력해주세요."
       />
-      <FormField<SignupFields>
+      <FormField
         label="이메일"
-        type="text"
+        type="email"
         name="email"
         value={signupForm.email}
         placeholder="이메일을 입력해주세요"
@@ -116,7 +100,7 @@ export default function SignupForm() {
         hasError={signupFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
-      <FormField<SignupFields>
+      <FormField
         label="비밀번호"
         type="password"
         name="password"
@@ -129,7 +113,7 @@ export default function SignupForm() {
         hasError={signupFormError.password}
         errorMessage="비밀번호는 최소 8자 이상이어야 합니다."
       />
-      <FormField<SignupFields>
+      <FormField
         label="비밀번호 확인"
         type="password"
         name="passwordCheck"
@@ -145,9 +129,9 @@ export default function SignupForm() {
       <Button type="submit" name="회원가입" className="h-16 mt-3" />
       <FormRedirect currentPage="signup" />
       <Alert
-        isOpen={showConfirmAlert}
+        isOpen={confirmAlert.show}
         type="confirm"
-        message={alertMessage}
+        message={confirmAlert.message}
         onConfirm={handleConfirm}
       />
     </form>
