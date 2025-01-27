@@ -22,7 +22,7 @@ export default function ChallengeSection({
   const handleChallengeClick = (challengeId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     router.push(`/detail/${gathering.gatheringId}`);
-   };
+  };
 
   if (!gathering) {
     console.error('No gathering provided to ChallengeSection');
@@ -147,7 +147,9 @@ export default function ChallengeSection({
               );
             })
           ) : (
-            <Null message="참여중인 챌린지가 없습니다." />
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-center">
+              <Null message="참여중인 챌린지가 없습니다." />
+            </div>
           )}
         </div>
       )}
