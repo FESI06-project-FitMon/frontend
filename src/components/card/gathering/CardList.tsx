@@ -1,8 +1,8 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import React from 'react';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
 import Card from './Card';
-import { useGatheringListQuery } from '@/pages/main/api/fetchGatheringList';
+import { useGatheringListQuery } from '@/pages/main/service/gatheringService';
 import { MainType } from '@/constants/MainList';
 import Image from 'next/image';
 
@@ -12,12 +12,7 @@ interface CardListProps {
 }
 
 export default function CardList({ mainType, subType }: CardListProps) {
-  const { queryKey, queryFn, getNextPageParam } = useGatheringListQuery(
-    mainType,
-    subType,
-    6,
-  );
-
+  // React Query 훅 사용
   const {
     data,
     fetchNextPage,
@@ -25,19 +20,16 @@ export default function CardList({ mainType, subType }: CardListProps) {
     isFetchingNextPage,
     isLoading,
     error,
-  } = useInfiniteQuery({
-    queryKey,
-    queryFn,
-    getNextPageParam,
-    initialPageParam: 0,
-  });
+  } = useGatheringListQuery(mainType, subType, 6);
 
+  // 무한 스크롤 설정
   const observerRef = useInfiniteScroll({
     onIntersect: fetchNextPage,
     isLoading: isFetchingNextPage,
     hasNextPage: !!hasNextPage,
   });
 
+  // 로딩 상태 처리
   if (isLoading) {
     return (
       <Null
@@ -53,14 +45,17 @@ export default function CardList({ mainType, subType }: CardListProps) {
     );
   }
 
+  // 에러 처리
   if (error) {
     return <Null message="데이터를 불러오는 중 오류가 발생했습니다." />;
   }
 
+  // 데이터 없을 때 처리
   if (data?.pages.every((page) => page.content.length === 0)) {
     return <Null message="모임 정보가 없습니다." />;
   }
 
+  // 데이터 렌더링
   return (
     <>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">

@@ -20,7 +20,7 @@ import CreateGathering from './main/components/CreateGatheringModal';
 import useMemberStore from '@/stores/useMemberStore';
 import Alert from '@/components/dialog/Alert';
 import { useRouter } from 'next/router';
-import { prefetchGatheringList } from './main/api/fetchGatheringList';
+import { prefetchGatheringList } from '@/pages/main/service/gatheringService';
 
 interface HomeProps {
   dehydratedState: DehydratedState;
