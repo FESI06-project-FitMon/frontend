@@ -10,7 +10,9 @@ export const isStepValid = (
       formData.title.trim() !== '' &&
       formData.description.trim() !== '' &&
       formData.startDate !== null &&
-      formData.endDate !== null,
+      formData.endDate !== null &&
+      formData.mainLocation !== '' &&
+      formData.subLocation !== '',
     2: () => {
       const challenge = formData.challenges[0];
       return (
