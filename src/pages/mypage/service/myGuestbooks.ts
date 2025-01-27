@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { guestbookService } from '@/pages/mypage/api/guestbookService';
 import { useGatheringChallenges, useParticipatingGatherings } from './myGathering';
-import { GuestbookItem, GuestbookRequest } from '@/types';
+import { GuestbookRequest } from '@/types';
 
 export const GUESTBOOK_KEYS = {
   all: ['guestbooks'] as const,

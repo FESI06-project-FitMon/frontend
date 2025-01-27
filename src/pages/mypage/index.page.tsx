@@ -41,14 +41,6 @@ export default function MyPage() {
     setIsInitialized(true);
   }, [router, setIsLogin]);
 
-  const handleGatheringClick = (gatheringId: number) => {
-    console.log('모임 클릭:', gatheringId);
-  };
-
-  const handleCancelParticipation = async (gatheringId: number) => {
-    console.log('참여 취소:', gatheringId);
-  };
-
   if (!isInitialized) return null;
 
   const renderContent = () => {

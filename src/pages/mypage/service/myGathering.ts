@@ -34,6 +34,7 @@ export function useCancelParticipation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GATHERING_KEYS.participants() });
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('참여 취소 실패:', error.message || error);
       alert('참여 취소에 실패했습니다. 다시 시도해주세요.');
@@ -61,6 +62,7 @@ export function useCancelGathering() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GATHERING_KEYS.hosted() });
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('모임 취소 실패:', error);
       alert('모임 취소에 실패했습니다. 다시 시도해주세요.');

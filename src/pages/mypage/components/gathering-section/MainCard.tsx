@@ -27,7 +27,7 @@ export default function MainCard({
     return null;
   }
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // API 호출 상태 관리
+  const [, setIsLoading] = useState(false); // API 호출 상태 관리
   const showToast = useToastStore((state) => state.show);
 
 

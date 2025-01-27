@@ -4,7 +4,6 @@ import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import ModalInput from '@/components/common/ModalInput';
 import { GuestbookItem } from '@/types';
-import { useCreateGuestbook, useUpdateGuestbook } from '@/pages/mypage/service/myGuestbooks';
 
 
 interface GuestbookModalProps {
