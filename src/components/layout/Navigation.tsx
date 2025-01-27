@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import getMe from '@/pages/login/components/service/getMe';
 import Alert from '../dialog/Alert';
 import Loading from '../dialog/Loading';
+import { useLogoutMutation } from '@/pages/login/components/service/postLogout';
 
 export default function Navigation() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function Navigation() {
 
   // 에러 발생 시 Alert 표시 및 닫기
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const { mutate: logoutMutation } = useLogoutMutation();
 
   // 현재 로그인 정보 가져오는 useQuery
   const { isLoading, isError, data } = useQuery({
@@ -52,8 +54,6 @@ export default function Navigation() {
   // 에러 발생 시 로그아웃 처리
   useEffect(() => {
     if (isError) {
-      localStorage.setItem('isLogin', 'false');
-      setIsLogin(false); // 에러가 발생하면 로그인 상태 초기화
       setShowConfirmAlert(true);
     }
   }, [isError]);
@@ -67,7 +67,7 @@ export default function Navigation() {
         message="오류가 발생했습니다. 다시 로그인해주세요."
         onConfirm={() => {
           setShowConfirmAlert(false);
-          router.push('/login');
+          logoutMutation();
         }}
       />
     );
