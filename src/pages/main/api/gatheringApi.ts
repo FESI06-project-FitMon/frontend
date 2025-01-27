@@ -1,5 +1,5 @@
 import apiRequest from '@/utils/apiRequest';
-import { GatheringList } from '@/types';
+import { GatheringList, CreateGatheringForm } from '@/types';
 
 // API 호출 함수
 export const fetchGatheringList = async (
@@ -10,7 +10,7 @@ export const fetchGatheringList = async (
 ): Promise<GatheringList> => {
   const apiEndpoint = '/api/v1/gatherings';
   const queryParams = {
-    sortBy: 'deadline',
+    sortBy: 'participants',
     sortDirection: 'ASC',
     page: String(pageParam),
     pageSize: String(pageSize),
@@ -20,4 +20,12 @@ export const fetchGatheringList = async (
 
   const paramWithPage = `${apiEndpoint}?${new URLSearchParams(queryParams).toString()}`;
   return await apiRequest<GatheringList>({ param: paramWithPage });
+};
+
+export const postGathering = async (formData: CreateGatheringForm) => {
+  return await apiRequest<CreateGatheringForm>({
+    param: '/api/v1/gatherings',
+    method: 'post',
+    requestData: formData,
+  });
 };
