@@ -21,7 +21,6 @@ export default function JoinGathering() {
   return (
     <GatheringList
       gatherings={gatheringsData.content}
-      gatheringStates={gatheringsData.content}
       gatheringChallenges={{}} // 챌린지 데이터가 필요한 경우 처리
       emptyMessage="참여한 모임이 없습니다."
       onCancelAction={cancelParticipation}

@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gatheringService } from '@/pages/mypage/api/gatheringService';
-import { PageResponse, GatheringListItem } from '@/types';
+import { PageResponse, GatheringListItem, ChallengeType } from '@/types';
 
 export const GATHERING_KEYS = {
   participants: () => ['gatherings', 'participants'] as const,
   hosted: () => ['gatherings', 'hosted'] as const,
-  challenges: (gatheringId: number) => [...GATHERING_KEYS.participants(), gatheringId, 'challenges'] as const,
+  challenges: () => ['gatherings', 'challenges'] as const  // gatheringId 제거
 };
 
 export function useParticipatingGatherings(page = 0) {
@@ -67,3 +67,35 @@ export function useCancelGathering() {
     },
   });
 }
+
+export function useGatheringChallenges(hostedGatheringsData: PageResponse<GatheringListItem> | undefined) {
+  return useQuery({
+    queryKey: GATHERING_KEYS.challenges(),
+    queryFn: async () => {
+      if (!hostedGatheringsData?.content) {
+        return {};
+      }
+      
+      const challengesMap: Record<number, { 
+        inProgressChallenges: ChallengeType[];
+        doneChallenges: ChallengeType[];
+      }> = {};
+ 
+      await Promise.all(
+        hostedGatheringsData.content.map(async ({ gatheringId }) => {
+          const inProgressResponse = await gatheringService.getChallenges(gatheringId, 'IN_PROGRESS');
+          const closedResponse = await gatheringService.getChallenges(gatheringId, 'CLOSED'); 
+ 
+          challengesMap[gatheringId] = {
+            inProgressChallenges: inProgressResponse.content,
+            doneChallenges: closedResponse.content
+          };
+        })
+      );
+      return challengesMap;
+    },
+    enabled: !!hostedGatheringsData?.content,
+    staleTime: 0,
+    refetchOnWindowFocus: true
+  });
+ }

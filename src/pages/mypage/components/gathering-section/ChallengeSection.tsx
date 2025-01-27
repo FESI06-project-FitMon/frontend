@@ -2,12 +2,13 @@ import Image from 'next/image';
 import { ChallengeType, GatheringChallengeType, GatheringListItem } from '@/types';
 import Null from '@/components/common/Null';
 import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
+import { useRouter } from 'next/router';
 
 interface ChallengeSectionProps {
   challenges: GatheringChallengeType;
   gathering: GatheringListItem;
   isOpen: boolean;
-  onToggle: () => void;
+  onToggle: (e: React.MouseEvent) => void;  // 타입 수정
 }
 
 export default function ChallengeSection({
@@ -16,7 +17,12 @@ export default function ChallengeSection({
   isOpen,
   onToggle,
 }: ChallengeSectionProps) {
-  console.log('ChallengeSection rendering:', { challenges, gathering, isOpen });
+  const router = useRouter();
+
+  const handleChallengeClick = (challengeId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/detail/${gathering.gatheringId}`);
+   };
 
   if (!gathering) {
     console.error('No gathering provided to ChallengeSection');
@@ -48,16 +54,14 @@ export default function ChallengeSection({
     <>
       {/* 챌린지 헤더 */}
       <div
-        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${
-          isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
-        }`}
+        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
+          }`}
         onClick={onToggle}
       >
         <span className="flex items-center gap-2 text-sm md:text-base font-semibold">
           <div
-            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${
-              isOpen ? 'rotate-90' : ''
-            }`}
+            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${isOpen ? 'rotate-90' : ''
+              }`}
           >
             <Image
               src="/assets/image/toggle.svg"
@@ -80,7 +84,8 @@ export default function ChallengeSection({
               return (
                 <div
                   key={challenge.challengeId}
-                  className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg"
+                  className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer"
+                  onClick={(e) => handleChallengeClick(challenge.challengeId, e)}
                 >
                   <div className="flex items-start gap-[17px]">
                     {/* 챌린지 이미지 */}

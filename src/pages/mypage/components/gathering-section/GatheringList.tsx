@@ -8,7 +8,6 @@ import { GatheringListItem, ChallengeType } from '@/types';
 
 interface GatheringListProps {
   gatherings: GatheringListItem[];
-  gatheringStates: GatheringListItem[];
   gatheringChallenges: { [key: number]: { inProgressChallenges: ChallengeType[]; doneChallenges: ChallengeType[] } };
   emptyMessage: string;
   onCancelAction?: (gatheringId: number) => void;
@@ -25,8 +24,8 @@ export default function GatheringList({
   const [openChallenges, setOpenChallenges] = useState<{ [key: number]: boolean }>({});
   const router = useRouter(); // useRouter 추가
 
-  const handleToggleChallenge = (gatheringId: number) => {
-    console.log(`Toggling challenges for gatheringId: ${gatheringId}`);
+  const handleToggleChallenge = (gatheringId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
     setOpenChallenges((prev) => ({
       ...prev,
       [gatheringId]: !prev[gatheringId],
@@ -37,33 +36,24 @@ export default function GatheringList({
     const target = event.target as HTMLElement;
     // 참여 취소 버튼 클릭 시 리다이렉션 방지
     if (target.tagName === 'BUTTON' || target.closest('button')) {
-      console.log(`Button clicked inside card of gatheringId: ${gatheringId}, preventing redirection.`);
       return;
     }
-    console.log(`Navigating to details page for gatheringId: ${gatheringId}`);
     router.push(`/detail/${gatheringId}`); // 상세 페이지로 이동
   };
 
   if (!gatherings || gatherings.length === 0) {
-    console.log('No gatherings available:', gatherings);
     return <Null message={emptyMessage} />;
   }
 
-  console.log('Gatherings data received:', gatherings);
 
   return (
     <div className="space-y-6 pb-[50px]">
       {gatherings.map((gathering) => {
         if (!gathering.gatheringId) {
-          console.error('Invalid gathering object:', gathering);
           return null;
         }
-
         const challenges = gatheringChallenges[gathering.gatheringId] || null;
         const isOpen = openChallenges[gathering.gatheringId];
-
-        console.log('Rendering gathering:', gathering);
-        console.log(`Challenges for gatheringId ${gathering.gatheringId}:`, challenges);
 
         const cancelProps =
           cancelActionType === 'gathering'
@@ -80,13 +70,15 @@ export default function GatheringList({
 
             {/* 챌린지 섹션 렌더링 조건 */}
             {challenges && (
-              <ChallengeSection
-                challenges={challenges}
-                gathering={gathering}
-                isOpen={isOpen}
-                onToggle={() => handleToggleChallenge(gathering.gatheringId)}
-              />
-            )}
+             <div onClick={(e) => e.stopPropagation()}>
+               <ChallengeSection
+                 challenges={challenges}
+                 gathering={gathering}
+                 isOpen={isOpen}
+                 onToggle={(e) => handleToggleChallenge(gathering.gatheringId, e)}
+               />
+             </div>
+           )}
 
             {/* 취소된 모임 처리 */}
             {gathering.status === '취소됨' && (
