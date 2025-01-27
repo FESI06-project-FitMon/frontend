@@ -6,6 +6,7 @@ import WrittenGuestbooks from '../guestbook/WrittenGuestbooks';
 import AvailableGuestbooks from '../guestbook/AvailableGuestbooks';
 import useToastStore from '@/stores/useToastStore';
 import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGuestbooks } from '@/pages/mypage/service/myGuestbooks';
+import { useParticipatingGatherings } from '../../service/myGathering';
 
 export default function GuestbookTab() {
   const [modalState, setModalState] = useState<{
@@ -16,6 +17,7 @@ export default function GuestbookTab() {
   }>({ isOpen: false, isEditMode: false });
 
   const showToast = useToastStore((state) => state.show);
+  const { data: participatingGatherings = { content: [] } } = useParticipatingGatherings();
   const { data: availableGuestbooks = [] } = useAvailableGuestbooks();
   const { data: guestbooksData = { content: [] } } = useGuestbooks();
   const [showWritten, setShowWritten] = useState(false);
@@ -79,7 +81,7 @@ export default function GuestbookTab() {
       {showWritten ? (
         <WrittenGuestbooks
           guestbooks={guestbooksData.content}
-          gatherings={availableGuestbooks as GatheringListItem[]}
+          gatherings={participatingGatherings?.content ?? []}
           onEditClick={handleEditClick}
         />
       ) : (
@@ -91,8 +93,8 @@ export default function GuestbookTab() {
       {modalState.isOpen && (
         <GuestbookModal
           isEditMode={modalState.isEditMode}
-          gatheringId={modalState.gatheringId ?? 0}
-          initialData={modalState.guestbook || null}
+          gatheringId={modalState.isEditMode ? modalState.guestbook?.gatheringId : modalState.gatheringId}
+          initialData={modalState.guestbook}
           onSubmit={handleModalSubmit}
           onValidationFail={() => showToast('방명록 내용을 입력해주세요.', 'error')}
           onClose={() => setModalState({ isOpen: false, isEditMode: false })}

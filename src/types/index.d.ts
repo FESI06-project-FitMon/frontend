@@ -168,3 +168,8 @@ export interface PageResponse<T> {
   totalElements: number;
   totalPages: number;
 }
+
+interface GuestbookRequest {
+  rating: number;
+  content: string;
+}

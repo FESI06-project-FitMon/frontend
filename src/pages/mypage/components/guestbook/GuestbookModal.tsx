@@ -26,29 +26,17 @@ export default function GuestbookModal({
 }: GuestbookModalProps) {
   const [rating, setRating] = useState(initialData?.rating || 0);
   const [content, setContent] = useState(initialData?.content || '');
-  
-  const createGuestbookMutation = useCreateGuestbook();
-  const updateGuestbookMutation = useUpdateGuestbook();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('Form submission started with:', {
-      gatheringId,
-      content,
-      rating,
-      isEditMode,
-      initialData
-    });
-
     if (!content.trim()) {
-      console.log('Validation failed: empty content');
       onValidationFail();
       return;
     }
 
-    if (!gatheringId) {
-      console.error('Missing gatheringId');
+    if (!gatheringId || gatheringId === 0) {
+      console.error('Missing or invalid gatheringId:', gatheringId);
       return;
     }
 
@@ -57,33 +45,13 @@ export default function GuestbookModal({
         content: content.trim(),
         rating: Number(rating)
       };
-
-      console.log('Sending request with data:', requestData);
-
-      if (isEditMode && initialData) {
-        await updateGuestbookMutation.mutateAsync({
-          gatheringId,
-          guestbookId: initialData.reviewId,
-          data: requestData
-        });
-      } else {
-        await createGuestbookMutation.mutateAsync({
-          gatheringId,
-          data: requestData
-        });
-      }
-
-      console.log('Request successful');
-      onSubmit(requestData);
-    } catch (err) {
-      console.error('Error details:', {
-        error: err,
-        response: err instanceof Error ? err.message : 'Unknown error'
-      });
+      await onSubmit(requestData);
+    } catch (error) {
+      console.error('Submit error:', error);
       onValidationFail();
     }
   };
-
+  
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">

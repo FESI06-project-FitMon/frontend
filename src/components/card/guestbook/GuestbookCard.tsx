@@ -2,6 +2,7 @@
 import Heart from "@/components/common/Heart";
 import Popover from "@/components/common/Popover";
 import { GatheringListItem, GuestbookItem } from "@/types";
+import getDatePart from "@/utils/getDatePart";
 import Image from 'next/image';
 
 interface GuestbookCardProps {
@@ -72,7 +73,7 @@ export default function GuestbookCard({
               {gathering.title} | {gathering.mainLocation} {gathering.subLocation}
             </p>
             <p className="text-dark-700 font-medium">
-              {gathering.startDate} ~ {gathering.endDate}
+              {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
             </p>
           </div>
         )}
