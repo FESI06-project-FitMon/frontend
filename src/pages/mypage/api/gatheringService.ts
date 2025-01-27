@@ -19,23 +19,17 @@ export const gatheringService = {
     }
   },
   getMyHostedGatherings: async (page = 0): Promise<PageResponse<GatheringListItem>> => {
-    try {
-      const response = await apiRequest<PageResponse<GatheringListItem>>({
-        param: `api/v1/my-page/gatherings/captain?page=${page}&pageSize=10`,
-        method: 'get',
-      });
-  
-      console.log('API 응답 데이터:', response); // 응답 데이터 확인
-      if (!response?.content) {
-        throw new Error('응답 데이터가 잘못되었습니다.');
-      }
-      return response;
-    } catch (error) {
-      console.error('주최한 모임 조회 API 호출 실패:', error);
-      throw error;
+    console.log('Calling getMyHostedGatherings');
+    const response = await apiRequest<PageResponse<GatheringListItem>>({
+      param: `api/v1/my-page/gatherings/captain?page=${page}&pageSize=10`,
+      method: 'get',
+    });
+    console.log('API Response:', response);
+    if (!response || !response.content) {
+      throw new Error('Invalid response structure');
     }
+    return response;
   },
-
   // 모임 참여 취소
   cancelParticipation: async (gatheringId: number): Promise<void> => {
     try {
