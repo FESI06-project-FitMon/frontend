@@ -15,31 +15,35 @@ interface MainCardProps {
     onCancelParticipation?: (gatheringId: number) => void;
   };
 }
-
 export default function MainCard({
   gathering,
   cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
   console.log('MainCard rendering with gathering:', gathering);
 
-  if (!gathering) {
-    console.error('No gathering provided to MainCard');
-    return null;
-  }
+  // 훅 호출은 최상위에서
   const [showAlert, setShowAlert] = useState(false);
   const [, setIsLoading] = useState(false); // API 호출 상태 관리
   const showToast = useToastStore((state) => state.show);
 
+  if (!gathering) {
+    console.error('No gathering provided to MainCard');
+    return null;
+  }
 
-  const handleCancelClick = () => setShowAlert(true);
+  const handleCancelClick = () => {
+    setShowAlert(true);
+  };
 
   const handleCancelConfirm = async () => {
     setIsLoading(true); // 로딩 상태 시작
     try {
       if (gathering.captainStatus) {
-        await onCancelGathering?.(gathering.gatheringId); // 모임 취소 API 호출
+        // 모임 취소 API 호출
+        await onCancelGathering?.(gathering.gatheringId);
       } else {
-        await onCancelParticipation?.(gathering.gatheringId); // 참여 취소 API 호출
+        // 참여 취소 API 호출
+        await onCancelParticipation?.(gathering.gatheringId);
       }
       showToast('취소되었습니다.', 'check');
     } catch (error) {
