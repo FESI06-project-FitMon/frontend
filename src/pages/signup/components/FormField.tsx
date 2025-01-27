@@ -3,26 +3,30 @@ import useDebounce from '@/hooks/useDebounce';
 import formValidation from '@/utils/formValidation';
 import React, { useEffect } from 'react';
 
-interface FormFieldProps<T> {
+interface FormFieldProps<
+  T extends Record<string, string>,
+  E extends Record<string, boolean>,
+> {
   label: string;
-  type: 'text' | 'email' | 'password';
-  name: keyof T;
+  type?: 'text' | 'email' | 'password';
+  name: Extract<keyof T, string>;
   value: string;
   placeholder: string;
   form: T;
   setForm: React.Dispatch<React.SetStateAction<T>>;
-  formError: { [K in keyof T]: boolean };
-  setFormError: React.Dispatch<
-    React.SetStateAction<{ [K in keyof T]: boolean }>
-  >;
+  formError: E;
+  setFormError: React.Dispatch<React.SetStateAction<E>>;
   hasError: boolean;
   errorMessage: string;
 }
 
 // 회원가입, 로그인 input 컴포넌트
-export default function FormField<T extends object & { password: string }>({
+export default function FormField<
+  T extends Record<string, string>,
+  E extends Record<string, boolean>,
+>({
   label,
-  type,
+  type = 'text',
   name,
   value,
   placeholder,
@@ -32,7 +36,7 @@ export default function FormField<T extends object & { password: string }>({
   setFormError,
   hasError,
   errorMessage,
-}: FormFieldProps<T>) {
+}: FormFieldProps<T, E>) {
   // 입력 값 저장
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,12 +63,11 @@ export default function FormField<T extends object & { password: string }>({
   };
 
   // 포커스 후 1초 이상 입력 없으면 값 저장
-  const debouncedFormValue = useDebounce(form[name] as string, 1000);
+  const debouncedFormValue = useDebounce(form[name], 1000);
 
   // 포커스 후 1초 이상 입력 없으면 유효성 검사
   useEffect(() => {
     const formType = 'nickName' in form ? 'signup' : 'login';
-    if (typeof name !== 'string') return;
     setFormError((prev) => ({
       ...prev,
       [name]: formValidation({
@@ -81,7 +84,7 @@ export default function FormField<T extends object & { password: string }>({
       <p className="mb-2.5 text-[1rem]">{label}</p>
       <Input
         type={type}
-        name={name as string}
+        name={name}
         value={value}
         placeholder={placeholder}
         handleInputChange={handleInputChange}
