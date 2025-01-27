@@ -85,7 +85,7 @@ export default function LoginForm() {
       onSubmit={handleLoginSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField<LoginFields>
+      <FormField
         label="이메일"
         type="text"
         name="email"
@@ -99,7 +99,7 @@ export default function LoginForm() {
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
 
-      <FormField<LoginFields>
+      <FormField
         label="비밀번호"
         type="password"
         name="password"
