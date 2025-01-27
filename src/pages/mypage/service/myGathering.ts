@@ -68,34 +68,38 @@ export function useCancelGathering() {
   });
 }
 
-export function useGatheringChallenges(hostedGatheringsData: PageResponse<GatheringListItem> | undefined) {
+export function useGatheringChallenges(gatheringsData: PageResponse<GatheringListItem> | undefined, isCaptain: boolean = true) {
   return useQuery({
-    queryKey: GATHERING_KEYS.challenges(),
+    queryKey: [...GATHERING_KEYS.challenges(), isCaptain],
     queryFn: async () => {
-      if (!hostedGatheringsData?.content) {
-        return {};
-      }
+      if (!gatheringsData?.content) return {};
       
       const challengesMap: Record<number, { 
         inProgressChallenges: ChallengeType[];
-        doneChallenges: ChallengeType[];
+        doneChallenges: ChallengeType[]; 
       }> = {};
  
       await Promise.all(
-        hostedGatheringsData.content.map(async ({ gatheringId }) => {
+        gatheringsData.content.map(async ({ gatheringId }) => {
           const inProgressResponse = await gatheringService.getChallenges(gatheringId, 'IN_PROGRESS');
-          const closedResponse = await gatheringService.getChallenges(gatheringId, 'CLOSED'); 
+          const closedResponse = await gatheringService.getChallenges(gatheringId, 'CLOSED');
  
-          challengesMap[gatheringId] = {
-            inProgressChallenges: inProgressResponse.content,
-            doneChallenges: closedResponse.content
-          };
+          // 내가 참여한 모임일 경우 참여한 챌린지만 필터링
+          if (!isCaptain) {
+            challengesMap[gatheringId] = {
+              inProgressChallenges: inProgressResponse.content.filter(c => c.participantStatus),
+              doneChallenges: closedResponse.content.filter(c => c.participantStatus)
+            };
+          } else {
+            challengesMap[gatheringId] = {
+              inProgressChallenges: inProgressResponse.content,
+              doneChallenges: closedResponse.content
+            };
+          }
         })
       );
       return challengesMap;
     },
-    enabled: !!hostedGatheringsData?.content,
-    staleTime: 0,
-    refetchOnWindowFocus: true
+    enabled: !!gatheringsData?.content
   });
  }
