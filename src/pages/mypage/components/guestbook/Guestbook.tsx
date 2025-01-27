@@ -79,6 +79,7 @@ export default function GuestbookTab() {
       {showWritten ? (
         <WrittenGuestbooks
           guestbooks={guestbooksData.content}
+          gatherings={availableGuestbooks as GatheringListItem[]}
           onEditClick={handleEditClick}
         />
       ) : (
@@ -90,9 +91,10 @@ export default function GuestbookTab() {
       {modalState.isOpen && (
         <GuestbookModal
           isEditMode={modalState.isEditMode}
-          gatheringId={modalState.gatheringId}
-          initialData={modalState.guestbook}
+          gatheringId={modalState.gatheringId ?? 0}
+          initialData={modalState.guestbook || null}
           onSubmit={handleModalSubmit}
+          onValidationFail={() => showToast('방명록 내용을 입력해주세요.', 'error')}
           onClose={() => setModalState({ isOpen: false, isEditMode: false })}
         />
       )}

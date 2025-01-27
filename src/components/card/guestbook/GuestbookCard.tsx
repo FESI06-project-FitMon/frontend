@@ -1,13 +1,13 @@
 // components/common/GuestbookCard.tsx
 import Heart from "@/components/common/Heart";
 import Popover from "@/components/common/Popover";
-import { GatheringItem, GuestbookItem } from "@/types";
+import { GatheringListItem, GuestbookItem } from "@/types";
 import Image from 'next/image';
 
 interface GuestbookCardProps {
   guestbook: GuestbookItem;
-  gathering?: GatheringItem;
-  showActions?: boolean;  // 팝오버 표시 여부
+  gathering?: GatheringListItem | null; // gathering이 없을 수도 있음
+  showActions?: boolean; // showActions는 기본값이 false
   onEdit?: (guestbook: GuestbookItem) => void;
   onDelete?: (guestbook: GuestbookItem) => void;
 }
@@ -25,11 +25,11 @@ export default function GuestbookCard({
       <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
         <Image
           src={
-            gathering?.gatheringImage === 'null' || !gathering?.gatheringImage
+            !gathering?.imageUrl || gathering.imageUrl === 'null'
               ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-              : gathering.gatheringImage
+              : gathering.imageUrl
           }
-          alt={gathering?.gatheringTitle || '모임 이미지'}
+          alt={gathering?.title || '모임 이미지'}
           layout="fill"
           className="object-cover"
           onError={(e) => {
@@ -67,14 +67,12 @@ export default function GuestbookCard({
         </p>
 
         {gathering && (
-          <div className="flex flex-col lg:flex-row mb-[10px] lg:mb-0items-start lg:items-end justify-between">
+          <div className="flex flex-col lg:flex-row mb-[10px] lg:mb-0 items-start lg:items-end justify-between">
             <p className="text-primary font-normal">
-              {gathering.gatheringTitle} |
-              {gathering.gatheringSi}
-              {gathering.gatheringGu}
+              {gathering.title} | {gathering.mainLocation} {gathering.subLocation}
             </p>
             <p className="text-dark-700 font-medium">
-              {gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}
+              {gathering.startDate} ~ {gathering.endDate}
             </p>
           </div>
         )}
@@ -82,4 +80,3 @@ export default function GuestbookCard({
     </div>
   );
 }
-
