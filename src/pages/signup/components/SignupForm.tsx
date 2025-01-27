@@ -36,8 +36,10 @@ export default function SignupForm() {
   });
 
   // 회원가입 성공, 실패 메시지 및 표시
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [confirmAlert, setConfirmAlert] = useState({
+    message: '',
+    show: false,
+  });
 
   // 회원가입 요청
   const useSignupMutation = useMutation<
@@ -48,15 +50,18 @@ export default function SignupForm() {
     mutationFn: postSignup,
     onSuccess: (data: postSignupResponse) => {
       if (data.message === '사용자 생성 성공') {
-        setAlertMessage('회원가입이 완료되었습니다.');
-        setShowConfirmAlert(true);
+        setConfirmAlert({
+          message: '회원가입이 완료되었습니다.',
+          show: true,
+        });
       }
     },
     onError: (error: Error) => {
       if (error.message === 'Request failed with status code 400') {
-        // console.log('이미 존재하는 이메일입니다.');
-        setShowConfirmAlert(true);
-        setAlertMessage('이미 존재하는 이메일입니다.');
+        setConfirmAlert({
+          message: '이미 존재하는 이메일입니다.',
+          show: true,
+        });
       }
     },
   });
@@ -74,14 +79,19 @@ export default function SignupForm() {
       });
     }
   };
-
   // 회원가입 성공 여부 표시
   const handleConfirm = () => {
-    if (alertMessage === '회원가입이 완료되었습니다.') {
-      setShowConfirmAlert(false);
+    if (confirmAlert.message === '회원가입이 완료되었습니다.') {
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
       router.push('/login');
     } else {
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
     }
   };
 
@@ -92,7 +102,6 @@ export default function SignupForm() {
     >
       <FormField
         label="닉네임"
-        type="text"
         name="nickName"
         value={signupForm.nickName}
         placeholder="닉네임을 입력해주세요"
@@ -145,9 +154,9 @@ export default function SignupForm() {
       <Button type="submit" name="회원가입" className="h-16 mt-3" />
       <FormRedirect currentPage="signup" />
       <Alert
-        isOpen={showConfirmAlert}
+        isOpen={confirmAlert.show}
         type="confirm"
-        message={alertMessage}
+        message={confirmAlert.message}
         onConfirm={handleConfirm}
       />
     </form>

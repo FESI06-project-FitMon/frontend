@@ -29,8 +29,10 @@ export default function LoginForm() {
   });
 
   // 로그인 성공, 실패 메시지 및 표시
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [confirmAlert, setConfirmAlert] = useState({
+    message: '',
+    show: false,
+  });
 
   // 로그인 요청 Mutation 함수
   const useLoginMutation = useMutation<
@@ -42,15 +44,19 @@ export default function LoginForm() {
     mutationFn: postLogin,
     onSuccess: (data: postLoginResponse) => {
       if (data.email) {
-        setAlertMessage('로그인에 성공했습니다.');
-        setShowConfirmAlert(true);
+        setConfirmAlert({
+          message: '로그인에 성공했습니다.',
+          show: true,
+        });
       }
     },
     onError: (error: Error) => {
       console.log(error);
       if (error.message === 'Request failed with status code 401') {
-        setAlertMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
-        setShowConfirmAlert(true);
+        setConfirmAlert({
+          message: '이메일 또는 비밀번호가 일치하지 않습니다.',
+          show: true,
+        });
       }
     },
   });
@@ -70,13 +76,19 @@ export default function LoginForm() {
 
   // 로그인 성공 여부 표시
   const handleConfirm = () => {
-    if (alertMessage === '로그인에 성공했습니다.') {
+    if (confirmAlert.message === '로그인에 성공했습니다.') {
       localStorage.setItem('isLogin', 'true');
       useMemberStore.getState().setIsLogin(true);
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
       router.push('/');
     } else {
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
     }
   };
 
@@ -116,9 +128,9 @@ export default function LoginForm() {
       <Button type="submit" name="로그인" className="h-16 mt-3" />
       <FormRedirect currentPage="login" />
       <Alert
-        isOpen={showConfirmAlert}
+        isOpen={confirmAlert.show}
         type="confirm"
-        message={alertMessage}
+        message={confirmAlert.message}
         onConfirm={handleConfirm}
       />
     </form>
