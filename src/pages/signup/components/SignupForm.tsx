@@ -1,12 +1,8 @@
 import Button from '@/components/common/Button';
 import { useState } from 'react';
-import postSignup, {
-  postSignupProps,
-  postSignupResponse,
-} from '@/pages/signup/components/service/postSignup';
+import { useSignupMutation } from '@/pages/signup/components/service/postSignup';
 import router from 'next/router';
 import FormField from './FormField';
-import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import FormRedirect from './FormRedirect';
 
@@ -41,30 +37,8 @@ export default function SignupForm() {
     show: false,
   });
 
-  // 회원가입 요청
-  const useSignupMutation = useMutation<
-    postSignupResponse,
-    Error,
-    postSignupProps
-  >({
-    mutationFn: postSignup,
-    onSuccess: (data: postSignupResponse) => {
-      if (data.message === '사용자 생성 성공') {
-        setConfirmAlert({
-          message: '회원가입이 완료되었습니다.',
-          show: true,
-        });
-      }
-    },
-    onError: (error: Error) => {
-      if (error.message === 'Request failed with status code 400') {
-        setConfirmAlert({
-          message: '이미 존재하는 이메일입니다.',
-          show: true,
-        });
-      }
-    },
-  });
+  // 회원가입 요청 Mutation 함수
+  const { mutate: signupMutation } = useSignupMutation({ setConfirmAlert });
 
   // 회원가입 요청
   const handleSignupSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,13 +46,14 @@ export default function SignupForm() {
 
     const isValid = Object.values(signupFormError).every((error) => !error);
     if (isValid) {
-      useSignupMutation.mutate({
+      signupMutation({
         email: signupForm.email,
         nickName: signupForm.nickName,
         password: signupForm.password,
       });
     }
   };
+
   // 회원가입 성공 여부 표시
   const handleConfirm = () => {
     if (confirmAlert.message === '회원가입이 완료되었습니다.') {
