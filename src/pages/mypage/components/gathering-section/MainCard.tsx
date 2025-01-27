@@ -4,41 +4,57 @@ import StatusTag from '@/components/tag/StatusTag';
 import OpenStatus from '@/components/tag/OpenStatus';
 import Button from '@/components/common/Button';
 import Alert from '@/components/dialog/Alert';
-import { GatheringItem, GatheringStateType } from '@/types';
+import { GatheringListItem } from '@/types';
 import useToastStore from '@/stores/useToastStore';
+import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
 
 interface MainCardProps {
-  gathering: GatheringItem;
-  state: GatheringStateType;
-  onCancelGathering?: (gatheringId: number) => void; // 모임장용
-  onCancelParticipation?: (gatheringId: number) => void;
+  gathering: GatheringListItem;
+  cancelProps: {
+    onCancelGathering?: (gatheringId: number) => void;
+    onCancelParticipation?: (gatheringId: number) => void;
+  };
 }
-
 export default function MainCard({
   gathering,
-  state,
-  onCancelGathering,
-  onCancelParticipation,
+  cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
+  console.log('MainCard rendering with gathering:', gathering);
+
+  // 훅 호출은 최상위에서
   const [showAlert, setShowAlert] = useState(false);
+  const [, setIsLoading] = useState(false); // API 호출 상태 관리
   const showToast = useToastStore((state) => state.show);
-  // gathering 객체가 유효한지 확인
-  if (!gathering || !gathering.gatheringImage) {
-    return null; // 또는 기본 UI 렌더링
+
+  if (!gathering) {
+    console.error('No gathering provided to MainCard');
+    return null;
   }
+
   const handleCancelClick = () => {
     setShowAlert(true);
   };
 
-  const handleCancelConfirm = () => {
-    if (gathering.captainStatus) {
-      onCancelGathering?.(gathering.gatheringId);
-    } else {
-      onCancelParticipation?.(gathering.gatheringId);
+  const handleCancelConfirm = async () => {
+    setIsLoading(true); // 로딩 상태 시작
+    try {
+      if (gathering.captainStatus) {
+        // 모임 취소 API 호출
+        await onCancelGathering?.(gathering.gatheringId);
+      } else {
+        // 참여 취소 API 호출
+        await onCancelParticipation?.(gathering.gatheringId);
+      }
+      showToast('취소되었습니다.', 'check');
+    } catch (error) {
+      console.error('취소 실패:', error);
+      showToast('취소에 실패했습니다. 다시 시도해주세요.', 'error');
+    } finally {
+      setIsLoading(false); // 로딩 상태 종료
+      setShowAlert(false);
     }
-    setShowAlert(false);
-    showToast('취소되었습니다.', 'check');
   };
+
   const handleCancelDeny = () => {
     setShowAlert(false);
     showToast('취소가 중단되었습니다.', 'caution');
@@ -46,15 +62,10 @@ export default function MainCard({
 
   return (
     <div className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-[10px] md:gap-[24px] lg:gap-[30px]">
-      {/* 이미지 영역 */}
       <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
         <Image
-        src={
-          gathering.gatheringImage === 'null' || !gathering.gatheringImage
-            ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-            : gathering.gatheringImage
-        }
-          alt={gathering.gatheringTitle || '기본 이미지'}
+          src={gathering.imageUrl || '/assets/image/default_img.png'}
+          alt={gathering.title || '기본 이미지'}
           width={300}
           height={200}
           className="w-full h-full object-cover"
@@ -65,19 +76,19 @@ export default function MainCard({
           }}
         />
         <div className="absolute bottom-4 left-5">
-          <StatusTag status={gathering.gatheringStatus} />
+          <StatusTag status={gathering.status} />
         </div>
       </div>
 
-      {/* 정보 영역 */}
-      <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px] ">
+      <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px]">
         <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
-
-          {gathering.gatheringSubType} | {gathering.gatheringSi} {gathering.gatheringGu}
+          {gathering.subType} | {gathering.mainLocation} {gathering.subLocation}
         </h3>
-        <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.gatheringTitle}</h2>
+        <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.title}</h2>
         <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
-          <h4>{gathering.gatheringStartDate} ~ {gathering.gatheringEndDate}</h4>
+          <h4>
+            {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+          </h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
               src="/assets/image/person.svg"
@@ -85,22 +96,19 @@ export default function MainCard({
               width={18}
               height={18}
             />
-            <span>
-              {state.gatheringJoinedPeopleCount}/{state.gatheringMaxPeopleCount}
-            </span>
+            <span>{gathering.participantCount}/{gathering.totalCount}</span>
           </div>
-          <OpenStatus
-            gatheringJoinedPeopleCount={state.gatheringJoinedPeopleCount}
-          />
+          <OpenStatus gatheringJoinedPeopleCount={gathering.participantCount} />
         </div>
         <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
           <Button
-
-            name={gathering.captainStatus ? "모임 취소하기" : "참여 취소하기"}
-            style={gathering.captainStatus ? "custom" : "cancel"}
-            className={gathering.captainStatus
-              ? "w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base "
-              : "w-[122px] h-[32px] md:w-[163px] md:h-[43px]  text-sm md:text-base text-primary font-semibold"}
+            name={gathering.captainStatus ? '모임 취소하기' : '참여 취소하기'}
+            style={gathering.captainStatus ? 'custom' : 'cancel'}
+            className={
+              gathering.captainStatus
+                ? 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base'
+                : 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold'
+            }
             handleButtonClick={handleCancelClick}
           />
         </div>
@@ -120,3 +128,4 @@ export default function MainCard({
     </div>
   );
 }
+

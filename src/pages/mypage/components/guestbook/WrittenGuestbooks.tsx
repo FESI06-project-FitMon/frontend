@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import Null from '@/components/common/Null';
 import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
-import { GatheringItem, GuestbookItem } from '@/types';
+import { GatheringListItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
 import useToastStore from '@/stores/useToastStore';
-import { useDeleteGuestbook } from '@/utils/useGuestbooks';
+import { useDeleteGuestbook } from '@/pages/mypage/service/myGuestbooks';
 
 interface WrittenGuestbooksProps {
   guestbooks: GuestbookItem[];
-  gatherings: GatheringItem[];
+  gatherings: GatheringListItem[];
   onEditClick: (guestbook: GuestbookItem) => void;
 }
 export default function WrittenGuestbooks({
@@ -20,7 +20,7 @@ export default function WrittenGuestbooks({
     showDeleteAlert: false,
     selectedGuestbook: null as GuestbookItem | null,
   });
-  
+
   const showToast = useToastStore((state) => state.show);
   const deleteGuestbookMutation = useDeleteGuestbook();  // React Query mutation 사용
 
@@ -62,7 +62,7 @@ export default function WrittenGuestbooks({
         <GuestbookCard
           key={guestbook.reviewId}
           guestbook={guestbook}
-          gathering={gatherings.find((g) => g.gatheringId === guestbook.gatheringId)}
+          gathering={gatherings.find((g) => g.gatheringId === guestbook.gatheringId) || null}
           showActions={true}
           onEdit={onEditClick}
           onDelete={() => handleDeleteClick(guestbook)}

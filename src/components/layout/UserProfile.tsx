@@ -1,8 +1,10 @@
-import useMemberStore from '@/stores/useMemberStore';
+import { useLogoutMutation } from '@/pages/login/service/postLogout';
 import Popover from '../common/Popover';
 import router from 'next/router';
 
 export default function UserProfile({ nickname }: { nickname: string }) {
+  const { mutate: logoutMutation } = useLogoutMutation();
+
   const popoverItems = [
     {
       id: 'mypage',
@@ -14,11 +16,7 @@ export default function UserProfile({ nickname }: { nickname: string }) {
     {
       id: 'logout',
       label: '로그아웃',
-      onClick: () => {
-        localStorage.removeItem('isLogin');
-        useMemberStore.getState().setIsLogin(false);
-        router.push('/');
-      },
+      onClick: () => logoutMutation(),
     },
   ];
 

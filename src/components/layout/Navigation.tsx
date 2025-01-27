@@ -6,9 +6,10 @@ import useLayoutStore from '@/stores/useLayoutStore';
 import UserProfile from './UserProfile';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import getMe from '@/pages/login/components/getMe';
+import getMe from '@/pages/login/service/getMe';
 import Alert from '../dialog/Alert';
 import Loading from '../dialog/Loading';
+import { useLogoutMutation } from '@/pages/login/service/postLogout';
 
 export default function Navigation() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function Navigation() {
 
   // 에러 발생 시 Alert 표시 및 닫기
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const { mutate: logoutMutation } = useLogoutMutation();
 
   // 현재 로그인 정보 가져오는 useQuery
   const { isLoading, isError, data } = useQuery({
@@ -67,7 +69,7 @@ export default function Navigation() {
         message="오류가 발생했습니다. 다시 로그인해주세요."
         onConfirm={() => {
           setShowConfirmAlert(false);
-          router.push('/login');
+          logoutMutation();
         }}
       />
     );
@@ -95,7 +97,10 @@ export default function Navigation() {
                 height="20"
               />
             </div>
-            <Link href="/" className="text-primary font-bold text-2xl pl-[24px] md:pl-0">
+            <Link
+              href="/"
+              className="text-primary font-bold text-2xl pl-6 md:pl-0"
+            >
               FitMon
             </Link>
           </h1>

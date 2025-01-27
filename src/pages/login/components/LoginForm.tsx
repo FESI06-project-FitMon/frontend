@@ -1,12 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from '@/components/common/Button';
-import postLogin, { postLoginProps, postLoginResponse } from './postLogin';
+import { useLoginMutation } from '../service/postLogin';
 import router from 'next/router';
 import FormField from '@/pages/signup/components/FormField';
-import useDebounce from '@/hooks/useDebounce';
-import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
+import FormRedirect from '@/pages/signup/components/FormRedirect';
+
+export interface LoginFields {
+  email: string;
+  password: string;
+}
 
 export default function LoginForm() {
   const [loginForm, setLoginForm] = useState({
@@ -21,78 +25,13 @@ export default function LoginForm() {
   });
 
   // 로그인 성공, 실패 메시지 및 표시
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-
-  // 로그인 정보 저장
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const debouncedLoginForm = useDebounce(loginForm, 1000);
-
-  // 포커스 아웃 시 특정 필드 유효성 검사
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (name === 'email') {
-      setLoginFormError((prev) => ({
-        ...prev,
-        [name]: value.trim() === '' || !emailRegex.test(value.trim()),
-      }));
-    } else if (name === 'password') {
-      setLoginFormError((prev) => ({
-        ...prev,
-        [name]: value.trim() === '',
-      }));
-    }
-  };
-
-  // 폼 전체 유효성 검사 (포커스 후 입력값 없는 경우)
-  useEffect(() => {
-    Object.entries(debouncedLoginForm).forEach(([name, value]) => {
-      if (value === '') return;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (name === 'email') {
-        setLoginFormError((prev) => ({
-          ...prev,
-          [name]: value.trim() === '' || !emailRegex.test(value.trim()),
-        }));
-      } else if (name === 'password') {
-        setLoginFormError((prev) => ({
-          ...prev,
-          [name]: value.trim() === '',
-        }));
-      }
-    });
-  }, [debouncedLoginForm]);
+  const [confirmAlert, setConfirmAlert] = useState({
+    message: '',
+    show: false,
+  });
 
   // 로그인 요청 Mutation 함수
-  const useLoginMutation = useMutation<
-    postLoginResponse,
-    Error,
-    postLoginProps,
-    unknown
-  >({
-    mutationFn: postLogin,
-    onSuccess: (data: postLoginResponse) => {
-      if (data.email) {
-        setAlertMessage('로그인에 성공했습니다.');
-        setShowConfirmAlert(true);
-      }
-    },
-    onError: (error: Error) => {
-      console.log(error);
-      if (error.message === 'Request failed with status code 401') {
-        setAlertMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
-        setShowConfirmAlert(true);
-      }
-    },
-  });
+  const { mutate: loginMutation } = useLoginMutation({ setConfirmAlert });
 
   // 로그인 요청
   const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,7 +39,7 @@ export default function LoginForm() {
 
     const isValid = Object.values(loginFormError).every((error) => !error);
     if (isValid) {
-      useLoginMutation.mutate({
+      loginMutation({
         email: loginForm.email.trim(),
         password: loginForm.password.trim(),
       });
@@ -109,13 +48,19 @@ export default function LoginForm() {
 
   // 로그인 성공 여부 표시
   const handleConfirm = () => {
-    if (alertMessage === '로그인에 성공했습니다.') {
+    if (confirmAlert.message === '로그인에 성공했습니다.') {
       localStorage.setItem('isLogin', 'true');
       useMemberStore.getState().setIsLogin(true);
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
       router.push('/');
     } else {
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
     }
   };
 
@@ -126,12 +71,14 @@ export default function LoginForm() {
     >
       <FormField
         label="이메일"
-        type="text"
+        type="email"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
-        handleInputChange={handleInputChange}
-        handleBlur={handleBlur}
+        form={loginForm}
+        setForm={setLoginForm}
+        formError={loginFormError}
+        setFormError={setLoginFormError}
         hasError={loginFormError.email}
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
@@ -142,26 +89,20 @@ export default function LoginForm() {
         name="password"
         value={loginForm.password}
         placeholder="비밀번호를 입력해주세요"
-        handleInputChange={handleInputChange}
-        handleBlur={handleBlur}
+        form={loginForm}
+        setForm={setLoginForm}
+        formError={loginFormError}
+        setFormError={setLoginFormError}
         hasError={loginFormError.password}
         errorMessage="비밀번호를 입력해주세요."
       />
 
       <Button type="submit" name="로그인" className="h-16 mt-3" />
-      <div className="flex flex-row justify-center md:justify-end -mt-2 md:mt-3">
-        <p className="mr-4 text-[1rem]">{'아직 회원이 아니신가요?'}</p>
-        <p
-          onClick={() => router.push('/signup')}
-          className="text-[1rem] text-primary underline decoration-primary underline-offset-[5px] cursor-pointer"
-        >
-          {'회원가입하기'}
-        </p>
-      </div>
+      <FormRedirect currentPage="login" />
       <Alert
-        isOpen={showConfirmAlert}
+        isOpen={confirmAlert.show}
         type="confirm"
-        message={alertMessage}
+        message={confirmAlert.message}
         onConfirm={handleConfirm}
       />
     </form>
