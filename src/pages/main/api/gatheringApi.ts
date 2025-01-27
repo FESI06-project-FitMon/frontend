@@ -10,7 +10,7 @@ export const fetchGatheringList = async (
 ): Promise<GatheringList> => {
   const apiEndpoint = '/api/v1/gatherings';
   const queryParams = {
-    sortBy: 'deadline',
+    sortBy: 'participants',
     sortDirection: 'ASC',
     page: String(pageParam),
     pageSize: String(pageSize),
