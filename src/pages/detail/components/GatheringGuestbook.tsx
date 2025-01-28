@@ -16,7 +16,6 @@ export default function GatheringGuestbook({
   const [page, setPage] = useState(0);
 
   const { data, isLoading } = useGatheringGuestbooks(gatheringId, page);
-
   if (isLoading) {
     <Null message="로딩중입니다." />;
   }

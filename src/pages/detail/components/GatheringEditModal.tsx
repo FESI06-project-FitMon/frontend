@@ -7,21 +7,12 @@ import TextArea from '@/components/common/TextArea';
 import { SelectType } from '@/stores/useSelectStore';
 import Image from 'next/image';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
-
-// import useGatheringStore from '@/stores/useGatheringStore';
 import cityData from '@/constants/city';
 import uploadImage from '@/utils/uploadImage';
 import { GatheringDetailType } from '@/types';
 import Null from '@/components/common/Null';
 import { useGatheringUpdate } from '../service/gatheringService';
-import {
-  QueryClient,
-  QueryFunctionContext,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { GatheringUpdateRequest } from '../dto/requestDto';
-import { updateGathering } from '../api/gatheringApi';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function GatheringEditModal({
   information,
@@ -32,7 +23,6 @@ export default function GatheringEditModal({
   gatheringId: number;
   setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
-  // const { updateGathering } = useGatheringStore();
   const [title, setTitle] = useState(information.title);
   const [description, setDescription] = useState(information.description);
   const [newTag, setNewTag] = useState('');
