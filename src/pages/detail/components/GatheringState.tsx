@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useGatheringStatus } from '../service/gatheringService';
 import Null from '@/components/common/Null';
+import { cancelGathering, participantGathering } from '../api/gatheringApi';
 
 export default function GatheringState({
   gatheringId,
@@ -23,6 +24,7 @@ export default function GatheringState({
 }) {
   const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
+  const [isParticipant, setIsParticipant] = useState(false);
   const {
     data: gatheringStatus,
     isLoading,
@@ -31,14 +33,23 @@ export default function GatheringState({
 
   // 좋아요 초기 상태 세팅
   useEffect(() => {
+    console.log(participantStatus);
     setHeart(gatheringIdInLikes(gatheringId));
+    setIsParticipant(participantStatus);
   }, [gatheringId]);
 
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = async () => {
     try {
-      // await participantGathering(gatheringId);
-      showToast('참여하기 완료되었습니다.', 'check');
+      if (isParticipant) {
+        await cancelGathering(gatheringId);
+        showToast('참여취소 완료되었습니다.', 'check');
+        setIsParticipant(false);
+      } else {
+        await participantGathering(gatheringId);
+        showToast('참여하기 완료되었습니다.', 'check');
+        setIsParticipant(true);
+      }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       if (axiosError.response?.data?.message) {
@@ -145,24 +156,13 @@ export default function GatheringState({
           </div>
         </div>
         <div className="flex mb-auto h-[56px]" id="buttons">
-          {participantStatus ? (
-            <Button
-              className="ml-[25px] w-[242px]"
-              style="disabled"
-              height="100%"
-              name="참여 완료"
-              handleButtonClick={() => handleGatheringButtonClick()}
-            />
-          ) : (
-            <Button
-              className="ml-[25px] w-[242px]"
-              style="custom"
-              height="100%"
-              name="참여하기"
-              handleButtonClick={() => handleGatheringButtonClick()}
-            />
-          )}
-
+          <Button
+            className="ml-[25px] w-[242px]"
+            style="custom"
+            height="100%"
+            name={isParticipant ? '참여 취소' : '참여하기'}
+            handleButtonClick={() => handleGatheringButtonClick()}
+          />
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
               src={
