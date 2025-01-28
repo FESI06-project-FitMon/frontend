@@ -5,11 +5,12 @@ import { useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
-import useGatheringStore from '@/stores/useGatheringStore';
 import getDatePart from '@/utils/getDatePart';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';
 import { GatheringDetailType } from '@/types';
+import { useGatheringDelete } from '../service/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function GatheringInformation({
   gathering,
@@ -19,16 +20,8 @@ export default function GatheringInformation({
   const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { deleteGathering } = useGatheringStore();
-
-  if (!gathering) {
-    return (
-      <div className="h-[480px]">
-        <p>Loading..</p>
-      </div>
-    );
-  }
-
+  const queryClient = useQueryClient();
+  const { mutate } = useGatheringDelete(gathering.gatheringId, queryClient);
   const popoverItems = [
     {
       id: 'edit',
@@ -48,7 +41,7 @@ export default function GatheringInformation({
 
   const handleDeleteConfirmButtonClick = async () => {
     try {
-      await deleteGathering(gathering.gatheringId);
+      mutate();
       setShowSelectAlert(false);
       showToast('모임을 취소했습니다.', 'check');
     } catch (error) {
@@ -61,6 +54,14 @@ export default function GatheringInformation({
   const handleDeleteCancelButtonClick = () => {
     setShowSelectAlert(false);
   };
+
+  if (!gathering) {
+    return (
+      <div className="h-[480px]">
+        <p>Loading..</p>
+      </div>
+    );
+  }
 
   return (
     <div id="gathering-information" className="w-full">
