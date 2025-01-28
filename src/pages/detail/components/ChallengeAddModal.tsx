@@ -3,10 +3,12 @@ import DatePickerCalendar from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
 import NumberSelect from '@/components/common/NumberSelect';
 import TextArea from '@/components/common/TextArea';
-import useGatheringStore from '@/stores/useGatheringStore';
 import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
+import { useChallengeCreate } from '../service/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
+import { ChallengeCreateRequest } from '../dto/requestDto';
 
 interface ChallengeAddModalProps {
   onClose: () => void;
@@ -24,8 +26,6 @@ export default function ChallengeAddModal({
   const [maxPeopleCount, setMaxPeopleCount] = useState(0);
   const [startDate, setStartDate] = useState<Date>(tomorrow);
   const [endDate, setEndDate] = useState<Date>(tomorrow);
-
-  const { createChallenge } = useGatheringStore();
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setChallengeTitle(e.target.value);
@@ -58,8 +58,7 @@ export default function ChallengeAddModal({
   };
 
   const handleChallengeAddButtonClick = async () => {
-    onClose();
-    const newChallenge = {
+    const newChallenge: ChallengeCreateRequest = {
       title: challengeTitle,
       description: challengeDescription,
       imageUrl: challengeImageUrl,
@@ -67,10 +66,11 @@ export default function ChallengeAddModal({
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
-    console.log(newChallenge);
-    await createChallenge(newChallenge, gatheringId);
+    mutate(newChallenge);
+    onClose();
   };
-
+  const queryClient = useQueryClient();
+  const { mutate } = useChallengeCreate(gatheringId, queryClient);
   return (
     <>
       {/* 챌린지 정보 */}
