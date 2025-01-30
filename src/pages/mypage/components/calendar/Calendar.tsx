@@ -59,7 +59,7 @@ export default function CalendarTab() {
   };
 
   // 호스트 및 유저 모임 데이터를 이벤트 형식으로 병합
-  const events = useMemo(() => 
+  const events = useMemo(() =>
     calendarData?.content?.map(gathering => ({
       id: gathering.gatheringId.toString(),
       start: gathering.startDate,
@@ -115,14 +115,20 @@ export default function CalendarTab() {
                     backgroundColor: event.backgroundColor,
                   }}
                 ></div>
-            
+
                 {/* 텍스트와 호스트 이미지 */}
                 <div
                   className="flex items-center justify-center gap-1"
                   style={{
-                    fontSize: '0.75rem', // 텍스트 크기
-                    fontWeight: 'bold', // 텍스트 굵기
-                    color: event.textColor || '#FFFFFF',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    color: '#FFFFFF',
+                    textShadow: `
+          -1px 0 ${event.backgroundColor},
+          0 1px ${event.backgroundColor},
+          1px 0 ${event.backgroundColor},
+          0 -1px ${event.backgroundColor}
+        `
                   }}
                 >
                   {event.extendedProps.isHost && (
@@ -136,7 +142,7 @@ export default function CalendarTab() {
                   )}
                   <span>{event.title}</span>
                 </div>
-            
+
                 {/* 오른쪽 선 */}
                 <div
                   style={{
@@ -147,7 +153,7 @@ export default function CalendarTab() {
                 ></div>
               </div>
             )}
-            
+
             dayHeaderClassNames="bg-dark-300 text-white text-base font-medium py-4" // 날짜 헤더 스타일
             dayHeaderContent={({ date }) => (
               <span className="flex justify-center">
