@@ -101,9 +101,14 @@ export default function GatheringChallenge({
             isLoading ? (
               <Null message="로딩중입니다"></Null>
             ) : data &&
-              data.pages.map(
-                (page) => (page as GatheringChallengeResponse).content,
-              ).length > 0 ? (
+              data.pages.length === 1 &&
+              data.pages[0].content.length === 0 ? (
+              <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
+                {currentTag === 'inProgress'
+                  ? '진행중인 챌린지가 없습니다.'
+                  : '마감된 챌린지가 없습니다.'}
+              </div>
+            ) : (
               data.pages.map((page) =>
                 (page as GatheringChallengeResponse).content?.map(
                   (challenge, index) => (
@@ -115,12 +120,6 @@ export default function GatheringChallenge({
                   ),
                 ),
               )
-            ) : (
-              <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
-                {currentTag === 'inProgress'
-                  ? '진행중인 챌린지가 없습니다.'
-                  : '마감된 챌린지가 없습니다.'}
-              </div>
             )
           ) : (
             <div>calendar</div>
