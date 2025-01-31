@@ -53,29 +53,30 @@ export default function CalendarTab() {
         return '#faf4b1';
       case '경기형':
         return '#4e7868';
-      case '근력형':
+      case '헬스형':
         return '#604163';
       default:
-        return '#5779b3';
+        return 'primary';
     }
   };
 
   // 호스트 및 유저 모임 데이터를 이벤트 형식으로 병합
   const events = useMemo(() =>
-    calendarData?.content?.map(gathering => ({
-      id: gathering.gatheringId.toString(),
-      start: gathering.startDate,
-      end: gathering.endDate,
-      title: gathering.title,
-      backgroundColor: getEventColor(gathering.mainType),
-      borderColor: getEventColor(gathering.mainType),
-      textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
-      extendedProps: {
-        isHost: gathering.captainStatus,
-        type: gathering.mainType
-      }
-    })) ?? [], [calendarData]);
-
+    calendarData?.content
+      ?.filter(gathering => gathering.status !== '취소됨') // 취소된 모임 필터링
+      ?.map(gathering => ({
+        id: gathering.gatheringId.toString(),
+        start: gathering.startDate,
+        end: gathering.endDate,
+        title: gathering.title,
+        backgroundColor: getEventColor(gathering.mainType),
+        borderColor: getEventColor(gathering.mainType),
+        textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
+        extendedProps: {
+          isHost: gathering.captainStatus,
+          type: gathering.mainType
+        }
+      })) ?? [], [calendarData]);
 
   if (isLoading) {
     return (
@@ -100,6 +101,31 @@ export default function CalendarTab() {
   return (
     <div className="space-y-6 pb-[50px]">
       <div className="bg-dark-300 rounded-lg p-4">
+        {/* 색상 범례 */}
+        <div className="flex flex-wrap items-center justify-end gap-4">
+          {[
+            { type: '유산소형', color: '#faf4b1' },
+            { type: '경기형', color: '#4e7868' },
+            { type: '헬스형', color: '#604163' }
+          ].map(({ type, color }) => (
+            <div key={type} className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              <span className="text-xs text-white">{type}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-2 ml-4">
+            <Image
+              src="/assets/image/crown.svg"
+              alt="Host"
+              width={12}
+              height={12}
+            />
+            <span className="text-xs text-white">주최자</span>
+          </div>
+        </div>
         {/* 캘린더 상단 네비게이션 (이전/다음 버튼과 현재 제목) */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={handlePrev} className="p-2">
