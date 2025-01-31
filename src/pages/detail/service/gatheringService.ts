@@ -1,14 +1,10 @@
 import {
   QueryClient,
-  QueryFunctionContext,
   useInfiniteQuery,
   useMutation,
   useQuery,
 } from '@tanstack/react-query';
 import { GatheringQueries } from './gatheringQueries';
-import { GatheringUpdateRequest } from '../dto/requestDto';
-import { GatheringDetailType } from '@/types';
-import { updateGathering } from '../api/gatheringApi';
 
 export const useGatheringDetail = (gatheringId: number) => {
   const queryOptions = GatheringQueries.getGatheringQuery(gatheringId);
@@ -41,6 +37,28 @@ export const useGatheringUpdate = (
   queryClient: QueryClient,
 ) => {
   const queryOptions = GatheringQueries.updateGatheringQuery(
+    gatheringId,
+    queryClient,
+  );
+  return useMutation(queryOptions);
+};
+
+export const useChallengeCreate = (
+  gatheringId: number,
+  queryClient: QueryClient,
+) => {
+  const queryOptions = GatheringQueries.createChallengeQuery(
+    gatheringId,
+    queryClient,
+  );
+  return useMutation(queryOptions);
+};
+
+export const useGatheringDelete = (
+  gatheringId: number,
+  queryClient: QueryClient,
+) => {
+  const queryOptions = GatheringQueries.deleteGatheringQuery(
     gatheringId,
     queryClient,
   );
