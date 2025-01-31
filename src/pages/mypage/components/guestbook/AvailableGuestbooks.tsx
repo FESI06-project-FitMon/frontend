@@ -6,7 +6,8 @@ import getDatePart from '@/utils/getDatePart';
 
 interface AvailableGuestbooksProps {
   gatherings: GatheringListItem[];
-  onWriteClick: (gatheringId: number) => void;
+  onWriteClick: (gatheringId: number) => void;  
+  isLoading?: boolean;
 }
 
 export default function AvailableGuestbooks({ gatherings, onWriteClick }: AvailableGuestbooksProps) {

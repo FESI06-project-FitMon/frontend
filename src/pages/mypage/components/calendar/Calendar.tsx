@@ -3,9 +3,11 @@ import Image from 'next/image';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useCalendarGatherings } from '../../service/myCalendar';
+import Null from '@/components/common/Null';
+
 
 export default function CalendarTab() {
-  const { data: calendarData } = useCalendarGatherings();
+  const { data: calendarData, isLoading } = useCalendarGatherings();
 
   // FullCalendar 컴포넌트의 레퍼런스를 저장하기 위한 useRef
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -74,6 +76,26 @@ export default function CalendarTab() {
       }
     })) ?? [], [calendarData]);
 
+
+  if (isLoading) {
+    return (
+      <Null
+        message="로딩 중..."
+        svg={
+          <Image
+            src="/assets/image/spinner.svg"
+            alt="로딩 스피너"
+            width={50}
+            height={50}
+          />
+        }
+      />
+    );
+  }
+
+  if (!calendarData?.content || calendarData.content.length === 0) {
+    return <Null message="일정이 없습니다." />;
+  }
 
   return (
     <div className="space-y-6 pb-[50px]">
