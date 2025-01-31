@@ -87,6 +87,7 @@ export default function GatheringChallengeCard({
                 </div>
                 {/* 퍼센트 */}
                 <p className="text-2xl text-primary font-bold">
+                  챌린지 성공률&nbsp;
                   {challenge.successParticipantCount === 0
                     ? 0
                     : (challenge.successParticipantCount /

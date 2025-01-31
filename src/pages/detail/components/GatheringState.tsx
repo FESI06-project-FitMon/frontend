@@ -95,7 +95,7 @@ export default function GatheringState({
         <h3 className="mb-[18px] font-bold">{'모임 만족도'}</h3>
         <div className="flex">
           <Heart rating={gatheringStatus.averageRating} />
-          <span className="ml-[10px]">{`${gatheringStatus.averageRating} / 5.0`}</span>
+          <span className="ml-[10px]">{`${gatheringStatus.averageRating.toFixed(1)} / 5.0`}</span>
         </div>
         <div className="text-sm mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
       </div>
