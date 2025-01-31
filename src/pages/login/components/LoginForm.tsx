@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import Button from '@/components/common/Button';
-import postLogin, {
-  postLoginProps,
-  postLoginResponse,
-} from './service/postLogin';
+import { useLoginMutation } from '../service/postLogin';
 import router from 'next/router';
 import FormField from '@/pages/signup/components/FormField';
-import { useMutation } from '@tanstack/react-query';
 import Alert from '@/components/dialog/Alert';
 import useMemberStore from '@/stores/useMemberStore';
 import FormRedirect from '@/pages/signup/components/FormRedirect';
@@ -29,31 +25,13 @@ export default function LoginForm() {
   });
 
   // 로그인 성공, 실패 메시지 및 표시
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [confirmAlert, setConfirmAlert] = useState({
+    message: '',
+    show: false,
+  });
 
   // 로그인 요청 Mutation 함수
-  const useLoginMutation = useMutation<
-    postLoginResponse,
-    Error,
-    postLoginProps,
-    unknown
-  >({
-    mutationFn: postLogin,
-    onSuccess: (data: postLoginResponse) => {
-      if (data.email) {
-        setAlertMessage('로그인에 성공했습니다.');
-        setShowConfirmAlert(true);
-      }
-    },
-    onError: (error: Error) => {
-      console.log(error);
-      if (error.message === 'Request failed with status code 401') {
-        setAlertMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
-        setShowConfirmAlert(true);
-      }
-    },
-  });
+  const { mutate: loginMutation } = useLoginMutation({ setConfirmAlert });
 
   // 로그인 요청
   const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,7 +39,7 @@ export default function LoginForm() {
 
     const isValid = Object.values(loginFormError).every((error) => !error);
     if (isValid) {
-      useLoginMutation.mutate({
+      loginMutation({
         email: loginForm.email.trim(),
         password: loginForm.password.trim(),
       });
@@ -70,13 +48,19 @@ export default function LoginForm() {
 
   // 로그인 성공 여부 표시
   const handleConfirm = () => {
-    if (alertMessage === '로그인에 성공했습니다.') {
+    if (confirmAlert.message === '로그인에 성공했습니다.') {
       localStorage.setItem('isLogin', 'true');
       useMemberStore.getState().setIsLogin(true);
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
       router.push('/');
     } else {
-      setShowConfirmAlert(false);
+      setConfirmAlert({
+        message: '',
+        show: false,
+      });
     }
   };
 
@@ -85,9 +69,9 @@ export default function LoginForm() {
       onSubmit={handleLoginSubmit}
       className="flex flex-col w-full px-6 gap-8 md:gap-6"
     >
-      <FormField<LoginFields>
+      <FormField
         label="이메일"
-        type="text"
+        type="email"
         name="email"
         value={loginForm.email}
         placeholder="이메일을 입력해주세요"
@@ -99,7 +83,7 @@ export default function LoginForm() {
         errorMessage="유효한 이메일 주소를 입력해주세요."
       />
 
-      <FormField<LoginFields>
+      <FormField
         label="비밀번호"
         type="password"
         name="password"
@@ -116,9 +100,9 @@ export default function LoginForm() {
       <Button type="submit" name="로그인" className="h-16 mt-3" />
       <FormRedirect currentPage="login" />
       <Alert
-        isOpen={showConfirmAlert}
+        isOpen={confirmAlert.show}
         type="confirm"
-        message={alertMessage}
+        message={confirmAlert.message}
         onConfirm={handleConfirm}
       />
     </form>
