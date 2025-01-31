@@ -3,14 +3,12 @@ import { useRouter } from 'next/router'; // useRouter 추가
 import ChallengeSection from '../gathering-section/ChallengeSection';
 import MainCard from '../gathering-section/MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
-import Null from '@/components/common/Null';
 import { GatheringListItem, ChallengeType } from '@/types';
 import Pagination from '@/components/common/Pagination';
 
 interface GatheringListProps {
   gatherings: GatheringListItem[];
   gatheringChallenges: { [key: number]: { inProgressChallenges: ChallengeType[]; doneChallenges: ChallengeType[] } };
-  emptyMessage: string;
   onCancelAction?: (gatheringId: number) => void;
   cancelActionType: 'gathering' | 'participation';
 }
@@ -18,7 +16,6 @@ interface GatheringListProps {
 export default function GatheringList({
   gatherings,
   gatheringChallenges,
-  emptyMessage,
   onCancelAction,
   cancelActionType,
 }: GatheringListProps) {
@@ -44,9 +41,6 @@ export default function GatheringList({
     router.push(`/detail/${gatheringId}`); // 상세 페이지로 이동
   };
 
-  if (!gatherings || gatherings.length === 0) {
-    return <Null message={emptyMessage} />;
-  }
 
   const paginatedGatherings = gatherings.slice(
     page * countPerPage,

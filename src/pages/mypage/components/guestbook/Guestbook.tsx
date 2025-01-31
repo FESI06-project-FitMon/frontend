@@ -6,9 +6,8 @@ import WrittenGuestbooks from '../guestbook/WrittenGuestbooks';
 import AvailableGuestbooks from '../guestbook/AvailableGuestbooks';
 import useToastStore from '@/stores/useToastStore';
 import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGuestbooks } from '@/pages/mypage/service/myGuestbooks';
-import { useParticipatingGatherings } from '../../service/myGathering';
-import Null from '@/components/common/Null';
-import Image from 'next/image';  
+import { useParticipatingGatherings } from '../../service/myGathering';;
+import { StateData } from '@/components/common/StateData';
 
 export default function Guestbook() {
   const [modalState, setModalState] = useState<{
@@ -25,9 +24,8 @@ export default function Guestbook() {
   const createGuestbookMutation = useCreateGuestbook();
   const updateGuestbookMutation = useUpdateGuestbook();
   const [showWritten, setShowWritten] = useState(false);
-  
-  const isLoading = isParticipatingLoading || isAvailableLoading || isGuestbooksLoading;
-  
+
+
   const handleWriteClick = useCallback((gatheringId: number) => {
     setModalState({
       isOpen: true,
@@ -43,7 +41,7 @@ export default function Guestbook() {
       guestbook,
     });
   }, []);
-  
+
   const handleModalSubmit = useCallback(async (data: { content: string; rating: number }) => {
     try {
       if (modalState.isEditMode && modalState.guestbook) {
@@ -67,22 +65,11 @@ export default function Guestbook() {
   }, [modalState, updateGuestbookMutation, createGuestbookMutation, showToast]);
 
   const handleTabChange = (id: string) => setShowWritten(id === 'written');
-  
-    if (isLoading) {
-      return (
-        <Null 
-          message="로딩 중..."
-          svg={
-            <Image 
-              src="/assets/image/spinner.svg" 
-              alt="로딩 스피너"
-              width={50} 
-              height={50}
-            />
-          }
-        />
-      );
-    }
+
+  const isLoading = isParticipatingLoading || isAvailableLoading || isGuestbooksLoading;
+  const isEmpty = showWritten
+    ? !guestbooksData.content.length
+    : !availableGuestbooks.length;
 
   return (
     <div className="pb-[30px] md:pb-[50px] xl:pb-20">
@@ -95,20 +82,34 @@ export default function Guestbook() {
           ]}
           currentTag={showWritten ? 'written' : 'available'}
           onTagChange={handleTabChange}
-          />
+        />
       </div>
-      {showWritten ? (
-        <WrittenGuestbooks
-        guestbooks={guestbooksData.content}
-          gatherings={participatingGatherings?.content ?? []}
-          onEditClick={handleEditClick}
+
+      {isLoading || isEmpty ? (
+        <StateData
+          isLoading={isLoading}
+          emptyMessage={showWritten
+            ? "작성한 방명록이 없습니다."
+            : "작성 가능한 방명록이 없습니다."
+          }
         />
       ) : (
-        <AvailableGuestbooks
-          gatherings={availableGuestbooks as GatheringListItem[]}
-          onWriteClick={handleWriteClick}
-        />
+        <>
+          {showWritten ? (
+            <WrittenGuestbooks
+              guestbooks={guestbooksData.content}
+              gatherings={participatingGatherings?.content ?? []}
+              onEditClick={handleEditClick}
+            />
+          ) : (
+            <AvailableGuestbooks
+              gatherings={availableGuestbooks as GatheringListItem[]}
+              onWriteClick={handleWriteClick}
+            />
+          )}
+        </>
       )}
+
       {modalState.isOpen && (
         <GuestbookModal
           isEditMode={modalState.isEditMode}
