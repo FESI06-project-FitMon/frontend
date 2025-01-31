@@ -18,6 +18,8 @@ export default function ChallengeCardButton({
   verificationStatus: boolean;
 }) {
   const [openModal, setOpenModal] = useState(false);
+  const [isParticipant, setIsParticipant] = useState(participantStatus);
+  const [isVerificated, setIsVerificated] = useState(verificationStatus);
   const showToast = useToastStore((state) => state.show);
 
   const handleGatheringButtonClick = () => {
@@ -28,6 +30,7 @@ export default function ChallengeCardButton({
     try {
       await participantChallenge(challengeId);
       showToast('챌린지에 참가하였습니다.', 'check');
+      setIsParticipant(true);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       if (axiosError.response?.data?.message) {
@@ -45,7 +48,8 @@ export default function ChallengeCardButton({
       />
     );
   }
-  if (!participantStatus) {
+
+  if (!isParticipant) {
     return (
       <Button
         style="custom"
@@ -58,7 +62,7 @@ export default function ChallengeCardButton({
     );
   }
 
-  if (!verificationStatus) {
+  if (!isVerificated) {
     return (
       <>
         <Button
@@ -73,6 +77,7 @@ export default function ChallengeCardButton({
               <ChallengeCertificationModal
                 challengeId={challengeId}
                 setOpenModal={setOpenModal}
+                setIsVerificated={setIsVerificated}
               />
             </Modal>
           )}

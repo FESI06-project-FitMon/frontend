@@ -24,7 +24,7 @@ export default function GatheringState({
 }) {
   const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
-  const [isParticipant, setIsParticipant] = useState(false);
+  const [isParticipant, setIsParticipant] = useState(participantStatus);
   const {
     data: gatheringStatus,
     isLoading,
@@ -33,9 +33,7 @@ export default function GatheringState({
 
   // 좋아요 초기 상태 세팅
   useEffect(() => {
-    console.log(participantStatus);
     setHeart(gatheringIdInLikes(gatheringId));
-    setIsParticipant(participantStatus);
   }, [gatheringId]);
 
   // 참여하기 버튼 클릭 핸들러
