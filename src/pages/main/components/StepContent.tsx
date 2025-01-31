@@ -23,6 +23,7 @@ export default function StepContent({
   if (currentStep === 0) {
     return (
       <ChoiceMainTypeModal
+        formData={formData}
         onSelect={(mainType, subType) => {
           updateFormData('mainType', mainType);
           updateFormData('subType', subType);
@@ -33,6 +34,7 @@ export default function StepContent({
   if (currentStep === 1) {
     return (
       <GatheringInfomationModal
+        formData={formData}
         onChange={(updatedData: Partial<CreateGatheringForm>) => {
           Object.entries(updatedData).forEach(([key, value]) =>
             updateFormData(key as keyof CreateGatheringForm, value),
@@ -44,6 +46,16 @@ export default function StepContent({
   if (currentStep === 2) {
     return (
       <ChallengeInfomationModal
+        formData={
+          formData.challenges[0] || {
+            title: '',
+            description: '',
+            imageUrl: null,
+            totalCount: 0,
+            startDate: null,
+            endDate: null,
+          }
+        }
         onChange={handleChallengeUpdate}
         gatheringEndDate={formData.endDate}
       />

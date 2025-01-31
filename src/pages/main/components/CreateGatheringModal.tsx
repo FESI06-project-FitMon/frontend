@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Modal from '@/components/dialog/Modal';
 import Button from '@/components/common/Button';
 import Step from './Step';
@@ -18,14 +19,38 @@ export default function CreateGathering({
     currentStep,
     setCurrentStep,
     formData,
+    setFormData,
     updateFormData,
     handleChallengeUpdate,
   } = useCreateGatheringForm();
+
+  const LOCAL_STORAGE_KEY = 'gatheringFormData';
+
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        setFormData(parsedData);
+      }
+    } catch (error) {
+      console.error('로컬스토리지 데이터 로드 중 오류:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
+
+  const calculateNextStep = (currentStep: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
+    return Math.min(currentStep + 1, 3) as 0 | 1 | 2 | 3;
+  };
 
   const handleNextStep = async () => {
     if (currentStep === 2) {
       try {
         await createGathering(formData);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
         setCurrentStep((prev) => calculateNextStep(prev));
       } catch (error) {
         console.error('모임 생성 중 오류:', error);
@@ -37,21 +62,8 @@ export default function CreateGathering({
     }
   };
 
-  const calculateNextStep = (currentStep: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
-    const nextStep = Math.min(currentStep + 1, 3);
-    if (nextStep === 0 || nextStep === 1 || nextStep === 2 || nextStep === 3) {
-      return nextStep;
-    }
-    return 0;
-  };
-
   const handlePreviousStep = () => {
-    setCurrentStep((prev) => {
-      if (prev === 0) return 0;
-      if (prev === 1) return 0;
-      if (prev === 2) return 1;
-      return 0;
-    });
+    setCurrentStep((prev) => Math.max(prev - 1, 0) as 0 | 1 | 2 | 3);
   };
 
   return (

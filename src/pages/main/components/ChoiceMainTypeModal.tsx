@@ -1,5 +1,5 @@
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useState } from 'react';
 import { LISTPAGE_MAINTYPE } from '@/constants/MainList';
 
 const IMAGES: Record<string, string> = {
@@ -15,14 +15,27 @@ const SUB_TYPES: Record<string, string[]> = {
 };
 
 interface ChoiceMainTypeModalProps {
+  formData: { mainType: string; subType: string };
   onSelect: (type: string, subType: string) => void;
 }
 
 export default function ChoiceMainTypeModal({
+  formData,
   onSelect,
 }: ChoiceMainTypeModalProps) {
-  const [selectedType, setSelectedType] = useState<string>('유산소형');
-  const [selectedSubType, setSelectedSubType] = useState<string>('런닝');
+  const [selectedType, setSelectedType] = useState<string>(
+    formData.mainType || '유산소형',
+  );
+  const [selectedSubType, setSelectedSubType] = useState<string>(
+    formData.subType || '런닝',
+  );
+
+  useEffect(() => {
+    setSelectedType(formData.mainType || '유산소형');
+    setSelectedSubType(
+      formData.subType || SUB_TYPES[formData.mainType]?.[0] || '런닝',
+    );
+  }, [formData.mainType, formData.subType]);
 
   const handleSelect = (type: string, subType: string) => {
     setSelectedType(type);
