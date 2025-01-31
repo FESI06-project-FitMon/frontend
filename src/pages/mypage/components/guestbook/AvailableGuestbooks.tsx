@@ -1,5 +1,4 @@
 import Button from "@/components/common/Button";
-import Null from "@/components/common/Null";
 import { GatheringListItem } from "@/types";
 import Image from 'next/image';
 import getDatePart from '@/utils/getDatePart';
@@ -7,12 +6,10 @@ import getDatePart from '@/utils/getDatePart';
 interface AvailableGuestbooksProps {
   gatherings: GatheringListItem[];
   onWriteClick: (gatheringId: number) => void;
+  isLoading?: boolean;
 }
 
 export default function AvailableGuestbooks({ gatherings, onWriteClick }: AvailableGuestbooksProps) {
-  if (gatherings.length === 0) {
-    return <Null message="작성 가능한 방명록이 없습니다." />;
-  }
 
   return (
     <div className="space-y-4 md:space-y-6">

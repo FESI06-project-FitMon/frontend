@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Null from '@/components/common/Null';
 import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { GatheringListItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
@@ -27,10 +26,6 @@ export default function WrittenGuestbooks({
   const updateState = (updates: Partial<typeof state>) => {
     setState((prev) => ({ ...prev, ...updates }));
   };
-
-  if (guestbooks.length === 0) {
-    return <Null message="아직 작성된 방명록이 없습니다." />;
-  }
 
   const handleDeleteClick = (guestbook: GuestbookItem) => {
     updateState({ selectedGuestbook: guestbook, showDeleteAlert: true });
