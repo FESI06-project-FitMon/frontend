@@ -102,7 +102,7 @@ export default function CalendarTab() {
     <div className="space-y-6 pb-[50px]">
       <div className="bg-dark-300 rounded-lg p-4">
         {/* 색상 범례 */}
-        <div className="flex flex-wrap items-center justify-end gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {[
             { type: '유산소형', color: '#faf4b1' },
             { type: '경기형', color: '#4e7868' },
