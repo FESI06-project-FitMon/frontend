@@ -50,14 +50,18 @@ export default function GuestbookModal({
       onValidationFail();
     }
   };
-  
+
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
         <form onSubmit={handleSubmit} className="w-full flex flex-col items-center md:items-start">
-          <div className="mb-3 md:my-4 flex items-center justify-center md:justify-start w-full">
+          <div className="mb-3 md:my-4 flex items-center justify-between w-full">
             <Heart rating={rating} onChange={(value) => setRating(value)} />
+            <span className="text-xs text-primary">
+              {content.length}/300
+            </span>
           </div>
+
 
           <div className="w-full">
             <ModalInput
