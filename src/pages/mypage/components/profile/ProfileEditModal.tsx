@@ -28,7 +28,7 @@ export default function ProfileEditModal({
     imageUrl: null as string | null,
     isValid: true
   });
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
 
@@ -56,7 +56,7 @@ export default function ProfileEditModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!profileEdit.validateNickname(formState.nickname)) {
       showToast('닉네임은 2글자에서 10글자 이내로 입력해주세요.', 'error');
       setFormState(prev => ({ ...prev, isValid: false }));
@@ -91,11 +91,14 @@ export default function ProfileEditModal({
                 isUploading={isUploading}
               />
             </div>
-            
+            {/* 닉네임 입력 부분 */}
             <div className="w-full md:flex-1 md:h-[130px] flex flex-col justify-end">
-              <label className="text-base mb-[10px] font-normal block">
-                닉네임
-              </label>
+              <div className="flex items-center justify-between mb-[10px]">
+                <label className="text-base font-normal">닉네임</label>
+                <span className="text-xs text-primary">
+                  {formState.nickname.length}/10
+                </span>
+              </div>
               <ModalInput
                 type="title"
                 value={formState.nickname}
@@ -108,7 +111,9 @@ export default function ProfileEditModal({
                 }}
                 placeholder="닉네임을 수정해주세요."
                 maxLength={10}
-                onValidationFail={() => 
+                onBlur={() => {
+                }}
+                onValidationFail={() =>
                   setFormState(prev => ({ ...prev, isValid: false }))
                 }
               />
