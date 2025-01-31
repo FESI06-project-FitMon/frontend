@@ -3,6 +3,9 @@ import Image from 'next/image';
 import BarChart from '@/components/chart/BarChart';
 import { ChallengeProps } from '@/types';
 import ChallengeCardButton from './ChallengeCardButton';
+import useToastStore from '@/stores/useToastStore';
+import { deleteChallenge } from '../api/challengeApi';
+import { AxiosError } from 'axios';
 
 export default function GatheringChallengeCard({
   challenge,
@@ -11,7 +14,19 @@ export default function GatheringChallengeCard({
   challenge: ChallengeProps;
   inProgress: boolean;
 }) {
-  const handleChallengeDeleteButtonClick = () => {};
+  const showToast = useToastStore((state) => state.show);
+
+  const handleChallengeDeleteButtonClick = async () => {
+    try {
+      await deleteChallenge(challenge.challengeId);
+      showToast('챌린지 삭제를 완료했습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.message, 'error');
+      }
+    }
+  };
 
   if (!challenge) return;
 

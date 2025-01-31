@@ -22,7 +22,7 @@ export default function GatheringGuestbook({
   return (
     <div className="mt-[43px] mb-[130px] w-full">
       {/* 방명록 리스트 */}
-      <div className=" flex flex-col gap-5 mb-[33px]">
+      <div className=" flex flex-col gap-5 mb-[33px] w-full">
         {data && (data as GatheringGuestbookResponse).content.length > 0 ? (
           (data as GatheringGuestbookResponse).content.map(
             (guestbook, index) => (

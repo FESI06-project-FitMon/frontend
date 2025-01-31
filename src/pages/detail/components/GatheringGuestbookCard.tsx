@@ -20,9 +20,11 @@ export default function Guestbook({
   guestbook: GuestbookProps;
 }) {
   return (
-    <div className="flex flex-col w-full h-[213px] bg-dark-200 rounded-[10px] gap-5 p-[30px]">
+    <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 p-[30px]">
       <Heart rating={guestbook.rating} />
-      <p className="h-[72px]">{guestbook.content}</p>
+      <p className="w-full h-min-[72px] text-ellipsis overflow-hidden break-words">
+        {guestbook.content}
+      </p>
       <div className="flex justify-between">
         <div className="flex gap-3 items-center justify-center">
           <Image

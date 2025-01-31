@@ -66,3 +66,16 @@ export const verificationChallenge = async (
     throw error;
   }
 };
+
+// 챌린지 삭제하기 API
+export const deleteChallenge = async (challengeId: number) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await apiRequest<any>({
+      param: `/api/v1/challenges/${challengeId}`,
+      method: 'delete',
+    });
+  } catch (error) {
+    throw error;
+  }
+};
