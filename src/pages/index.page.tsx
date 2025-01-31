@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 export default function Home({ dehydratedState }: HomeProps) {
   const [mainType, setMainType] = useState<MainType>('전체');
   const [subType, setSubType] = useState('전체');
-  const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const { isLogin } = useMemberStore();
@@ -48,7 +48,7 @@ export default function Home({ dehydratedState }: HomeProps) {
 
   const handleCreateButton = () => {
     if (isLogin) {
-      setShowModal(true);
+      setShowCreateModal(true);
     } else {
       setShowAlert(true);
     }
@@ -98,8 +98,10 @@ export default function Home({ dehydratedState }: HomeProps) {
           />
         </div>
 
-        {showModal && (
-          <CreateGathering setShowModal={() => setShowModal(false)} />
+        {showCreateModal && (
+          <CreateGathering
+            setShowCreateModal={() => setShowCreateModal(false)}
+          />
         )}
       </div>
 

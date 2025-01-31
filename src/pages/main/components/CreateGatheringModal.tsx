@@ -9,11 +9,11 @@ import { isStepValid } from '@/utils/stepValidation';
 import Image from 'next/image';
 
 interface CreateGatheringProps {
-  setShowModal: () => void;
+  setShowCreateModal: () => void;
 }
 
 export default function CreateGathering({
-  setShowModal,
+  setShowCreateModal,
 }: CreateGatheringProps) {
   const {
     currentStep,
@@ -56,7 +56,7 @@ export default function CreateGathering({
         console.error('모임 생성 중 오류:', error);
       }
     } else if (currentStep === 3) {
-      setShowModal();
+      setShowCreateModal();
     } else {
       setCurrentStep((prev) => calculateNextStep(prev));
     }
@@ -76,7 +76,7 @@ export default function CreateGathering({
           '모임 생성이 완료됐어요!',
         ][currentStep]
       }
-      onClose={setShowModal}
+      onClose={setShowCreateModal}
     >
       <div className="relative text-sm md:text-base">
         {/* 이전 버튼 */}
