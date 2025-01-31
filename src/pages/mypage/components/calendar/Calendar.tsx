@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useCalendarGatherings } from '../../service/useCalendar';
+import { useCalendarGatherings } from '../../service/myCalendar';
 
 export default function CalendarTab() {
   const { data: calendarData } = useCalendarGatherings();
@@ -124,11 +124,11 @@ export default function CalendarTab() {
                     fontWeight: 'bold',
                     color: '#FFFFFF',
                     textShadow: `
-          -1px 0 ${event.backgroundColor},
-          0 1px ${event.backgroundColor},
-          1px 0 ${event.backgroundColor},
-          0 -1px ${event.backgroundColor}
-        `
+                      -1px 0 ${event.backgroundColor},
+                      0 1px ${event.backgroundColor},
+                      1px 0 ${event.backgroundColor},
+                      0 -1px ${event.backgroundColor}
+                    `
                   }}
                 >
                   {event.extendedProps.isHost && (
