@@ -1,13 +1,17 @@
 // components/common/GuestbookCard.tsx
-import Heart from "@/components/common/Heart";
-import Popover from "@/components/common/Popover";
-import { GatheringListItem, GuestbookItem } from "@/types";
-import getDatePart from "@/utils/getDatePart";
+import Heart from '@/components/common/Heart';
+import Popover from '@/components/common/Popover';
+import {
+  NormalizedGathering,
+  NormalizedGuestbook,
+} from '@/pages/guestBooks/utils/normalizeGuestbook';
+import { GatheringListItem, GuestbookItem } from '@/types';
+import getDatePart from '@/utils/getDatePart';
 import Image from 'next/image';
 
 interface GuestbookCardProps {
-  guestbook: GuestbookItem;
-  gathering?: GatheringListItem | null; // gathering이 없을 수도 있음
+  guestbook: GuestbookItem | NormalizedGuestbook;
+  gathering?: GatheringListItem | NormalizedGathering | null; // gathering이 없을 수도 있음
   showActions?: boolean; // showActions는 기본값이 false
   onEdit?: (guestbook: GuestbookItem) => void;
   onDelete?: (guestbook: GuestbookItem) => void;
@@ -18,7 +22,7 @@ export default function GuestbookCard({
   gathering,
   showActions = false,
   onEdit,
-  onDelete
+  onDelete,
 }: GuestbookCardProps) {
   return (
     <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
@@ -36,7 +40,8 @@ export default function GuestbookCard({
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+            target.src =
+              'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
           }}
         />
       </div>
@@ -44,23 +49,26 @@ export default function GuestbookCard({
       <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
         <div className="flex justify-between items-start mb-4">
           <Heart rating={guestbook.rating} />
-          {showActions && onEdit && onDelete && (
-            <Popover
-              type="dot"
-              items={[
-                {
-                  id: 'edit',
-                  label: '수정하기',
-                  onClick: () => onEdit(guestbook)
-                },
-                {
-                  id: 'delete',
-                  label: '삭제하기',
-                  onClick: () => onDelete(guestbook)
-                }
-              ]}
-            />
-          )}
+          {showActions &&
+            onEdit &&
+            onDelete &&
+            'reviewOwnerStatus' in guestbook && (
+              <Popover
+                type="dot"
+                items={[
+                  {
+                    id: 'edit',
+                    label: '수정하기',
+                    onClick: () => onEdit(guestbook),
+                  },
+                  {
+                    id: 'delete',
+                    label: '삭제하기',
+                    onClick: () => onDelete(guestbook),
+                  },
+                ]}
+              />
+            )}
         </div>
 
         <p className="mb-2 lg:mb-4 break-all line-clamp-4">
@@ -70,10 +78,11 @@ export default function GuestbookCard({
         {gathering && (
           <div className="flex flex-col lg:flex-row mb-[10px] lg:mb-0 items-start lg:items-end justify-between">
             <p className="text-primary font-normal">
-              {gathering.title} | {gathering.mainLocation} {gathering.subLocation}
+              {gathering.title} | {gathering.mainLocation}{' '}
+              {gathering.subLocation}
             </p>
             <p className="text-dark-700 font-medium">
-              {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+              {getDatePart(guestbook.createDate)}
             </p>
           </div>
         )}
