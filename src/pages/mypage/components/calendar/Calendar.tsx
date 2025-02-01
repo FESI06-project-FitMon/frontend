@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useCalendarGatherings, EVENT_TYPES, getEventColor } from '../../service/myCalendar';
 import Null from '@/components/common/Null';
+import { StateData } from '@/components/common/StateData';
 import { ColorLegend } from './ColorLegend';
 
 export default function CalendarTab() {
@@ -37,25 +38,9 @@ export default function CalendarTab() {
   useEffect(() => {
     updateTitle();
   }, []);
-
-  if (isLoading) {
-    return (
-      <Null
-        message="로딩 중..."
-        svg={
-          <Image
-            src="/assets/image/spinner.svg"
-            alt="로딩 스피너"
-            width={50}
-            height={50}
-          />
-        }
-      />
-    );
-  }
-
+  
   if (!calendarData?.content || calendarData.content.length === 0) {
-    return <Null message="일정이 없습니다." />;
+    return <StateData isLoading={isLoading} emptyMessage="일정이 없습니다." />;
   }
 
   return (
