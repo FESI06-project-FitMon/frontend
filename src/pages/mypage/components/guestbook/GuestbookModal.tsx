@@ -58,18 +58,22 @@ export default function GuestbookModal({
           <div className="mb-3 md:my-4 flex items-center justify-between w-full">
             <Heart rating={rating} onChange={(value) => setRating(value)} />
             <span className="text-xs text-primary">
-              {content.length}/300
+              {content.length}/200
             </span>
           </div>
 
 
           <div className="w-full">
-            <ModalInput
+          <ModalInput
               type="description"
               value={content}
-              onChange={(value) => setContent(value)}
+              onChange={(value) => {
+                if (value.length <= 200) { 
+                  setContent(value);
+                }
+              }}
               placeholder="방명록을 작성해주세요."
-              maxLength={300}
+              maxLength={200}  
               height="220px"
               onValidationFail={onValidationFail}
             />
