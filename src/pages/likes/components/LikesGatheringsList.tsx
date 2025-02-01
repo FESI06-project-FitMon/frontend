@@ -5,7 +5,7 @@ import Card from '@/components/card/gathering/Card';
 import { GatheringList } from '@/types';
 import postLikesGatherings, {
   likesGatheringsProps,
-} from '../service/postLikesGathering';
+} from '../api/postLikesGathering';
 
 export default function LikesGatheringsList({
   mainType,
