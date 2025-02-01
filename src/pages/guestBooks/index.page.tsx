@@ -7,6 +7,7 @@ import {
 } from '@/constants/MainList';
 import {
   dehydrate,
+  DehydratedState,
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query';
@@ -16,6 +17,10 @@ import { GetServerSideProps } from 'next';
 import GuestbooksList from './components/GuestbooksList';
 import { GuestBooksList } from './api/getGuestBooks';
 import ReviewScore from './components/ReviewScore';
+
+interface GuestBooksProps {
+  dehydratedState: DehydratedState;
+}
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const ROWS_PER_PAGE = 20;
@@ -54,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default function LikesGatherings() {
+export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
   const [mainType, setMainType] = useState<MainType>('전체'); // 메인 타입 상태
   const [subType, setSubType] = useState('전체'); // 서브 타입 상태
 
@@ -88,7 +93,7 @@ export default function LikesGatherings() {
       </div>
       {/* 방명록 리스트 */}
       <div className="mt-5 lg:mt-10 pb-20">
-        <HydrationBoundary>
+        <HydrationBoundary state={dehydratedState}>
           <GuestbooksList mainType={mainType} subType={subType} />
         </HydrationBoundary>
       </div>
