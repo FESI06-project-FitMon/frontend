@@ -1,10 +1,11 @@
-import { useState } from 'react';
+// Profile.tsx
+import { useState, memo } from 'react';
 import Image from 'next/image';
 import useMemberStore from '@/stores/useMemberStore';
 import ProfileEditModal from './ProfileEditModal';
 import { ProfileImage } from './ProfileImage';
 
-export default function Profile() {
+const Profile = memo(function Profile() {
   const { user, setUser } = useMemberStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -15,6 +16,8 @@ export default function Profile() {
       profileImageUrl: newImageUrl,
     });
   };
+
+  console.log('Profile component rendered'); // 개발 시 리렌더링 확인용
 
   return (
     <>
@@ -55,4 +58,6 @@ export default function Profile() {
       />
     </>
   );
-}
+});
+
+export default Profile;
