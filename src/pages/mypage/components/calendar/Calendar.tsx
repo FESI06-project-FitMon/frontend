@@ -2,10 +2,12 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useCalendarGatherings } from '../../service/useCalendar';
+import { useCalendarGatherings } from '../../service/myCalendar';
+import Null from '@/components/common/Null';
+
 
 export default function CalendarTab() {
-  const { data: calendarData } = useCalendarGatherings();
+  const { data: calendarData, isLoading } = useCalendarGatherings();
 
   // FullCalendar 컴포넌트의 레퍼런스를 저장하기 위한 useRef
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -51,33 +53,79 @@ export default function CalendarTab() {
         return '#faf4b1';
       case '경기형':
         return '#4e7868';
-      case '근력형':
+      case '헬스형':
         return '#604163';
       default:
-        return '#5779b3';
+        return 'primary';
     }
   };
 
   // 호스트 및 유저 모임 데이터를 이벤트 형식으로 병합
-  const events = useMemo(() => 
-    calendarData?.content?.map(gathering => ({
-      id: gathering.gatheringId.toString(),
-      start: gathering.startDate,
-      end: gathering.endDate,
-      title: gathering.title,
-      backgroundColor: getEventColor(gathering.mainType),
-      borderColor: getEventColor(gathering.mainType),
-      textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
-      extendedProps: {
-        isHost: gathering.captainStatus,
-        type: gathering.mainType
-      }
-    })) ?? [], [calendarData]);
+  const events = useMemo(() =>
+    calendarData?.content
+      ?.filter(gathering => gathering.status !== '취소됨') // 취소된 모임 필터링
+      ?.map(gathering => ({
+        id: gathering.gatheringId.toString(),
+        start: gathering.startDate,
+        end: gathering.endDate,
+        title: gathering.title,
+        backgroundColor: getEventColor(gathering.mainType),
+        borderColor: getEventColor(gathering.mainType),
+        textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
+        extendedProps: {
+          isHost: gathering.captainStatus,
+          type: gathering.mainType
+        }
+      })) ?? [], [calendarData]);
 
+  if (isLoading) {
+    return (
+      <Null
+        message="로딩 중..."
+        svg={
+          <Image
+            src="/assets/image/spinner.svg"
+            alt="로딩 스피너"
+            width={50}
+            height={50}
+          />
+        }
+      />
+    );
+  }
+
+  if (!calendarData?.content || calendarData.content.length === 0) {
+    return <Null message="일정이 없습니다." />;
+  }
 
   return (
     <div className="space-y-6 pb-[50px]">
       <div className="bg-dark-300 rounded-lg p-4">
+        {/* 색상 범례 */}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {[
+            { type: '유산소형', color: '#faf4b1' },
+            { type: '경기형', color: '#4e7868' },
+            { type: '헬스형', color: '#604163' }
+          ].map(({ type, color }) => (
+            <div key={type} className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              <span className="text-xs text-white">{type}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-2 ml-4">
+            <Image
+              src="/assets/image/crown.svg"
+              alt="Host"
+              width={12}
+              height={12}
+            />
+            <span className="text-xs text-white">주최자</span>
+          </div>
+        </div>
         {/* 캘린더 상단 네비게이션 (이전/다음 버튼과 현재 제목) */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={handlePrev} className="p-2">
@@ -115,14 +163,20 @@ export default function CalendarTab() {
                     backgroundColor: event.backgroundColor,
                   }}
                 ></div>
-            
+
                 {/* 텍스트와 호스트 이미지 */}
                 <div
                   className="flex items-center justify-center gap-1"
                   style={{
-                    fontSize: '0.75rem', // 텍스트 크기
-                    fontWeight: 'bold', // 텍스트 굵기
-                    color: event.textColor || '#FFFFFF',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    color: '#FFFFFF',
+                    textShadow: `
+                      -1px 0 ${event.backgroundColor},
+                      0 1px ${event.backgroundColor},
+                      1px 0 ${event.backgroundColor},
+                      0 -1px ${event.backgroundColor}
+                    `
                   }}
                 >
                   {event.extendedProps.isHost && (
@@ -136,7 +190,7 @@ export default function CalendarTab() {
                   )}
                   <span>{event.title}</span>
                 </div>
-            
+
                 {/* 오른쪽 선 */}
                 <div
                   style={{
@@ -147,7 +201,7 @@ export default function CalendarTab() {
                 ></div>
               </div>
             )}
-            
+
             dayHeaderClassNames="bg-dark-300 text-white text-base font-medium py-4" // 날짜 헤더 스타일
             dayHeaderContent={({ date }) => (
               <span className="flex justify-center">
