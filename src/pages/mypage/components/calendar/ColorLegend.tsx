@@ -1,12 +1,14 @@
-import { EVENT_TYPES, getEventColor } from '@/pages/mypage/service/myCalendar';
+// ColorLegend.tsx
+import React, { memo } from 'react';
 import Image from 'next/image';
+import { EVENT_TYPES, getEventColor } from '@/pages/mypage/service/myCalendar';
 
 interface ColorLegendProps {
   eventTypes: typeof EVENT_TYPES;
   getColor: (type: string) => string;
 }
 
-export function ColorLegend({ eventTypes, getColor }: ColorLegendProps) {
+export const ColorLegend = memo(function ColorLegend({ eventTypes, getColor }: ColorLegendProps) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       {eventTypes.map((type) => (
@@ -29,4 +31,4 @@ export function ColorLegend({ eventTypes, getColor }: ColorLegendProps) {
       </div>
     </div>
   );
-}
+})

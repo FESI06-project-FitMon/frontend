@@ -7,7 +7,7 @@ interface EventContentProps {
   event: EventApi;
 }
 
-const EventContent = memo(({ event }: EventContentProps) => {
+export const EventContent = memo(function EventContent({ event }: EventContentProps) {
   return (
     <div className="event-container flex items-center justify-between">
       <div
@@ -52,7 +52,3 @@ const EventContent = memo(({ event }: EventContentProps) => {
     </div>
   );
 });
-
-EventContent.displayName = 'EventContent';
-
-export default EventContent;

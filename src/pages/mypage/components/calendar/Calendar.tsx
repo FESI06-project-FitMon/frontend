@@ -6,7 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { useCalendarGatherings, EVENT_TYPES, getEventColor } from '../../service/myCalendar';
 import { StateData } from '@/components/common/StateData';
 import { ColorLegend } from './ColorLegend';
-import EventContent from './EventContent';
+import {EventContent} from './EventContent';
 import { DayCell, DayHeader } from './CalendarCell';
 import { calendarStyles } from './calendarStyles';
 
