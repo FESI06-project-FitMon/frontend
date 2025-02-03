@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { GatheringItem } from './GatheringItem';
-import Pagination from '@/components/common/Pagination';
-import { GatheringListItem, ChallengeType } from '@/types';
+import { PageResponse, GatheringListItem, ChallengeType } from "@/types";
+import  Pagination  from "@/components/common/Pagination";
+import { GatheringItem } from "./GatheringItem";
 
 interface GatheringListProps {
-  gatherings: GatheringListItem[];
+  gatherings: PageResponse<GatheringListItem>;
   gatheringChallenges: {
     [key: number]: {
       inProgressChallenges: ChallengeType[];
@@ -13,6 +12,8 @@ interface GatheringListProps {
   };
   onCancelAction?: (gatheringId: number) => void;
   cancelActionType: 'gathering' | 'participation';
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
 export default function GatheringList({
@@ -20,19 +21,13 @@ export default function GatheringList({
   gatheringChallenges,
   onCancelAction,
   cancelActionType,
+  currentPage,
+  onPageChange,
 }: GatheringListProps) {
-  const [page, setPage] = useState(0);
-  const countPerPage = 10;
-
-  const paginatedGatherings = gatherings.slice(
-    page * countPerPage,
-    (page + 1) * countPerPage
-  );
-
   return (
     <>
       <div className="space-y-6 pb-[50px]">
-        {paginatedGatherings.map((gathering) => (
+        {gatherings.content.map((gathering) => (
           gathering.gatheringId ? (
             <GatheringItem
               key={gathering.gatheringId}
@@ -44,12 +39,16 @@ export default function GatheringList({
           ) : null
         ))}
       </div>
-      <Pagination
-        page={page}
-        setPage={setPage}
-        totalNumber={gatherings.length}
-        countPerPage={countPerPage}
-      />
+      {gatherings.totalPages > 1 && (
+        <div className="flex justify-center mt-4">
+          <Pagination
+            page={currentPage}
+            setPage={onPageChange}
+            totalNumber={gatherings.totalElements}
+            countPerPage={10}  // API의 pageSize와 동일하게 설정
+          />
+        </div>
+      )}
     </>
   );
 }

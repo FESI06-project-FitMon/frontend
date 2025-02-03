@@ -1,9 +1,11 @@
 import { useParticipatingGatherings, useCancelParticipation, useGatheringChallenges } from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
 import { StateData } from '@/components/common/StateData';
+import { useState } from 'react';
 
 export default function JoinGathering() {
-  const { data: gatheringsData, isLoading } = useParticipatingGatherings();
+  const [currentPage, setCurrentPage] = useState(0);
+  const { data: gatheringsData, isLoading } = useParticipatingGatherings(currentPage);
   const { mutateAsync: cancelParticipation } = useCancelParticipation();
   const { data: gatheringChallenges = {} } = useGatheringChallenges(gatheringsData, false);
 
@@ -18,10 +20,12 @@ export default function JoinGathering() {
 
   return (
     <GatheringList
-      gatherings={gatheringsData.content}
+      gatherings={gatheringsData}
       gatheringChallenges={gatheringChallenges}
       onCancelAction={cancelParticipation}
       cancelActionType="participation"
+      currentPage={currentPage}
+      onPageChange={setCurrentPage}
     />
   );
 }
