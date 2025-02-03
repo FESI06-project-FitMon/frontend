@@ -21,6 +21,8 @@ import useMemberStore from '@/stores/useMemberStore';
 import Alert from '@/components/dialog/Alert';
 import { useRouter } from 'next/router';
 import { prefetchGatheringList } from '@/pages/main/service/gatheringService';
+import Image from 'next/image';
+import FilterModal from './main/components/FilterModal';
 
 interface HomeProps {
   dehydratedState: DehydratedState;
@@ -41,6 +43,7 @@ export default function Home({ dehydratedState }: HomeProps) {
   const [mainType, setMainType] = useState<MainType>('전체');
   const [subType, setSubType] = useState('전체');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const { isLogin } = useMemberStore();
@@ -52,6 +55,10 @@ export default function Home({ dehydratedState }: HomeProps) {
     } else {
       setShowAlert(true);
     }
+  };
+
+  const handleFilterButton = () => {
+    setShowFilterModal((prev) => !prev);
   };
 
   const handleAlertConfirm = () => {
@@ -105,13 +112,30 @@ export default function Home({ dehydratedState }: HomeProps) {
         )}
       </div>
 
-      <div className="my-5 lg:my-[35px]">
+      <div className="flex justify-end items-center my-5 lg:my-[35px]">
         {mainType !== '전체' && (
           <SubTag
             tags={LISTPAGE_SUBTYPE[mainType]}
             currentTag={subType}
             onTagChange={(newTag) => setSubType(newTag)}
+            className="flex w-full justify-start"
           />
+        )}
+        <div
+          className="min-w-20 flex gap-2.5 text-right"
+          onClick={handleFilterButton}
+        >
+          정렬
+          <Image
+            src={'/assets/image/filter.svg'}
+            alt="필터 아이콘"
+            width={20}
+            height={20}
+          ></Image>
+        </div>
+
+        {showFilterModal && (
+          <FilterModal setShowFilterModal={() => setShowFilterModal(false)} />
         )}
       </div>
 
