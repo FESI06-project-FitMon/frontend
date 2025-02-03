@@ -17,7 +17,6 @@ import {
   GatheringUpdateRequest,
 } from '../dto/requestDto';
 import { GatheringDetailType, GatheringStateType } from '@/types';
-import { GatheringChallengeResponse } from '../dto/responseDto';
 
 export const queryKeys = {
   gathering: (gatheringId: number) => [`gathering`, gatheringId],
@@ -56,7 +55,7 @@ export const GatheringQueries = {
   getGatheringChallengesQuery: (gatheringId: number, status: string) => {
     return infiniteQueryOptions({
       queryKey: queryKeys.gatheringChallenges(gatheringId, status),
-      queryFn: ({ pageParam }) =>
+      queryFn: ({ pageParam = 0 }: QueryFunctionContext) =>
         fetchGatheringChallenges(gatheringId, pageParam! as number, 10, status),
       initialPageParam: void 1,
       getNextPageParam: (page, pageParam) => {
@@ -75,10 +74,12 @@ export const GatheringQueries = {
   },
 
   updateGatheringQuery: (gatheringId: number, queryClient: QueryClient) => {
-    return queryOptions<GatheringDetailType, Error, GatheringUpdateRequest>({
-      mutationFn: async (newGathering: GatheringUpdateRequest) => {
-        return await updateGathering(newGathering, gatheringId);
-      },
+    return {
+      mutationFn: ({
+        newGathering,
+      }: {
+        newGathering: GatheringUpdateRequest;
+      }) => updateGathering(newGathering, gatheringId),
       onMutate: async (newGathering: GatheringUpdateRequest) => {
         await queryClient.cancelQueries({
           queryKey: queryKeys.gathering(gatheringId),
@@ -134,29 +135,23 @@ export const GatheringQueries = {
           queryClient.setQueryData(queryKeys.gathering(gatheringId), context);
         }
       },
-    });
+    };
   },
 
   createChallengeQuery: (gatheringId: number, queryClient: QueryClient) => {
-    return queryOptions<
-      GatheringChallengeResponse,
-      Error,
-      ChallengeCreateRequest
-    >({
-      mutationFn: async (newChallenge: ChallengeCreateRequest) => {
-        const result = await createChallenge(newChallenge, gatheringId);
-        return result;
+    return {
+      mutationFn: (newChallenge: ChallengeCreateRequest) => {
+        createChallenge(newChallenge, gatheringId);
       },
-
       onMutate: async (newChallenge: ChallengeCreateRequest) => {
         await queryClient.cancelQueries({
           queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
         });
 
-        const previousGatheringChallenges =
-          queryClient.getQueryData<GatheringChallengeResponse>(
-            queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
-          );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const previousGatheringChallenges: any = queryClient.getQueryData(
+          queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
+        )!;
 
         const challenge = {
           gatheringId: 0,
@@ -168,11 +163,32 @@ export const GatheringQueries = {
           ...newChallenge,
         };
 
+        console.log(
+          previousGatheringChallenges,
+          typeof previousGatheringChallenges,
+        );
+        const newChallenges = {
+          ...previousGatheringChallenges,
+          pages: [
+            {
+              content: [
+                challenge,
+                ...previousGatheringChallenges.pages[0].content,
+              ],
+              hasNext: previousGatheringChallenges.pages[0].hasNext,
+            },
+          ],
+        };
+        console.log('newChallenges', newChallenges);
+        console.log(
+          'previousGatheringChallenges????',
+          previousGatheringChallenges.pages?.length > 0 &&
+            previousGatheringChallenges.pages[0]?.content,
+        );
         if (previousGatheringChallenges) {
-          queryClient.setQueryData<GatheringChallengeResponse>(
+          queryClient.setQueryData(
             queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
-            previousGatheringChallenges.pages?.length > 0 &&
-              previousGatheringChallenges.pages[0]?.content
+            previousGatheringChallenges.pages?.length > 0
               ? {
                   ...previousGatheringChallenges,
                   pages: [
@@ -198,20 +214,15 @@ export const GatheringQueries = {
         });
       },
 
-      onError: (context: QueryFunctionContext) => {
-        if (context) {
-          queryClient.setQueryData(queryKeys.gathering(gatheringId), context);
-        }
+      onError: (error: Error) => {
+        console.log(error);
       },
-    });
+    };
   },
 
   deleteGatheringQuery: (gatheringId: number, queryClient: QueryClient) => {
-    return queryOptions<GatheringDetailType, Error, GatheringDetailType>({
-      mutationFn: async () => {
-        return await deleteGathering(gatheringId);
-      },
-
+    return {
+      mutationFn: () => deleteGathering(gatheringId),
       onMutate: async () => {
         await queryClient.cancelQueries({
           queryKey: queryKeys.gathering(gatheringId),
@@ -223,6 +234,6 @@ export const GatheringQueries = {
           queryKey: queryKeys.gathering(gatheringId),
         });
       },
-    });
+    };
   },
 };

@@ -66,6 +66,7 @@ export default function ChallengeAddModal({
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
+    console.log(newChallenge);
     mutate(newChallenge);
     onClose();
   };

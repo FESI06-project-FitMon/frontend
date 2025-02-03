@@ -9,3 +9,7 @@ export interface GatheringChallengeResponse {
   content: Array<ChallengeType>;
   hasNext: boolean;
 }
+
+export interface ChallengeCreateResponse {
+  challengeId: number;
+}

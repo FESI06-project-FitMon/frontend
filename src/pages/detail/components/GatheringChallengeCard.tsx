@@ -30,6 +30,7 @@ export default function GatheringChallengeCard({
 
   if (!challenge) return;
 
+  console.log(challenge);
   return (
     <div className="w-full h-[250px] bg-dark-200 rounded-[10px]">
       <div className="flex ">
