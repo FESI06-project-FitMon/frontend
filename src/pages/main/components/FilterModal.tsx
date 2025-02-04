@@ -21,7 +21,6 @@ export default function FilterModal({
 }: FilterModalProps) {
   const buttonActive = 'bg-dark-600';
 
-  // 현재 선택한 필터를 임시 저장할 `localFilters` 상태
   const [localFilters, setLocalFilters] = useState(filters);
 
   const placeSiItems: SelectItem[] = Object.keys(cityData).map((city) => ({
@@ -37,7 +36,11 @@ export default function FilterModal({
     : [];
 
   const resetSort = () =>
-    setLocalFilters({ ...localFilters, sortBy: 'deadline' });
+    setLocalFilters({
+      ...localFilters,
+      sortBy: 'deadline',
+      sortDirection: 'ASC',
+    });
   const resetLocation = () =>
     setLocalFilters({ ...localFilters, mainLocation: '', subLocation: '' });
   const resetDate = () => setLocalFilters({ ...localFilters, searchDate: '' });
@@ -54,56 +57,108 @@ export default function FilterModal({
   return (
     <Modal onClose={setShowFilterModal} title="필터 및 정렬">
       {/* 정렬 필터 */}
-      <div className="relative mt-[30px] ">
-        <h2 className="mb-[10px] text-lg font-semibold">모임 정보</h2>
-        <div className="flex gap-2.5 items-end">
+      <div className="relative mt-[30px]">
+        <h2 className="mb-[10px] text-lg font-semibold">모임 정렬</h2>
+        <div className="grid grid-cols-2 gap-2.5 items-end text-[15px]">
           <button
-            className={`py-3 px-6 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'deadline' ? buttonActive : ''
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
+              localFilters.sortBy === 'deadline' &&
+              localFilters.sortDirection === 'ASC'
+                ? buttonActive
+                : ''
             }`}
             onClick={() =>
-              setLocalFilters({ ...localFilters, sortBy: 'deadline' })
+              setLocalFilters({
+                ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
+                sortBy: 'deadline',
+                sortDirection: 'ASC',
+              })
             }
           >
-            마감임박순
+            마감이 먼 순
           </button>
+
           <button
-            className={`py-3 px-6 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'participants' ? buttonActive : ''
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
+              localFilters.sortBy === 'deadline' &&
+              localFilters.sortDirection === 'DESC'
+                ? buttonActive
+                : ''
             }`}
             onClick={() =>
-              setLocalFilters({ ...localFilters, sortBy: 'participants' })
+              setLocalFilters({
+                ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
+                sortBy: 'deadline',
+                sortDirection: 'DESC',
+              })
             }
           >
-            참여인원순
+            마감 임박순
           </button>
-          <div className="flex justify-end ml-1">
-            <button
-              className="flex items-center gap-1 text-sm text-dark-700 transition-all"
-              onClick={resetSort}
-            >
-              필터 초기화
-              <Image
-                src={'/assets/image/arrow-clockwise.svg'}
-                aria-readonly
-                alt="초기화 이미지"
-                width={14}
-                height={14}
-              />
-            </button>
-          </div>
+
+          <button
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
+              localFilters.sortBy === 'participants' &&
+              localFilters.sortDirection === 'ASC'
+                ? buttonActive
+                : ''
+            }`}
+            onClick={() =>
+              setLocalFilters({
+                ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
+                sortBy: 'participants',
+                sortDirection: 'ASC',
+              })
+            }
+          >
+            참여인원 적은 순
+          </button>
+
+          <button
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
+              localFilters.sortBy === 'participants' &&
+              localFilters.sortDirection === 'DESC'
+                ? buttonActive
+                : ''
+            }`}
+            onClick={() =>
+              setLocalFilters({
+                ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
+                sortBy: 'participants',
+                sortDirection: 'DESC',
+              })
+            }
+          >
+            참여인원 많은 순
+          </button>
+        </div>
+        {/* 초기화 버튼 */}
+        <div className="flex mt-4">
+          <button
+            className="flex items-center gap-1 text-sm text-dark-700 transition-all"
+            onClick={resetSort}
+          >
+            초기화
+            <Image
+              src={'/assets/image/arrow-clockwise.svg'}
+              aria-readonly
+              alt="초기화 이미지"
+              width={14}
+              height={14}
+            />
+          </button>
         </div>
       </div>
 
       {/* 장소 선택 */}
       <div className="relative mt-[20px]">
         <h2 className="mb-[10px]">장소</h2>
-        <div className="flex items-end ">
+        <div className="flex justify-start items-end ">
           <Select
             items={placeSiItems}
             selectedItem={localFilters.mainLocation || ''}
             setSelectedItem={handleSiChange}
-            className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
+            className="mr-[10px] md:w-full min-w-[100px] md:w-[175px]"
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             width="200px"
             height="47px"
@@ -115,16 +170,17 @@ export default function FilterModal({
               setLocalFilters({ ...localFilters, subLocation: value })
             }
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
-            className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
+            className="mr-[10px]  min-w-[100px] md:w-[175px]"
             width="200px"
             height="47px"
           />
-          <div className="flex justify-end ml-1">
+          {/* 초기화 버튼 */}
+          <div className="flex md:justify-end mt-2 ml-2 w-full">
             <button
               className="flex items-center gap-1 text-sm text-dark-700 transition-all"
               onClick={resetLocation}
             >
-              필터 초기화
+              초기화
               <Image
                 src={'/assets/image/arrow-clockwise.svg'}
                 aria-readonly
@@ -138,41 +194,38 @@ export default function FilterModal({
       </div>
 
       {/* 날짜 선택 */}
-      <div className="relative flex flex-col md:flex-row w-full gap-[10px] mt-[20px]">
-        <div className="w-full">
-          <h2 className="mb-[10px]">날짜 선택</h2>
-          <div className="flex items-end">
-            <DatePickerCalendar
-              className="w-full md:w-[245px]"
-              height="47px"
-              selectedDate={
-                localFilters.searchDate
-                  ? new Date(localFilters.searchDate)
-                  : null
-              }
-              setSelectedDate={(date) =>
-                setLocalFilters({
-                  ...localFilters,
-                  searchDate: date ? date.toISOString().split('T')[0] : '',
-                })
-              }
-              minDate={null}
-            />
-            <div className="flex justify-end ml-3">
-              <button
-                className="flex items-center gap-1 text-sm text-dark-700 transition-all"
-                onClick={resetDate}
-              >
-                필터 초기화
-                <Image
-                  src={'/assets/image/arrow-clockwise.svg'}
-                  aria-readonly
-                  alt="초기화 이미지"
-                  width={14}
-                  height={14}
-                />
-              </button>
-            </div>
+      <div className="relative mt-[20px]">
+        <h2 className="mb-[10px]">날짜 선택</h2>
+        <div className="flex items-end">
+          <DatePickerCalendar
+            className="w-[245px]"
+            height="47px"
+            selectedDate={
+              localFilters.searchDate ? new Date(localFilters.searchDate) : null
+            }
+            setSelectedDate={(date) =>
+              setLocalFilters({
+                ...localFilters,
+                searchDate: date ? date.toISOString().split('T')[0] : '',
+              })
+            }
+            minDate={null}
+          />
+          {/* 초기화 버튼 */}
+          <div className="flex justify-end ml-3">
+            <button
+              className="flex items-center gap-1 text-sm text-dark-700 transition-all"
+              onClick={resetDate}
+            >
+              초기화
+              <Image
+                src={'/assets/image/arrow-clockwise.svg'}
+                aria-readonly
+                alt="초기화 이미지"
+                width={14}
+                height={14}
+              />
+            </button>
           </div>
         </div>
       </div>
@@ -185,7 +238,7 @@ export default function FilterModal({
           style="cancel"
           className="w-[48%] h-[52px] text-primary"
         />
-        {/* 적용 버튼 (변경된 값 반영 후 닫기) */}
+        {/* 적용 버튼 */}
         <Button
           name="적용"
           handleButtonClick={applyFilters}
