@@ -54,7 +54,7 @@ export default function GuestbookCard({
             {showActions &&
               onEdit &&
               onDelete &&
-              'reviewOwnerStatus' in guestbook && (
+              'gatheringId' in guestbook && (
                 <Popover
                   type="dot"
                   items={[
