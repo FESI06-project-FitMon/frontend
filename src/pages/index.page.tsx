@@ -119,6 +119,18 @@ export default function Home({ dehydratedState }: HomeProps) {
               subType: '전체',
             }));
           }}
+          rightElement={
+            <div className="hidden lg:flex w-full justify-end">
+              <Button
+                style="custom"
+                name="모임 만들기"
+                className="text-base my-2 h-9 w-[126px]"
+                handleButtonClick={() =>
+                  isLogin ? setShowCreateModal(true) : setShowAlert(true)
+                }
+              />
+            </div>
+          }
         />
 
         {/* 모바일/태블릿용 고정 버튼 */}

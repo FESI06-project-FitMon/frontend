@@ -158,7 +158,7 @@ export default function FilterModal({
             items={placeSiItems}
             selectedItem={localFilters.mainLocation || ''}
             setSelectedItem={handleSiChange}
-            className="mr-[10px] md:w-full min-w-[100px] md:w-[175px]"
+            className="mr-[10px] min-w-[100px] md:w-[175px]"
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             width="200px"
             height="47px"
