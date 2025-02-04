@@ -1,10 +1,11 @@
 import SubTag from '@/components/tag/SubTag';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import useGatheringStore from '@/stores/useGatheringStore';
 import GatheringChallengeCard from './GatheringChallengeCard';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
+import { useGatheringChallenges } from '../service/gatheringService';
+import { GatheringChallengeResponse } from '../dto/responseDto';
 
 export default function GatheringChallenge({
   captainStatus,
@@ -19,53 +20,26 @@ export default function GatheringChallenge({
   ];
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
-  const [isLoading, setIsLoading] = useState(false);
-  const {
-    fetchGatheringChallenges,
-    challenges,
-    hasNextPage,
-    setHasNextPage,
-    setIsStatusChanged,
-  } = useGatheringStore();
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
-
-  const fetchNextPage = async () => {
-    console.log('fetchNextPage');
-    setIsStatusChanged(false);
-    await fetchGatheringChallenges(
+  const { data, isLoading, hasNextPage, fetchPreviousPage, fetchNextPage } =
+    useGatheringChallenges(
       gatheringId,
-      10,
       currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
     );
-    setHasNextPage(!hasNextPage);
-  };
 
-  // 무한 스크롤 옵저버 연결
+  useEffect(() => {
+    fetchPreviousPage();
+  }, [currentTag]);
+
   const observerRef = useInfiniteScroll({
     onIntersect: fetchNextPage,
     isLoading: isLoading,
     hasNextPage: !!hasNextPage,
   });
 
-  useEffect(() => {
-    fetchGatheringChallenges(
-      gatheringId,
-      10,
-      currentTag === 'inProgress' ? 'IN_PROGRESS' : 'CLOSED',
-    );
-  }, [gatheringId, currentTag]);
-
   const handleTagChange = (newTag: string) => {
     setCurrentTag(newTag);
-    setHasNextPage(false);
-    setIsStatusChanged(true);
   };
-  if (isLoading) {
-    return <Null message="로딩중입니다." />;
-  }
 
   return (
     <div>
@@ -124,20 +98,30 @@ export default function GatheringChallenge({
 
         <div className="flex flex-col mt-[31px] mb-[27px] gap-6">
           {currentInquiryState === 'list' ? (
-            challenges && challenges.length > 0 ? (
-              challenges?.map((challenge, index) => (
-                <GatheringChallengeCard
-                  key={index}
-                  challenge={{ ...challenge, captainStatus }}
-                  inProgress={currentTag === 'inProgress'}
-                />
-              ))
-            ) : (
+            isLoading ? (
+              <Null message="로딩중입니다"></Null>
+            ) : data &&
+              data.pages.length === 1 &&
+              (data.pages[0] as GatheringChallengeResponse).content.length ===
+                0 ? (
               <div className="h-[250px] bg-dark-200 rounded-[10px] flex items-center justify-center">
                 {currentTag === 'inProgress'
                   ? '진행중인 챌린지가 없습니다.'
                   : '마감된 챌린지가 없습니다.'}
               </div>
+            ) : (
+              data &&
+              data.pages.map((page) =>
+                (page as GatheringChallengeResponse).content?.map(
+                  (challenge, index) => (
+                    <GatheringChallengeCard
+                      key={index}
+                      challenge={{ ...challenge, captainStatus }}
+                      inProgress={currentTag === 'inProgress'}
+                    />
+                  ),
+                ),
+              )
             )
           ) : (
             <div>calendar</div>
