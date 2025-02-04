@@ -104,8 +104,7 @@ export default function GatheringEditModal({
       tags: tags,
     };
 
-    // updateGathering(editedInformation, gatheringId);
-    mutate(editedInformation);
+    mutate({ newGathering: editedInformation });
     // 모달을 닫는다.
     setIsModalOpen(false);
   };
