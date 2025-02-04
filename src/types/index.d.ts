@@ -97,6 +97,30 @@ export interface GatheringList {
   hasNext: boolean;
 }
 
+export interface GatheringDetailType {
+  gatheringId: number;
+  captainStatus: boolean;
+  participantStatus: boolean;
+  title: string;
+  description: string;
+  mainType: '유산소형' | '무산소형' | '경기형';
+  subType: string;
+  imageUrl: string;
+  startDate: string;
+  endDate: string;
+  mainLocation: string;
+  subLocation: string;
+  minCount: number;
+  totalCount: number;
+  participantCount: number;
+  status: '시작전' | '진행중' | '종료됨' | '취소됨';
+  tags: string[];
+  participants: Participant[];
+  averageRating: number;
+  guestBookCount: number;
+}
+
+
 export interface GatheringListItem {
   gatheringId: number;
   captainStatus: boolean;
