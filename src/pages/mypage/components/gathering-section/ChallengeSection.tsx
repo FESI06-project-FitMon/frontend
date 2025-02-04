@@ -11,6 +11,10 @@ interface ChallengeSectionProps {
   onToggle: (e: React.MouseEvent) => void;
 }
 
+interface ChallengeWithStatus extends ChallengeType {
+  isClosed?: boolean;
+}
+
 export default function ChallengeSection({
   challenges,
   gathering,
@@ -29,11 +33,7 @@ export default function ChallengeSection({
     return null;
   }
 
-  const getStatusInfo = (challenge: ChallengeType, isClosed: boolean = false) => {
-    if (isClosed) {
-      return { text: '마감됨', style: 'bg-dark-500' };
-    }
-    
+  const getStatusInfo = (challenge: ChallengeWithStatus) => {
     if (gathering.captainStatus) {
       if (challenge.verificationStatus && challenge.participantStatus) {
         return { text: '참여완료', style: 'bg-dark-500' };
@@ -49,25 +49,23 @@ export default function ChallengeSection({
     }
   };
 
-// 진행중인 챌린지와 마감된 챌린지 모두 표시
-const displayChallenges = [
-  ...(challenges?.inProgressChallenges || []),
-  ...(challenges?.doneChallenges || [])
-];
+  // 진행중인 챌린지와 마감된 챌린지 모두 표시
+  const displayChallenges = [
+    ...(challenges?.inProgressChallenges || []).map(c => ({ ...c, isClosed: false })),
+    ...(challenges?.doneChallenges || []).map(c => ({ ...c, isClosed: true }))
+  ];
 
   return (
     <>
       <div
-        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${
-          isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
-        }`}
+        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
+          }`}
         onClick={onToggle}
       >
         <span className="flex items-center gap-2 text-sm md:text-base font-semibold">
           <div
-            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${
-              isOpen ? 'rotate-90' : ''
-            }`}
+            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${isOpen ? 'rotate-90' : ''
+              }`}
           >
             <Image
               src="/assets/image/toggle.svg"
@@ -77,7 +75,7 @@ const displayChallenges = [
               height={20}
             />
           </div>
-          이 모임에서 참여했던 챌린지
+          {gathering.captainStatus ? '이 모임의 모든 챌린지' : '이 모임에서 참여했던 챌린지'}
         </span>
       </div>
 
@@ -89,9 +87,15 @@ const displayChallenges = [
               return (
                 <div
                   key={challenge.challengeId}
-                  className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer"
+                  className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer relative overflow-visible" // overflow-visible 추가
                   onClick={(e) => handleChallengeClick(challenge.challengeId, e)}
                 >
+                  {/* 마감 딱지 */}
+                  {challenge.isClosed && (
+                    <div className="absolute -top-5 -right-5 bg-dark-500 text-sm w-[50px] h-[50px] rounded-full flex items-center justify-center shadow-md">
+                      마감
+                    </div>
+                  )}
                   <div className="flex items-start gap-[17px]">
                     <div className="relative w-[61px] h-[61px] rounded-full overflow-hidden flex-shrink-0">
                       <Image
@@ -140,7 +144,7 @@ const displayChallenges = [
                           </h4>
                         </div>
                         <h5 className="text-dark-700 text-sm font-normal">
-                          {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+                          {getDatePart(challenge.startDate)} ~ {getDatePart(challenge.endDate)}
                         </h5>
                       </div>
                     </div>
