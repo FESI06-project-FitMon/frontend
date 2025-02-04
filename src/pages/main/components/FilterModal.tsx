@@ -96,7 +96,7 @@ export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
             height="47px"
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-            minDate={undefined}
+            minDate={null}
           />
         </div>
       </div>

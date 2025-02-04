@@ -170,3 +170,15 @@ interface CalendarGathering {
   endDate: string;
   status: string;
 }
+
+export interface GatheringListParams {
+  pageParam?: number;
+  pageSize?: number;
+  mainType?: string;
+  subType?: string;
+  mainLocation?: string;
+  subLocation?: string;
+  searchDate?: string;
+  sortBy?: 'deadline' | 'participants';
+  sortDirection?: 'ASC' | 'DESC';
+}

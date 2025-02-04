@@ -1,60 +1,49 @@
-import {
-  QueryClient,
-  QueryFunctionContext,
-  useInfiniteQuery,
-} from '@tanstack/react-query';
+import { QueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
   fetchGatheringList,
   postGathering,
 } from '@/pages/main/api/gatheringApi';
-import { GatheringList, CreateGatheringForm } from '@/types';
+import {
+  GatheringList,
+  CreateGatheringForm,
+  GatheringListParams,
+} from '@/types';
 
 // Query Keys
 export const queryKeys = {
-  gatheringList: (mainType: string, subType: string) => [
-    'gatheringList',
-    mainType,
-    subType,
-  ],
+  gatheringList: (filters: GatheringListParams) => ['gatheringList', filters],
 };
 
 // 서버사이드 prefetch 함수
 export const prefetchGatheringList = async (
   queryClient: QueryClient,
-  mainType: string,
-  subType: string,
-  pageSize: number,
+  filters: GatheringListParams,
 ) => {
   await queryClient.prefetchInfiniteQuery({
-    queryKey: queryKeys.gatheringList(mainType, subType),
+    queryKey: queryKeys.gatheringList(filters),
     queryFn: ({ pageParam = 0 }) =>
-      fetchGatheringList(pageParam, pageSize, mainType, subType),
+      fetchGatheringList({ ...filters, pageParam }),
     initialPageParam: 0,
   });
 };
 
 // 클라이언트용 React Query 훅
-export const useGatheringListQuery = (
-  mainType: string,
-  subType: string,
-  pageSize: number,
-) => {
-  const queryKey = queryKeys.gatheringList(mainType, subType);
+export const useGatheringListQuery = (filters: GatheringListParams) => {
+  console.log('📌 현재 필터 값:', filters); // ✅ 필터 값 확인
 
   return useInfiniteQuery<GatheringList>({
-    queryKey,
-    queryFn: ({ pageParam = 0 }: QueryFunctionContext) =>
-      fetchGatheringList(pageParam as number, pageSize, mainType, subType),
+    queryKey: ['gatheringList', filters],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchGatheringList({ ...filters, pageParam: pageParam as number }),
     getNextPageParam: (lastPage, allPages) =>
       lastPage.content.length > 0 ? allPages.length : undefined,
-    initialPageParam: 0, // 초기 페이지 설정
+    initialPageParam: 0,
   });
 };
 
 export const createGathering = async (formData: CreateGatheringForm) => {
   try {
-    const response = await postGathering(formData);
-    return response;
+    return await postGathering(formData);
   } catch (error) {
     throw error;
   }

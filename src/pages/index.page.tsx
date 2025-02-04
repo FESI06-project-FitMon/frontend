@@ -1,28 +1,32 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import CardList from '@/components/card/gathering/CardList';
 import Button from '@/components/common/Button';
 import Tab from '@/components/common/Tab';
 import SubTag from '@/components/tag/SubTag';
 import ListChallenge from '@/pages/main/components/ListChallenge';
-import {
-  LISTPAGE_MAINTYPE,
-  LISTPAGE_SUBTYPE,
-  MainType,
-} from '@/constants/MainList';
+import FilterModal from './main/components/FilterModal';
+import CreateGathering from './main/components/CreateGatheringModal';
+import Alert from '@/components/dialog/Alert';
 import {
   QueryClient,
   dehydrate,
   HydrationBoundary,
   DehydratedState,
 } from '@tanstack/react-query';
-import CreateGathering from './main/components/CreateGatheringModal';
+import {
+  prefetchGatheringList,
+  useGatheringListQuery,
+} from '@/pages/main/service/gatheringService';
+import { GatheringListParams } from '@/types';
 import useMemberStore from '@/stores/useMemberStore';
-import Alert from '@/components/dialog/Alert';
-import { useRouter } from 'next/router';
-import { prefetchGatheringList } from '@/pages/main/service/gatheringService';
 import Image from 'next/image';
-import FilterModal from './main/components/FilterModal';
+import {
+  LISTPAGE_MAINTYPE,
+  LISTPAGE_SUBTYPE,
+  MainType,
+} from '@/constants/MainList';
 
 interface HomeProps {
   dehydratedState: DehydratedState;
@@ -30,7 +34,15 @@ interface HomeProps {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();
-  await prefetchGatheringList(queryClient, '전체', '전체', 6);
+  await prefetchGatheringList(queryClient, {
+    mainType: '',
+    subType: '',
+    mainLocation: '',
+    subLocation: '',
+    searchDate: '',
+    sortBy: 'deadline',
+    sortDirection: 'ASC',
+  });
 
   return {
     props: {
@@ -40,30 +52,36 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default function Home({ dehydratedState }: HomeProps) {
-  const [mainType, setMainType] = useState<MainType>('전체');
-  const [subType, setSubType] = useState('전체');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [filters, setFilters] = useState<GatheringListParams>({
+    mainType: '전체',
+    subType: '전체',
+    mainLocation: '',
+    subLocation: '',
+    searchDate: '',
+    sortBy: 'deadline',
+    sortDirection: 'ASC',
+  });
+
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const { isLogin } = useMemberStore();
   const router = useRouter();
 
+  const queryResults = useGatheringListQuery(filters);
+
+  const handleApplyFilters = (newFilters: GatheringListParams) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  };
+
+  // ✅ 모임 만들기 버튼 핸들러
   const handleCreateButton = () => {
     if (isLogin) {
       setShowCreateModal(true);
     } else {
       setShowAlert(true);
     }
-  };
-
-  const handleFilterButton = () => {
-    setShowFilterModal((prev) => !prev);
-  };
-
-  const handleAlertConfirm = () => {
-    setShowAlert(false);
-    router.push('/login');
   };
 
   return (
@@ -76,25 +94,21 @@ export default function Home({ dehydratedState }: HomeProps) {
         <ListChallenge />
       </div>
 
+      {/* 메인 탭 */}
       <div className="w-full mt-[30px] md:mt-[50px] lg:mt-20">
         <Tab
           items={LISTPAGE_MAINTYPE}
-          currentTab={mainType}
+          currentTab={filters.mainType ?? ''}
           onTabChange={(newTab) => {
-            setMainType(newTab as MainType);
-            setSubType('전체');
+            console.log('🚀 탭 변경됨:', newTab);
+            setFilters((prev) => ({
+              ...prev,
+              mainType: newTab,
+              subType: '전체',
+            }));
           }}
-          rightElement={
-            <div className="hidden lg:flex w-full justify-end">
-              <Button
-                style="custom"
-                name="모임 만들기"
-                className="text-base my-2 h-9 w-[126px]"
-                handleButtonClick={handleCreateButton}
-              />
-            </div>
-          }
         />
+
         {/* 모바일/태블릿용 고정 버튼 */}
         <div className="lg:hidden fixed right-6 bottom-10 z-50">
           <Button
@@ -104,26 +118,24 @@ export default function Home({ dehydratedState }: HomeProps) {
             handleButtonClick={handleCreateButton}
           />
         </div>
-
-        {showCreateModal && (
-          <CreateGathering
-            setShowCreateModal={() => setShowCreateModal(false)}
-          />
-        )}
       </div>
 
       <div className="flex justify-end items-center my-5 lg:my-[35px]">
-        {mainType !== '전체' && (
+        {filters.mainType !== '전체' && (
           <SubTag
-            tags={LISTPAGE_SUBTYPE[mainType]}
-            currentTag={subType}
-            onTagChange={(newTag) => setSubType(newTag)}
+            tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
+            currentTag={filters.subType ?? ''}
+            onTagChange={(newTag) =>
+              setFilters((prev) => ({ ...prev, subType: newTag }))
+            }
             className="flex w-full justify-start"
           />
         )}
+
+        {/* 필터 버튼 */}
         <div
           className="min-w-20 flex gap-2.5 text-right"
-          onClick={handleFilterButton}
+          onClick={() => setShowFilterModal(true)}
         >
           정렬
           <Image
@@ -131,18 +143,41 @@ export default function Home({ dehydratedState }: HomeProps) {
             alt="필터 아이콘"
             width={20}
             height={20}
-          ></Image>
+          />
         </div>
-
-        {showFilterModal && (
-          <FilterModal setShowFilterModal={() => setShowFilterModal(false)} />
-        )}
       </div>
 
+      {/* 필터 모달 */}
+      {showFilterModal && (
+        <FilterModal
+          setShowFilterModal={() => setShowFilterModal(false)}
+          filters={filters}
+          setFilters={handleApplyFilters}
+        />
+      )}
+
+      {/* 모임 만들기 모달 ✅ 유지 */}
+      {showCreateModal && (
+        <CreateGathering setShowCreateModal={() => setShowCreateModal(false)} />
+      )}
+
+      {/* 카드 리스트 */}
       <div className="pb-20">
         <HydrationBoundary state={dehydratedState}>
-          <CardList mainType={mainType} subType={subType} />
+          <CardList filters={filters} />
         </HydrationBoundary>
+      </div>
+
+      {/* 더 보기 버튼 */}
+      <div className="text-center mt-5">
+        {queryResults.hasNextPage && (
+          <Button
+            style="custom"
+            name="더 보기"
+            className="text-base h-9 w-[126px]"
+            handleButtonClick={() => queryResults.fetchNextPage()}
+          />
+        )}
       </div>
 
       {/* 알럿 컴포넌트 */}
@@ -151,7 +186,10 @@ export default function Home({ dehydratedState }: HomeProps) {
           isOpen={showAlert}
           type="confirm"
           message="로그인이 필요합니다."
-          onConfirm={handleAlertConfirm}
+          onConfirm={() => {
+            setShowAlert(false);
+            router.push('/login');
+          }}
           onCancel={() => setShowAlert(false)}
         />
       )}
