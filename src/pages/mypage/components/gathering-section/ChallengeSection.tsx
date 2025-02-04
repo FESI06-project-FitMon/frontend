@@ -92,7 +92,7 @@ export default function ChallengeSection({
                 >
                   {/* 마감 딱지 */}
                   {challenge.isClosed && (
-                    <div className="absolute -top-5 -right-5 bg-dark-500 text-sm w-[50px] h-[50px] rounded-full flex items-center justify-center shadow-md">
+                    <div className="absolute top-4 right-4 bg-dark-500 w-[45px] h-[45px] rounded-full flex items-center justify-center shadow-md z-10 text-sm">
                       마감
                     </div>
                   )}
