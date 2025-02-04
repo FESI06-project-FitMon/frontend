@@ -87,7 +87,8 @@ export default function MainCard({
         <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.title}</h2>
         <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-2.5 sm:mb-[15px] lg:mb-5">
           <h4>
-            {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+            {getDatePart(gathering.startDate)} ~{' '}
+            {getDatePart(gathering.endDate)}
           </h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
@@ -96,7 +97,9 @@ export default function MainCard({
               width={18}
               height={18}
             />
-            <span>{gathering.participantCount}/{gathering.totalCount}</span>
+            <span>
+              {gathering.participantCount}/{gathering.totalCount}
+            </span>
           </div>
           <OpenStatus gatheringJoinedPeopleCount={gathering.participantCount} />
         </div>
@@ -128,4 +131,3 @@ export default function MainCard({
     </div>
   );
 }
-

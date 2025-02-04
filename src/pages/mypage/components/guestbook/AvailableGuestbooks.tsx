@@ -1,5 +1,5 @@
-import Button from "@/components/common/Button";
-import { GatheringListItem } from "@/types";
+import Button from '@/components/common/Button';
+import { GatheringListItem } from '@/types';
 import Image from 'next/image';
 import getDatePart from '@/utils/getDatePart';
 
@@ -9,8 +9,10 @@ interface AvailableGuestbooksProps {
   isLoading?: boolean;
 }
 
-export default function AvailableGuestbooks({ gatherings, onWriteClick }: AvailableGuestbooksProps) {
-
+export default function AvailableGuestbooks({
+  gatherings,
+  onWriteClick,
+}: AvailableGuestbooksProps) {
   return (
     <div className="space-y-4 md:space-y-6">
       {gatherings.map((gathering) => (
@@ -18,7 +20,6 @@ export default function AvailableGuestbooks({ gatherings, onWriteClick }: Availa
           key={gathering.gatheringId}
           className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-2.5 md:gap-6 lg:gap-[30px]"
         >
-
           <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
             <Image
               src={gathering.imageUrl || '/assets/image/default_img.png'}
@@ -43,7 +44,8 @@ export default function AvailableGuestbooks({ gatherings, onWriteClick }: Availa
             </h2>
             <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-2.5 sm:mb-[15px] lg:mb-5">
               <h4>
-                {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+                {getDatePart(gathering.startDate)} ~{' '}
+                {getDatePart(gathering.endDate)}
               </h4>
               <div className="flex items-center font-normal gap-2 text-white">
                 <Image
