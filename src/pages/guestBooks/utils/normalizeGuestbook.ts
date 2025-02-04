@@ -1,11 +1,11 @@
 import { GuestBooksListItem } from '../api/getGuestBooks';
 
 export interface NormalizedGuestbook {
-  writer: string;
-  reviewId: number;
+  guestbookId: number; // reviewId에서 변경
   rating: number;
   content: string;
-  createDate: string;
+  createdAt: string; // createDate에서 변경
+  writer: string;
 }
 
 export interface NormalizedGathering {
@@ -17,13 +17,14 @@ export interface NormalizedGathering {
   endDate: string;
 }
 
+
 export default function normalizeGuestbook(guestbook: GuestBooksListItem) {
   const guestbookData = {
-    writer: guestbook.nickName,
-    reviewId: guestbook.guestbookId,
+    guestbookId: guestbook.guestbookId, // reviewId에서 변경
     rating: guestbook.guestbookScore,
     content: guestbook.guestBookContent,
-    createDate: guestbook.guestbookCreatedDate,
+    createdAt: guestbook.guestbookCreatedDate, // createDate에서 변경
+    writer: guestbook.nickName
   };
 
   const gatheringData = {

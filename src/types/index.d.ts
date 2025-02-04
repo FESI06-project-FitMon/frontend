@@ -65,10 +65,10 @@ interface ChallengeProps {
 }
 
 export interface GuestbookItem {
-  reviewId: number;
+  guestbookId: number;  
   content: string;
   rating: number;
-  createDate: string;
+  createdAt: string; 
   writer: GuestbookWriter;
   reviewOwnerStatus: boolean;
   gatheringId: number;

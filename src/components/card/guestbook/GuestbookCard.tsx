@@ -23,6 +23,13 @@ export default function GuestbookCard({
   onEdit,
   onDelete,
 }: GuestbookCardProps) {
+  console.log('GuestbookCard props:', {
+    guestbook,
+    gathering,
+    showActions,
+    hasOnEdit: !!onEdit,
+    hasOnDelete: !!onDelete
+  });
   return (
     <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
       {/* 이미지 영역 */}
@@ -83,7 +90,7 @@ export default function GuestbookCard({
                   {gathering.subLocation}
                 </p>
                 <p className="text-dark-700 font-medium whitespace-nowrap">
-                  {getDatePart(guestbook.createDate)}
+                  {getDatePart(guestbook.createdAt)}
                 </p>
               </div>
             )}
