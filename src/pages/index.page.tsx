@@ -134,7 +134,7 @@ export default function Home({ dehydratedState }: HomeProps) {
         </div>
       </div>
 
-      <div className="flex justify-end items-center my-5 lg:my-[35px]">
+      <div className="flex justify-end items-center my-5 lg:my-[35px] ">
         {filters.mainType !== '전체' && (
           <SubTag
             tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
@@ -148,10 +148,10 @@ export default function Home({ dehydratedState }: HomeProps) {
 
         {isFilterChanged && (
           <button
-            className="flex items-center gap-1 text-sm text-dark-700 transition-all mr-4"
+            className="flex items-center gap-1 text-sm text-dark-700 transition-all whitespace-pre mr-6 "
             onClick={resetFilters}
           >
-            필터 초기화
+            초기화
             <Image
               src={'/assets/image/arrow-clockwise.svg'}
               aria-readonly
@@ -164,10 +164,10 @@ export default function Home({ dehydratedState }: HomeProps) {
 
         {/* 필터 버튼 */}
         <div
-          className="min-w-20 flex gap-2.5 text-right"
+          className="min-w-[18px] lg:min-w-16 flex gap-2.5 text-right text-sm md:text-base justify-end items-center"
           onClick={() => setShowFilterModal(true)}
         >
-          정렬
+          <span className="hidden lg:inline-block">필터</span>
           <Image
             src={'/assets/image/filter.svg'}
             alt="필터 아이콘"
