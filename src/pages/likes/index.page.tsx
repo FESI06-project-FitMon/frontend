@@ -9,8 +9,9 @@ import { useState } from 'react';
 import LikesGatheringsList from './components/LikesGatheringsList';
 
 export default function LikesGatherings() {
-  const [mainType, setMainType] = useState<MainType>('전체'); // 메인 타입 상태
-  const [subType, setSubType] = useState('전체'); // 서브 타입 상태
+  // 메인타입, 서브타입 상태
+  const [mainType, setMainType] = useState<MainType>('전체');
+  const [subType, setSubType] = useState('전체');
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
