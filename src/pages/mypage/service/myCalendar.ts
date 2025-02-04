@@ -36,7 +36,7 @@ export function useCalendarGatherings(page = 0, pageSize = 100) {
           title: gathering.title,
           backgroundColor: getEventColor(gathering.mainType),
           borderColor: getEventColor(gathering.mainType),
-          textColor: gathering.mainType === '유산소형' ? '#000000' : '#FFFFFF',
+          textColor: gathering.mainType,
           extendedProps: {
             isHost: gathering.captainStatus,
             type: gathering.mainType

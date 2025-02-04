@@ -20,6 +20,7 @@ export const calendarStyles = `
   .fc-daygrid-event {
     background: transparent !important;
     border: none !important;
+    cursor: pointer !important;  /* 이벤트에 커서 포인터 추가 */
   }
   
   .fc-daygrid-event .event-container {
@@ -37,7 +38,7 @@ export const calendarStyles = `
   }
         
   .fc-daygrid-day.fc-day-today {
-    background-color: rgba(255, 33, 64, 0.1) !important;
+    background-color: rgba(255, 33, 64, 0.2) !important;
   }
 
   .fc .fc-daygrid-day-top {
@@ -48,13 +49,13 @@ export const calendarStyles = `
     margin-right: 0;
   }
 
+  /* today 날짜 원형 스타일 제거, 기본 스타일만 유지 */
   .fc-day-today .fc-daygrid-day-number {
-    background-color: #FF2140;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: #FF2140;  /* 오늘 날짜는 빨간색 텍스트만 적용 */
+  }
+
+  /* 이벤트 호버 시 커서 스타일 */
+  .fc-event:hover {
+    cursor: pointer;
   }
 `;

@@ -6,29 +6,29 @@ import { EventApi } from '@fullcalendar/core';
 interface EventContentProps {
   event: EventApi;
 }
-
 export const EventContent = memo(function EventContent({ event }: EventContentProps) {
+
   return (
-    <div className="event-container flex items-center justify-between">
+    <div className="event-container flex items-center justify-between px-2">
       <div
+        className="flex-1"
         style={{
-          width: '45%',
           height: '2px',
           backgroundColor: event.backgroundColor,
         }}
       />
       <div
-        className="flex items-center justify-center gap-1"
+        className="flex items-center justify-center gap-1 px-2 whitespace-nowrap"
         style={{
           fontSize: '0.75rem',
           fontWeight: 'bold',
-          color: '#FFFFFF',
+          color: '#FFFFFF', // 모든 텍스트 흰색으로 통일
           textShadow: `
-            -1px 0 ${event.backgroundColor},
-            0 1px ${event.backgroundColor},
-            1px 0 ${event.backgroundColor},
-            0 -1px ${event.backgroundColor}
-          `
+            -1.5px 0 rgb(62,62,64),
+            0 1.5px rgb(62,62,64),
+            1.5px 0 rgb(62,62,64),
+            0 -1.5px rgb(62,62,64)
+          ` //(dark-400)텍스트 쉐도우 설정
         }}
       >
         {event.extendedProps.isHost && (
@@ -43,8 +43,8 @@ export const EventContent = memo(function EventContent({ event }: EventContentPr
         <span>{event.title}</span>
       </div>
       <div
+        className="flex-1"
         style={{
-          width: '45%',
           height: '2px',
           backgroundColor: event.backgroundColor,
         }}

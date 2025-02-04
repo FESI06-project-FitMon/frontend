@@ -104,7 +104,9 @@ export default function CalendarTab() {
             initialView="dayGridMonth"
             events={events}
             locale="en"
+            dayMaxEvents={false}  // "more" 링크 대신 모든 이벤트 표시
             height="auto"
+            eventDisplay="block"
             editable={false}
             selectable={false}
             headerToolbar={false}
