@@ -29,8 +29,6 @@ export const prefetchGatheringList = async (
 
 // 클라이언트용 React Query 훅
 export const useGatheringListQuery = (filters: GatheringListParams) => {
-  console.log('📌 현재 필터 값:', filters); // ✅ 필터 값 확인
-
   return useInfiniteQuery<GatheringList>({
     queryKey: ['gatheringList', filters],
     queryFn: ({ pageParam = 0 }) =>

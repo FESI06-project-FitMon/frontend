@@ -11,8 +11,6 @@ export const fetchGatheringList = async (
 ): Promise<GatheringList> => {
   const apiEndpoint = '/api/v1/gatherings';
 
-  console.log('📌 API 요청 파라미터 확인:', params);
-
   const queryParams = new URLSearchParams({
     sortBy: params.sortBy || 'deadline',
     sortDirection: params.sortDirection || 'ASC',
@@ -30,8 +28,6 @@ export const fetchGatheringList = async (
   });
 
   const paramWithPage = `${apiEndpoint}?${new URLSearchParams(queryParams).toString()}`;
-
-  console.log('🚀 API 요청 URL:', paramWithPage);
 
   return await apiRequest<GatheringList>({ param: paramWithPage });
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import CardList from '@/components/card/gathering/CardList';
@@ -75,14 +75,27 @@ export default function Home({ dehydratedState }: HomeProps) {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
-  // ✅ 모임 만들기 버튼 핸들러
-  const handleCreateButton = () => {
-    if (isLogin) {
-      setShowCreateModal(true);
-    } else {
-      setShowAlert(true);
-    }
+  const resetFilters = () => {
+    setFilters((prev) => ({
+      mainType: prev.mainType,
+      subType: prev.subType,
+      mainLocation: '',
+      subLocation: '',
+      searchDate: '',
+      sortBy: 'deadline',
+      sortDirection: 'ASC',
+    }));
   };
+
+  const isFilterChanged = useMemo(() => {
+    return (
+      filters.mainLocation !== '' ||
+      filters.subLocation !== '' ||
+      filters.searchDate !== '' ||
+      filters.sortBy !== 'deadline' ||
+      filters.sortDirection !== 'ASC'
+    );
+  }, [filters]);
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
@@ -100,7 +113,6 @@ export default function Home({ dehydratedState }: HomeProps) {
           items={LISTPAGE_MAINTYPE}
           currentTab={filters.mainType ?? ''}
           onTabChange={(newTab) => {
-            console.log('🚀 탭 변경됨:', newTab);
             setFilters((prev) => ({
               ...prev,
               mainType: newTab,
@@ -115,7 +127,9 @@ export default function Home({ dehydratedState }: HomeProps) {
             style="custom"
             name="모임 만들기"
             className="text-base h-9 w-[126px]"
-            handleButtonClick={handleCreateButton}
+            handleButtonClick={() =>
+              isLogin ? setShowCreateModal(true) : setShowAlert(true)
+            }
           />
         </div>
       </div>
@@ -130,6 +144,22 @@ export default function Home({ dehydratedState }: HomeProps) {
             }
             className="flex w-full justify-start"
           />
+        )}
+
+        {isFilterChanged && (
+          <button
+            className="flex items-center gap-1 text-sm text-dark-700 transition-all mr-4"
+            onClick={resetFilters}
+          >
+            필터 초기화
+            <Image
+              src={'/assets/image/arrow-clockwise.svg'}
+              aria-readonly
+              alt="초기화 이미지"
+              width={14}
+              height={14}
+            />
+          </button>
         )}
 
         {/* 필터 버튼 */}
@@ -156,7 +186,7 @@ export default function Home({ dehydratedState }: HomeProps) {
         />
       )}
 
-      {/* 모임 만들기 모달 ✅ 유지 */}
+      {/* 모임 만들기 모달  */}
       {showCreateModal && (
         <CreateGathering setShowCreateModal={() => setShowCreateModal(false)} />
       )}
