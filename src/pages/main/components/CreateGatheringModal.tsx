@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Modal from '@/components/dialog/Modal';
 import Button from '@/components/common/Button';
 import Step from './Step';
@@ -7,10 +7,13 @@ import { useCreateGatheringForm } from '@/pages/main/hooks/useCreateGatheringFor
 import { createGathering } from '@/pages/main/service/gatheringService';
 import { isStepValid } from '@/utils/stepValidation';
 import Image from 'next/image';
+import useDebounce from '@/hooks/useDebounce';
 
 interface CreateGatheringProps {
   setShowCreateModal: () => void;
 }
+
+const LOCAL_STORAGE_KEY = 'gatheringFormData';
 
 export default function CreateGathering({
   setShowCreateModal,
@@ -24,9 +27,10 @@ export default function CreateGathering({
     handleChallengeUpdate,
   } = useCreateGatheringForm();
 
-  const LOCAL_STORAGE_KEY = 'gatheringFormData';
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const debouncedFormData = useDebounce(formData, 500);
 
-  useEffect(() => {
+  const loadFormData = useCallback(() => {
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
@@ -36,11 +40,23 @@ export default function CreateGathering({
     } catch (error) {
       console.error('로컬스토리지 데이터 로드 중 오류:', error);
     }
-  }, []);
+    setIsDataLoaded(true);
+  }, [setFormData]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
-  }, [formData]);
+    if (!isDataLoaded) {
+      loadFormData();
+    }
+  }, [isDataLoaded, loadFormData]);
+
+  useEffect(() => {
+    if (isDataLoaded) {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify(debouncedFormData),
+      );
+    }
+  }, [debouncedFormData, isDataLoaded]);
 
   const calculateNextStep = (currentStep: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
     return Math.min(currentStep + 1, 3) as 0 | 1 | 2 | 3;
@@ -94,10 +110,10 @@ export default function CreateGathering({
           </div>
         )}
 
-        {/* Step 컴포넌트 조건부 렌더링 */}
+        {/* Step 컴포넌트 */}
         {currentStep < 3 && <Step currentStep={currentStep} />}
 
-        <div className="mt-4 overflow-y-auto flex flex-col justify-center max-h-[65vh] md:h-auto md:overflow-visible ">
+        <div className="mt-4 overflow-y-auto flex flex-col justify-center max-h-[65vh] md:h-auto md:overflow-visible">
           <StepContent
             currentStep={currentStep}
             formData={formData}
