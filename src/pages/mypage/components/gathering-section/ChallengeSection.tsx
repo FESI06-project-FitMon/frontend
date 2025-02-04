@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import { ChallengeType, GatheringChallengeType, GatheringListItem } from '@/types';
 import Null from '@/components/common/Null';
-import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
+import getDatePart from '@/utils/getDatePart';
 import { useRouter } from 'next/router';
 
 interface ChallengeSectionProps {
   challenges: GatheringChallengeType;
   gathering: GatheringListItem;
   isOpen: boolean;
-  onToggle: (e: React.MouseEvent) => void;  // 타입 수정
+  onToggle: (e: React.MouseEvent) => void;
 }
 
 export default function ChallengeSection({
@@ -26,10 +26,14 @@ export default function ChallengeSection({
 
   if (!gathering) {
     console.error('No gathering provided to ChallengeSection');
-    return null; // gathering이 없는 경우 아무것도 렌더링하지 않음
+    return null;
   }
-  // 상태에 따른 텍스트와 스타일 반환
-  const getStatusInfo = (challenge: ChallengeType) => {
+
+  const getStatusInfo = (challenge: ChallengeType, isClosed: boolean = false) => {
+    if (isClosed) {
+      return { text: '마감됨', style: 'bg-dark-500' };
+    }
+    
     if (gathering.captainStatus) {
       if (challenge.verificationStatus && challenge.participantStatus) {
         return { text: '참여완료', style: 'bg-dark-500' };
@@ -45,23 +49,22 @@ export default function ChallengeSection({
     }
   };
 
-  // 필터링된 챌린지
-  const filteredChallenges = gathering.captainStatus
-    ? challenges?.inProgressChallenges || []
-    : challenges?.inProgressChallenges?.filter((c) => c.participantStatus) || [];
+  // For captain, show all challenges. For participants, filter by participation
+  const displayChallenges = challenges?.inProgressChallenges || [];
 
   return (
     <>
-      {/* 챌린지 헤더 */}
       <div
-        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
-          }`}
+        className={`mt-[15px] md:mt-[30px] bg-dark-200 p-3 md:py-5 md:px-6 cursor-pointer ${
+          isOpen ? 'rounded-t-[10px]' : 'rounded-[10px]'
+        }`}
         onClick={onToggle}
       >
         <span className="flex items-center gap-2 text-sm md:text-base font-semibold">
           <div
-            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${isOpen ? 'rotate-90' : ''
-              }`}
+            className={`w-3 h-4 md:w-4 md:h-5 transition-transform ${
+              isOpen ? 'rotate-90' : ''
+            }`}
           >
             <Image
               src="/assets/image/toggle.svg"
@@ -75,11 +78,10 @@ export default function ChallengeSection({
         </span>
       </div>
 
-      {/* 챌린지 리스트 */}
       {isOpen && (
         <div className="grid gap-2 md:gap-2.5 px-4 md:px-5 lg:px-8 py-2.5 md:py-[30px] max-h-[443px] overflow-y-auto bg-dark-200 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filteredChallenges.length > 0 ? (
-            filteredChallenges.map((challenge) => {
+          {displayChallenges.length > 0 ? (
+            displayChallenges.map((challenge) => {
               const status = getStatusInfo(challenge);
               return (
                 <div
@@ -88,7 +90,6 @@ export default function ChallengeSection({
                   onClick={(e) => handleChallengeClick(challenge.challengeId, e)}
                 >
                   <div className="flex items-start gap-[17px]">
-                    {/* 챌린지 이미지 */}
                     <div className="relative w-[61px] h-[61px] rounded-full overflow-hidden flex-shrink-0">
                       <Image
                         src={
@@ -108,7 +109,6 @@ export default function ChallengeSection({
                       />
                     </div>
 
-                    {/* 챌린지 상태 및 정보 */}
                     <div className="flex-1">
                       <div className="flex items-center gap-[13px] mb-2.5">
                         <span
@@ -130,7 +130,6 @@ export default function ChallengeSection({
                         </div>
                       </div>
 
-                      {/* 챌린지 제목 및 기간 */}
                       <div>
                         <div className="w-full min-w-0 h-[60px] mb-[5px]">
                           <h4 className="font-semibold break-words">

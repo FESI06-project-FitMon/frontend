@@ -1,13 +1,12 @@
-// components/common/GuestbookCard.tsx
 import Heart from '@/components/common/Heart';
 import Popover from '@/components/common/Popover';
-import {
-  NormalizedGathering,
-  NormalizedGuestbook,
-} from '@/pages/guestBooks/utils/normalizeGuestbook';
 import { GatheringListItem, GuestbookItem } from '@/types';
 import getDatePart from '@/utils/getDatePart';
 import Image from 'next/image';
+import {
+  NormalizedGathering,
+  NormalizedGuestbook,
+} from '../../../pages/guestBooks/utils/normalizeGuestbook';
 
 interface GuestbookCardProps {
   guestbook: GuestbookItem | NormalizedGuestbook;
@@ -47,45 +46,49 @@ export default function GuestbookCard({
       </div>
 
       <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
-        <div className="flex justify-between items-start mb-4">
-          <Heart rating={guestbook.rating} />
-          {showActions &&
-            onEdit &&
-            onDelete &&
-            'reviewOwnerStatus' in guestbook && (
-              <Popover
-                type="dot"
-                items={[
-                  {
-                    id: 'edit',
-                    label: '수정하기',
-                    onClick: () => onEdit(guestbook),
-                  },
-                  {
-                    id: 'delete',
-                    label: '삭제하기',
-                    onClick: () => onDelete(guestbook),
-                  },
-                ]}
-              />
-            )}
-        </div>
-
-        <p className="mb-2 lg:mb-4 break-all line-clamp-4">
-          {guestbook.content}
-        </p>
-
-        {gathering && (
-          <div className="flex flex-col lg:flex-row mb-[10px] lg:mb-0 items-start lg:items-end justify-between">
-            <p className="text-primary font-normal">
-              {gathering.title} | {gathering.mainLocation}{' '}
-              {gathering.subLocation}
-            </p>
-            <p className="text-dark-700 font-medium">
-              {getDatePart(guestbook.createDate)}
-            </p>
+        <div className="flex flex-col h-full">
+          {' '}
+          {/* flex container 추가 */}
+          <div className="flex justify-between items-start mb-4">
+            <Heart rating={guestbook.rating} />
+            {showActions &&
+              onEdit &&
+              onDelete &&
+              'reviewOwnerStatus' in guestbook && (
+                <Popover
+                  type="dot"
+                  items={[
+                    {
+                      id: 'edit',
+                      label: '수정하기',
+                      onClick: () => onEdit(guestbook),
+                    },
+                    {
+                      id: 'delete',
+                      label: '삭제하기',
+                      onClick: () => onDelete(guestbook),
+                    },
+                  ]}
+                />
+              )}
           </div>
-        )}
+          <p className="mb-2 lg:mb-4 break-all line-clamp-4">
+            {guestbook.content}
+          </p>
+          <div className="mt-auto pb-1">
+            {gathering && (
+              <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between">
+                <p className="text-primary font-normal truncate flex-1 min-w-0">
+                  {gathering.title} | {gathering.mainLocation}{' '}
+                  {gathering.subLocation}
+                </p>
+                <p className="text-dark-700 font-medium whitespace-nowrap">
+                  {getDatePart(guestbook.createDate)}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
