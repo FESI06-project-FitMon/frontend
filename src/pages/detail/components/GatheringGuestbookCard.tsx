@@ -2,23 +2,21 @@ import Heart from '@/components/common/Heart';
 import Image from 'next/image';
 
 interface GuestbookProps {
-  reviewId: number;
-  rating: number;
-  content: string;
-  createDate: string;
-  writer: {
-    memberId: number;
-    nickName: string;
-    profileImageUrl: string;
+  guestbook: {  // 중첩된 guestbook 객체를 제거
+    guestbookId: number;
+    content: string;
+    rating: number;
+    createdAt: string;
+    writer: {
+      memberId: number;
+      nickName: string;
+      profileImageUrl: string;
+    };
   };
-  reviewOwnerStatus: boolean;
 }
 
-export default function Guestbook({
-  guestbook,
-}: {
-  guestbook: GuestbookProps;
-}) {
+
+export default function Guestbook({ guestbook }: GuestbookProps) {  
   return (
     <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 p-[30px]">
       <Heart rating={guestbook.rating} />
@@ -38,9 +36,10 @@ export default function Guestbook({
         </div>
         {/* 날짜 */}
         <p className="text-sm text-dark-700 content-center">
-          {`${guestbook.createDate.substring(0, 10)}`}
+          {guestbook.createdAt ? guestbook.createdAt.substring(0, 10) : ''}
         </p>
       </div>
     </div>
   );
 }
+

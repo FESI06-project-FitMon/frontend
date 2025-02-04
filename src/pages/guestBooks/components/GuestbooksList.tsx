@@ -68,7 +68,7 @@ export default function GuestbooksList({
                     normalizeGuestbook(guestbook);
                   return (
                     <GuestbookCard
-                      key={guestbookData.reviewId}
+                      key={guestbookData.guestbookId}
                       guestbook={guestbookData}
                       gathering={gatheringData}
                     />

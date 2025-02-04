@@ -45,9 +45,10 @@ export default function Guestbook() {
   const handleModalSubmit = useCallback(async (data: { content: string; rating: number }) => {
     try {
       if (modalState.isEditMode && modalState.guestbook) {
+        // reviewId 대신 guestbookId 사용
         await updateGuestbookMutation.mutateAsync({
           gatheringId: modalState.guestbook.gatheringId,
-          guestbookId: modalState.guestbook.reviewId,
+          guestbookId: modalState.guestbook.guestbookId, // 여기를 수정
           data,
         });
         showToast('방명록이 수정되었습니다.', 'check');
@@ -59,11 +60,12 @@ export default function Guestbook() {
         showToast('방명록이 작성되었습니다.', 'check');
       }
       setModalState({ isOpen: false, isEditMode: false });
-    } catch {
+    } catch (error) {
+      console.error('Submit error:', error);
       showToast('오류가 발생했습니다.', 'error');
     }
   }, [modalState, updateGuestbookMutation, createGuestbookMutation, showToast]);
-
+  
   const handleTabChange = (id: string) => setShowWritten(id === 'written');
 
   const isLoading = isParticipatingLoading || isAvailableLoading || isGuestbooksLoading;
