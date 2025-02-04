@@ -45,6 +45,7 @@ export const useCreateGatheringForm = () => {
     currentStep,
     setCurrentStep,
     formData,
+    setFormData,
     updateFormData,
     handleChallengeUpdate,
   };
