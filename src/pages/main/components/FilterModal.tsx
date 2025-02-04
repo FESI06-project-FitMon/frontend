@@ -5,37 +5,45 @@ import cityData from '@/constants/city';
 import { SelectType } from '@/stores/useSelectStore';
 import DatePickerCalendar from '@/components/common/DatePicker';
 import Button from '@/components/common/Button';
+import { GatheringListParams } from '@/types';
 
 interface FilterModalProps {
   setShowFilterModal: () => void;
+  filters: GatheringListParams;
+  setFilters: (filters: GatheringListParams) => void;
 }
 
-export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
-  const [selectedSort, setSelectedSort] = useState<string>('마감임박순');
-  const [selectedSi, setSelectedSi] = useState<string>(''); // 시/도 선택 상태
-  const [selectedGu, setSelectedGu] = useState<string>(''); // 군/구 선택 상태
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 날짜 선택 상태 추가 ✅
-
+export default function FilterModal({
+  setShowFilterModal,
+  filters,
+  setFilters,
+}: FilterModalProps) {
   const buttonActive = 'bg-dark-600';
 
-  // 시/도 목록 생성
+  // ✅ 현재 선택한 필터를 임시 저장할 `localFilters` 상태 추가
+  const [localFilters, setLocalFilters] = useState(filters);
+
   const placeSiItems: SelectItem[] = Object.keys(cityData).map((city) => ({
     value: city,
     label: city,
   }));
 
-  // 선택된 시/도에 따른 군/구 목록 생성
-  const placeGuItems: SelectItem[] = selectedSi
-    ? cityData[selectedSi]?.map((gu) => ({
+  const placeGuItems: SelectItem[] = localFilters.mainLocation
+    ? cityData[localFilters.mainLocation]?.map((gu) => ({
         value: gu.value,
         label: gu.label,
       })) || []
     : [];
 
-  // 시/도 선택 핸들러
+  // ✅ 시/도 선택 핸들러 (localFilters 업데이트)
   const handleSiChange = (value: string) => {
-    setSelectedSi(value);
-    setSelectedGu(''); // 시가 변경되면 군/구 초기화
+    setLocalFilters({ ...localFilters, mainLocation: value, subLocation: '' });
+  };
+
+  // ✅ "적용" 버튼 클릭 시, 변경된 localFilters를 부모로 전달
+  const applyFilters = () => {
+    setFilters(localFilters); // ✅ 필터 업데이트
+    setShowFilterModal(); // ✅ 모달 닫기
   };
 
   return (
@@ -45,17 +53,21 @@ export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
         <div className="flex gap-2.5">
           <button
             className={`py-2 px-6 rounded-[10px] transition-colors bg-dark-400 ${
-              selectedSort === '마감임박순' ? buttonActive : ''
+              localFilters.sortBy === 'deadline' ? buttonActive : ''
             }`}
-            onClick={() => setSelectedSort('마감임박순')}
+            onClick={() =>
+              setLocalFilters({ ...localFilters, sortBy: 'deadline' })
+            }
           >
             마감임박순
           </button>
           <button
             className={`py-3 px-6 rounded-[10px] transition-colors bg-dark-400 ${
-              selectedSort === '참여인원순' ? buttonActive : ''
+              localFilters.sortBy === 'participants' ? buttonActive : ''
             }`}
-            onClick={() => setSelectedSort('참여인원순')}
+            onClick={() =>
+              setLocalFilters({ ...localFilters, sortBy: 'participants' })
+            }
           >
             참여인원순
           </button>
@@ -68,7 +80,7 @@ export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
         <div className="flex w-full">
           <Select
             items={placeSiItems}
-            selectedItem={selectedSi || ''}
+            selectedItem={localFilters.mainLocation || ''}
             setSelectedItem={handleSiChange}
             className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
@@ -77,8 +89,10 @@ export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
           />
           <Select
             items={placeGuItems}
-            selectedItem={selectedGu || ''}
-            setSelectedItem={setSelectedGu}
+            selectedItem={localFilters.subLocation || ''}
+            setSelectedItem={(value) =>
+              setLocalFilters({ ...localFilters, subLocation: value })
+            }
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
             className="mr-[10px] w-full min-w-[100px] md:w-[175px]"
             width="200px"
@@ -94,19 +108,36 @@ export default function FilterModal({ setShowFilterModal }: FilterModalProps) {
           <DatePickerCalendar
             className="w-full md:w-[245px]"
             height="47px"
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
+            selectedDate={
+              localFilters.searchDate ? new Date(localFilters.searchDate) : null
+            }
+            setSelectedDate={(date) =>
+              setLocalFilters({
+                ...localFilters,
+                searchDate: date ? date.toISOString().split('T')[0] : '',
+              })
+            }
             minDate={null}
           />
         </div>
       </div>
 
-      <Button
-        name={'적용'}
-        handleButtonClick={setShowFilterModal}
-        style={'default'}
-        className="w-full h-[52px] block mt-6"
-      />
+      {/* 버튼 영역 */}
+      <div className="flex justify-between mt-6">
+        <Button
+          name="취소"
+          handleButtonClick={setShowFilterModal}
+          style="cancel"
+          className="w-[48%] h-[52px] text-primary"
+        />
+        {/* 적용 버튼 (변경된 값 반영 후 닫기) */}
+        <Button
+          name="적용"
+          handleButtonClick={applyFilters}
+          style="default"
+          className="w-[48%] h-[52px]"
+        />
+      </div>
     </Modal>
   );
 }
