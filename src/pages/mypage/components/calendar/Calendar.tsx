@@ -1,12 +1,13 @@
 // CalendarTab.tsx
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import FullCalendar from '@fullcalendar/react';
 import { EventContentArg, DayCellContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useCalendarGatherings, EVENT_TYPES, getEventColor } from '../../service/myCalendar';
 import { StateData } from '@/components/common/StateData';
 import { ColorLegend } from './ColorLegend';
-import {EventContent} from './EventContent';
+import { EventContent } from './EventContent';
 import { DayCell, DayHeader } from './CalendarCell';
 import { calendarStyles } from './calendarStyles';
 
@@ -14,6 +15,7 @@ export default function CalendarTab() {
   const { data: calendarData, isLoading } = useCalendarGatherings();
   const calendarRef = useRef<FullCalendar | null>(null);
   const [currentTitle, setCurrentTitle] = useState('');
+  const router = useRouter();
 
   const updateTitle = useCallback(() => {
     if (calendarRef.current) {
@@ -38,9 +40,12 @@ export default function CalendarTab() {
     }
   }, []);
 
-  const handleEventClick = useCallback(() => {
-    alert('Calendar modification is not available.');
-  }, []);
+  const handleEventClick = useCallback((arg: { event: { id: string } }) => {
+    const gatheringId = arg.event.id;
+    if (gatheringId) {
+      router.push(`/detail/${gatheringId}`);
+    }
+  }, [router]);
 
   const renderEventContent = useCallback((arg: EventContentArg) => {
     return <EventContent event={arg.event} />;
@@ -73,8 +78,8 @@ export default function CalendarTab() {
         <ColorLegend eventTypes={EVENT_TYPES} getColor={getEventColor} />
 
         <div className="flex items-center justify-between mb-4">
-          <button 
-            onClick={handlePrev} 
+          <button
+            onClick={handlePrev}
             className="p-2"
             type="button"
             aria-label="Previous month"
@@ -82,8 +87,8 @@ export default function CalendarTab() {
             <img src="/assets/image/toggle.svg" alt="prev" className="w-6 h-6 rotate-180" />
           </button>
           <h2 className="text-white text-lg font-bold">{currentTitle}</h2>
-          <button 
-            onClick={handleNext} 
+          <button
+            onClick={handleNext}
             className="p-2"
             type="button"
             aria-label="Next month"

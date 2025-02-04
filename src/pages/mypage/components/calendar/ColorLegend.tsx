@@ -1,7 +1,7 @@
 // ColorLegend.tsx
 import React, { memo } from 'react';
 import Image from 'next/image';
-import { EVENT_TYPES, getEventColor } from '@/pages/mypage/service/myCalendar';
+import { EVENT_TYPES} from '@/pages/mypage/service/myCalendar';
 
 interface ColorLegendProps {
   eventTypes: typeof EVENT_TYPES;
