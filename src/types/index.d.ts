@@ -11,13 +11,19 @@ export interface UserProfile {
 }
 
 export interface GatheringStateType {
-  gatheringJoinedFivePeopleImages: string[]?;
-  gatheringAverageRating: double;
-  gatheringGuestbookCount: number;
-  gatheringMaxPeopleCount: number;
-  gatheringMinPeopleCount: number;
-  gatheringJoinedPeopleCount: number;
-  gatheringStatus: string;
+  participants: Array<GatheringParticipants>;
+  minCount: number;
+  totalCount: number;
+  participantCount: number;
+  status: string;
+  averageRating: number;
+  guestBookCount: number;
+}
+
+interface GatheringParticipants {
+  memberId: number;
+  nickName: string;
+  profileImageUrl: string;
 }
 
 export interface GatheringChallengeType {
