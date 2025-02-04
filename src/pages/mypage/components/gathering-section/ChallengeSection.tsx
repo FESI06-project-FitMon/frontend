@@ -49,8 +49,11 @@ export default function ChallengeSection({
     }
   };
 
-  // For captain, show all challenges. For participants, filter by participation
-  const displayChallenges = challenges?.inProgressChallenges || [];
+// 진행중인 챌린지와 마감된 챌린지 모두 표시
+const displayChallenges = [
+  ...(challenges?.inProgressChallenges || []),
+  ...(challenges?.doneChallenges || [])
+];
 
   return (
     <>
