@@ -1,12 +1,16 @@
-import { useMyHostedGatherings, useCancelGathering, useGatheringChallenges } from '@/pages/mypage/service/myGathering';
+import {
+  useMyHostedGatherings,
+  useCancelGathering,
+  useGatheringChallenges,
+} from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
 import { StateData } from '@/components/common/StateData';
-
 
 export default function MyGathering() {
   const { data: hostedGatheringsData, isLoading } = useMyHostedGatherings();
   const { mutateAsync: cancelGathering } = useCancelGathering();
-  const { data: gatheringChallenges = {} } = useGatheringChallenges(hostedGatheringsData);
+  const { data: gatheringChallenges = {} } =
+    useGatheringChallenges(hostedGatheringsData);
 
   if (isLoading || !hostedGatheringsData?.content?.length) {
     return (
@@ -16,7 +20,6 @@ export default function MyGathering() {
       />
     );
   }
-
 
   return (
     <GatheringList
