@@ -6,6 +6,8 @@ export interface NormalizedGuestbook {
   rating: number;
   content: string;
   createDate: string;
+  reviewOwnerStatus: boolean;  // 추가
+  gatheringId: number;         // 추가
 }
 
 export interface NormalizedGathering {

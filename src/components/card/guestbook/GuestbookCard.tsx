@@ -1,4 +1,3 @@
-// components/common/GuestbookCard.tsx
 import Heart from "@/components/common/Heart";
 import Popover from "@/components/common/Popover";
 import { GatheringListItem, GuestbookItem } from "@/types";
