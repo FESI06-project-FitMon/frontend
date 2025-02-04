@@ -18,7 +18,7 @@ export default function AvailableGuestbooks({
       {gatherings.map((gathering) => (
         <div
           key={gathering.gatheringId}
-          className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-[10px] md:gap-[24px] lg:gap-[30px]"
+          className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-2.5 md:gap-6 lg:gap-[30px]"
         >
           <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
             <Image
@@ -35,15 +35,14 @@ export default function AvailableGuestbooks({
             />
           </div>
 
-          <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px]">
-            <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
-              {gathering.subType} | {gathering.mainLocation}{' '}
-              {gathering.subLocation}
+          <div className="flex flex-col flex-1 px-1 md:px-0 py-1 lg:py-5">
+            <h3 className="text-primary text-xs md:text-base font-normal mb-2.5 md:mb-3.5">
+              {gathering.subType} | {gathering.mainLocation} {gathering.subLocation}
             </h3>
             <h2 className="text-sm md:text-xl font-bold mb-3.5">
               {gathering.title}
             </h2>
-            <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
+            <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-2.5 sm:mb-[15px] lg:mb-5">
               <h4>
                 {getDatePart(gathering.startDate)} ~{' '}
                 {getDatePart(gathering.endDate)}
@@ -61,11 +60,11 @@ export default function AvailableGuestbooks({
                 </span>
               </div>
             </div>
-            <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
+            <div className="w-[122px] h-8 md:w-[163px] md:h-[43px]">
               <Button
                 name="방명록 작성하기"
                 style="custom"
-                className="w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base"
+                className="w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base"
                 handleButtonClick={() => onWriteClick(gathering.gatheringId)}
               />
             </div>

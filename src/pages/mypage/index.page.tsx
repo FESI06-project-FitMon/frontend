@@ -5,7 +5,7 @@ import JoinGathering from './components/join-gathering/JoinGathering';
 import MyGathering from './components/my-gathering/MyGathering';
 import Guestbook from './components/guestbook/Guestbook';
 import Calendar from './components/calendar/Calendar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { TabItem } from '@/types';
 import useMemberStore from '@/stores/useMemberStore';
 import useTabState from '@/hooks/useTabState';
@@ -41,28 +41,23 @@ export default function MyPage() {
     setIsInitialized(true);
   }, [router, setIsLogin]);
 
-  if (!isInitialized) return null;
-
-  const renderContent = () => {
+  // useMemo를 사용하여 탭 콘텐츠 렌더링 함수 메모이제이션
+  const tabContent = useMemo(() => {
     switch (currentTab) {
       case 'gathering':
-        return (
-          <JoinGathering
-          />
-        );
+        return <JoinGathering />;
       case 'guestbook':
         return <Guestbook />;
       case 'myGathering':
-        return (
-          <MyGathering
-          />
-        );
+        return <MyGathering />;
       case 'calendar':
         return <Calendar />;
       default:
         return null;
     }
-  };
+  }, [currentTab]);
+
+  if (!isInitialized) return null;
 
   return (
     <div
@@ -78,7 +73,7 @@ export default function MyPage() {
           onTabChange={handleTabChange}
         />
 
-        <div className="mt-6 lg:mt-[37px]">{renderContent()}</div>
+        <div className="mt-6 lg:mt-[37px]">{tabContent}</div>
       </div>
     </div>
   );
