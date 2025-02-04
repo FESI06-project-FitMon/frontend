@@ -34,19 +34,22 @@ export default function ChallengeSection({
   }
 
   const getStatusInfo = (challenge: ChallengeWithStatus) => {
-    if (gathering.captainStatus) {
-      if (challenge.verificationStatus && challenge.participantStatus) {
-        return { text: '참여완료', style: 'bg-dark-500' };
-      } else if (challenge.participantStatus) {
-        return { text: '참여중', style: 'bg-primary' };
-      }
-      return { text: '미참여', style: 'bg-dark-500' };
-    } else {
-      if (challenge.verificationStatus && challenge.participantStatus) {
-        return { text: '참여완료', style: 'bg-dark-500' };
-      }
+    // 참여완료 상태 - 모든 경우에 동일하게 적용
+    if (challenge.verificationStatus && challenge.participantStatus) {
+      return { text: '참여완료', style: 'bg-dark-500' };
+    }
+    // 참여중 상태
+    if (challenge.participantStatus) {
       return { text: '참여중', style: 'bg-primary' };
     }
+  
+    // 미참여 상태 - 주최자일 때만 표시
+    if (gathering.captainStatus) {
+      return { text: '미참여', style: 'bg-dark-500' };
+    }
+  
+    // 참여자의 경우 참여중 상태로 표시
+    return { text: '참여중', style: 'bg-primary' };
   };
 
   // 진행중인 챌린지와 마감된 챌린지 모두 표시
