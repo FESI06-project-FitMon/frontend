@@ -1,4 +1,4 @@
-// import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
+import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import getGuestBooks, {
   GuestBooksList,
@@ -6,7 +6,7 @@ import getGuestBooks, {
 } from '../api/getGuestBooks';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
-// import normalizeGuestbook from '../utils/normalizeGuestbook';
+import normalizeGuestbook from '../utils/normalizeGuestbook';
 
 export default function GuestbooksList({
   mainType,
@@ -63,7 +63,7 @@ export default function GuestbooksList({
               <Null message="이 페이지에는 모임 정보가 없습니다." />
             ) : (
               <div className="space-y-6">
-                {/* {page.content.map((guestbook) => {
+                {page.content.map((guestbook) => {
                   const { guestbookData, gatheringData } =
                     normalizeGuestbook(guestbook);
                   return (
@@ -73,7 +73,7 @@ export default function GuestbooksList({
                       gathering={gatheringData}
                     />
                   );
-                })} */}
+                })}
               </div>
             )}
           </div>
