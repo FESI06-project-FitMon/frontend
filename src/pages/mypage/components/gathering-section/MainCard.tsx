@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import Image from 'next/image';
 import StatusTag from '@/components/tag/StatusTag';
 import OpenStatus from '@/components/tag/OpenStatus';
@@ -15,11 +15,10 @@ interface MainCardProps {
     onCancelParticipation?: (gatheringId: number) => void;
   };
 }
-export default function MainCard({
+export default memo(function MainCard({
   gathering,
   cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
-  console.log('MainCard rendering with gathering:', gathering);
 
   // 훅 호출은 최상위에서
   const [showAlert, setShowAlert] = useState(false);
@@ -130,4 +129,4 @@ export default function MainCard({
       />
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import ChallengeSection from './ChallengeSection';
 import MainCard from './MainCard';
@@ -21,26 +21,30 @@ export const GatheringItem = memo(function GatheringItem({
   onCancelAction,
   cancelActionType
 }: GatheringItemProps) {
-  const [isOpen, setIsOpen] = useState(false);
 
+  const [isOpen, setIsOpen] = useState(false);
   // 이벤트 버블링 방지 핸들러
-  const handleContentClick = (e: React.MouseEvent) => {
+  const handleContentClick = useCallback((e: React.MouseEvent) => {
     if (e.target instanceof HTMLElement &&
       (e.target.tagName === 'BUTTON' || e.target.closest('button'))) {
       e.preventDefault();
       e.stopPropagation();
     }
-  };
+  }, []);
 
-  const handleToggleChallenge = (e: React.MouseEvent) => {
+
+  const handleToggleChallenge = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsOpen(prev => !prev);
-  };
+  }, []);
 
-  const cancelProps = cancelActionType === 'gathering'
-    ? { onCancelGathering: onCancelAction }
-    : { onCancelParticipation: onCancelAction };
+  const cancelProps = useMemo(() => 
+    cancelActionType === 'gathering'
+      ? { onCancelGathering: onCancelAction }
+      : { onCancelParticipation: onCancelAction },
+    [cancelActionType, onCancelAction]
+  );
 
   return (
     <div className="relative rounded-lg overflow-hidden mb-[50px]">
