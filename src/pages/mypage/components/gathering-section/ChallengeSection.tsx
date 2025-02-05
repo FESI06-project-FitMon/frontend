@@ -1,8 +1,8 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ChallengeType, GatheringChallengeType, GatheringListItem } from '@/types';
 import Null from '@/components/common/Null';
 import getDatePart from '@/utils/getDatePart';
-import { useRouter } from 'next/router';
 
 interface ChallengeSectionProps {
   challenges: GatheringChallengeType;
@@ -21,11 +21,10 @@ export default function ChallengeSection({
   isOpen,
   onToggle,
 }: ChallengeSectionProps) {
-  const router = useRouter();
 
-  const handleChallengeClick = (challengeId: number, e: React.MouseEvent) => {
+  const handleChallengeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    router.push(`/detail/${gathering.gatheringId}`);
   };
 
   if (!gathering) {
@@ -34,25 +33,18 @@ export default function ChallengeSection({
   }
 
   const getStatusInfo = (challenge: ChallengeWithStatus) => {
-    // 참여완료 상태 - 모든 경우에 동일하게 적용
     if (challenge.verificationStatus && challenge.participantStatus) {
       return { text: '참여완료', style: 'bg-dark-500' };
     }
-    // 참여중 상태
     if (challenge.participantStatus) {
       return { text: '참여중', style: 'bg-primary' };
     }
-  
-    // 미참여 상태 - 주최자일 때만 표시
     if (gathering.captainStatus) {
       return { text: '미참여', style: 'bg-dark-500' };
     }
-  
-    // 참여자의 경우 참여중 상태로 표시
     return { text: '참여중', style: 'bg-primary' };
   };
 
-  // 진행중인 챌린지와 마감된 챌린지 모두 표시
   const displayChallenges = [
     ...(challenges?.inProgressChallenges || []).map(c => ({ ...c, isClosed: false })),
     ...(challenges?.doneChallenges || []).map(c => ({ ...c, isClosed: true }))
@@ -88,71 +80,70 @@ export default function ChallengeSection({
             displayChallenges.map((challenge) => {
               const status = getStatusInfo(challenge);
               return (
-                <div
+                <Link
                   key={challenge.challengeId}
-                  className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer relative overflow-visible" // overflow-visible 추가
-                  onClick={(e) => handleChallengeClick(challenge.challengeId, e)}
+                  href={`/detail/${gathering.gatheringId}`}
+                  onClick={handleChallengeClick}
                 >
-                  {/* 마감 딱지 */}
-                  {challenge.isClosed && (
-                    <div className="absolute top-4 right-4 bg-dark-500 w-[45px] h-[45px] rounded-full flex items-center justify-center shadow-md z-10 text-sm">
-                      마감
-                    </div>
-                  )}
-                  <div className="flex items-start gap-[17px]">
-                    <div className="relative w-[61px] h-[61px] rounded-full overflow-hidden flex-shrink-0">
-                      <Image
-                        src={
-                          challenge.imageUrl === 'null' || !challenge.imageUrl
-                            ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-                            : challenge.imageUrl
-                        }
-                        alt={challenge.title}
-                        width={61}
-                        height={61}
-                        className="object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = '/assets/image/default_challenge.png';
-                        }}
-                      />
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-[13px] mb-2.5">
-                        <span
-                          className={`text-sm font-semibold w-[84px] text-center px-3 py-[7px] rounded-full ${status.style}`}
-                        >
-                          {status.text}
-                        </span>
-                        <div className="flex items-center font-normal gap-2">
-                          <Image
-                            src="/assets/image/person.svg"
-                            alt="참여자 아이콘"
-                            width={20}
-                            height={20}
-                          />
-                          <span>
-                            {challenge.successParticipantCount}/
-                            {challenge.participantCount}
-                          </span>
-                        </div>
+                  <div className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer relative overflow-visible">
+                    {challenge.isClosed && (
+                      <div className="absolute top-4 right-4 bg-dark-500 w-[45px] h-[45px] rounded-full flex items-center justify-center shadow-md z-10 text-sm">
+                        마감
+                      </div>
+                    )}
+                    <div className="flex items-start gap-[17px]">
+                      <div className="relative w-[61px] h-[61px] rounded-full overflow-hidden flex-shrink-0">
+                        <Image
+                          src={
+                            challenge.imageUrl === 'null' || !challenge.imageUrl
+                              ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+                              : challenge.imageUrl
+                          }
+                          alt={challenge.title}
+                          width={61}
+                          height={61}
+                          className="object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = '/assets/image/default_challenge.png';
+                          }}
+                        />
                       </div>
 
-                      <div>
-                        <div className="w-full min-w-0 h-[60px] mb-[5px]">
-                          <h4 className="font-semibold break-words">
-                            {challenge.title}
-                          </h4>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-[13px] mb-2.5">
+                          <span className={`text-sm font-semibold w-[84px] text-center px-3 py-[7px] rounded-full ${status.style}`}>
+                            {status.text}
+                          </span>
+                          <div className="flex items-center font-normal gap-2">
+                            <Image
+                              src="/assets/image/person.svg"
+                              alt="참여자 아이콘"
+                              width={20}
+                              height={20}
+                            />
+                            <span>
+                              {challenge.successParticipantCount}/
+                              {challenge.participantCount}
+                            </span>
+                          </div>
                         </div>
-                        <h5 className="text-dark-700 text-sm font-normal">
-                          {getDatePart(challenge.startDate)} ~ {getDatePart(challenge.endDate)}
-                        </h5>
+
+                        <div>
+                          <div className="w-full min-w-0 h-[60px] mb-[5px]">
+                            <h4 className="font-semibold break-words">
+                              {challenge.title}
+                            </h4>
+                          </div>
+                          <h5 className="text-dark-700 text-sm font-normal">
+                            {getDatePart(challenge.startDate)} ~ {getDatePart(challenge.endDate)}
+                          </h5>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })
           ) : (

@@ -1,6 +1,5 @@
-// GatheringItem.tsx
 import React, { memo, useState } from 'react';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import ChallengeSection from './ChallengeSection';
 import MainCard from './MainCard';
 import CanceledGathering from '@/components/common/CanceledGathering';
@@ -23,19 +22,20 @@ export const GatheringItem = memo(function GatheringItem({
   cancelActionType
 }: GatheringItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
-  const handleToggleChallenge = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsOpen(prev => !prev);
+  // 이벤트 버블링 방지 핸들러
+  const handleContentClick = (e: React.MouseEvent) => {
+    if (e.target instanceof HTMLElement &&
+      (e.target.tagName === 'BUTTON' || e.target.closest('button'))) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
-  const handleCardClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.tagName === 'BUTTON' || target.closest('button')) {
-      return;
-    }
-    router.push(`/detail/${gathering.gatheringId}`);
+  const handleToggleChallenge = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(prev => !prev);
   };
 
   const cancelProps = cancelActionType === 'gathering'
@@ -44,30 +44,32 @@ export const GatheringItem = memo(function GatheringItem({
 
   return (
     <div className="relative rounded-lg overflow-hidden mb-[50px]">
-      <div className="cursor-pointer" onClick={handleCardClick}>
-        <MainCard gathering={gathering} cancelProps={cancelProps} />
-      </div>
-
-      {challenges && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <ChallengeSection
-            challenges={challenges}
-            gathering={gathering}
-            isOpen={isOpen}
-            onToggle={handleToggleChallenge}
-          />
+      <Link href={`/detail/${gathering.gatheringId}`}>
+        <div className="cursor-pointer" onClick={handleContentClick}>
+          <MainCard gathering={gathering} cancelProps={cancelProps} />
         </div>
-      )}
 
-      {gathering.status === '취소됨' && (
-        <CanceledGathering
-          type="gathering"
-          gatheringStartDate={gathering.startDate}
-          gatheringJoinedPeopleCount={gathering.participantCount}
-          isReservationCancellable={true}
-          onOverlay={() => setIsOpen(false)}
-        />
-      )}
+        {challenges && (
+          <div onClick={handleToggleChallenge}>
+            <ChallengeSection
+              challenges={challenges}
+              gathering={gathering}
+              isOpen={isOpen}
+              onToggle={handleToggleChallenge}
+            />
+          </div>
+        )}
+
+        {gathering.status === '취소됨' && (
+          <CanceledGathering
+            type="gathering"
+            gatheringStartDate={gathering.startDate}
+            gatheringJoinedPeopleCount={gathering.participantCount}
+            isReservationCancellable={true}
+            onOverlay={() => setIsOpen(false)}
+          />
+        )}
+      </Link>
     </div>
   );
 });

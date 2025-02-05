@@ -1,6 +1,5 @@
-// CalendarTab.tsx
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import FullCalendar from '@fullcalendar/react';
 import { EventContentArg, DayCellContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -15,7 +14,6 @@ export default function CalendarTab() {
   const { data: calendarData, isLoading } = useCalendarGatherings();
   const calendarRef = useRef<FullCalendar | null>(null);
   const [currentTitle, setCurrentTitle] = useState('');
-  const router = useRouter();
 
   const updateTitle = useCallback(() => {
     if (calendarRef.current) {
@@ -40,15 +38,14 @@ export default function CalendarTab() {
     }
   }, []);
 
-  const handleEventClick = useCallback((arg: { event: { id: string } }) => {
-    const gatheringId = arg.event.id;
-    if (gatheringId) {
-      router.push(`/detail/${gatheringId}`);
-    }
-  }, [router]);
-
   const renderEventContent = useCallback((arg: EventContentArg) => {
-    return <EventContent event={arg.event} />;
+    return (
+      <Link href={`/detail/${arg.event.id}`}>
+        <div onClick={(e) => e.stopPropagation()}>
+          <EventContent event={arg.event} />
+        </div>
+      </Link>
+    );
   }, []);
 
   const renderDayCellContent = useCallback((arg: DayCellContentArg) => {
@@ -59,7 +56,6 @@ export default function CalendarTab() {
     return <DayHeader date={arg.date} />;
   }, []);
 
-  // 이벤트 데이터 메모이제이션
   const events = useMemo(() => {
     return calendarData?.events ?? [];
   }, [calendarData?.events]);
@@ -104,7 +100,7 @@ export default function CalendarTab() {
             initialView="dayGridMonth"
             events={events}
             locale="en"
-            dayMaxEvents={false}  // "more" 링크 대신 모든 이벤트 표시
+            dayMaxEvents={false}
             height="auto"
             eventDisplay="block"
             editable={false}
@@ -118,7 +114,6 @@ export default function CalendarTab() {
               `calendar-cell ${isToday ? 'today' : ''}`
             }
             datesSet={updateTitle}
-            eventClick={handleEventClick}
           />
         </div>
 
