@@ -28,13 +28,11 @@ export default function ChallengeSection({
     e.stopPropagation();
   };
 
-  if (!gathering) {
-    console.error('No gathering provided to ChallengeSection');
-    return null;
-  }
-
+  
   // 복잡한 조건부 로직이므로 useCallback 사용
   const getStatusInfo = useCallback((challenge: ChallengeWithStatus) => {
+    if (!gathering) return { text: '미참여', style: 'bg-dark-500' };
+    
     if (challenge.verificationStatus && challenge.participantStatus) {
       return { text: '참여완료', style: 'bg-dark-500' };
     }
@@ -45,14 +43,17 @@ export default function ChallengeSection({
       return { text: '미참여', style: 'bg-dark-500' };
     }
     return { text: '참여중', style: 'bg-primary' };
-  }, [gathering.captainStatus]);
-
+  }, [gathering?.captainStatus]); // gathering이 undefined일 수 있으므로 안전한 접근 사용
+  
+  if (!gathering) {
+    console.error('No gathering provided to ChallengeSection');
+    return null;
+  }
   // 배열 생성 작업을 메모이제이션
   const displayChallenges = useMemo(() => [
     ...(challenges?.inProgressChallenges || []).map(c => ({ ...c, isClosed: false })),
     ...(challenges?.doneChallenges || []).map(c => ({ ...c, isClosed: true }))
   ], [challenges?.inProgressChallenges, challenges?.doneChallenges]);
-
 
   return (
     <>

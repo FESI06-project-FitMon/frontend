@@ -22,7 +22,7 @@ export default memo(function MainCard({
   cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const { show: showToast } = useToastStore(); // 수정: 객체 구조분해할당으로 변경
   
   // 방명록 데이터 가져오기
