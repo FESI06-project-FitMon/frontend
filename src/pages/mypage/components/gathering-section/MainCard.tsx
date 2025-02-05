@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import Image from 'next/image';
 import StatusTag from '@/components/tag/StatusTag';
 import OpenStatus from '@/components/tag/OpenStatus';
@@ -6,7 +6,8 @@ import Button from '@/components/common/Button';
 import Alert from '@/components/dialog/Alert';
 import { GatheringListItem } from '@/types';
 import useToastStore from '@/stores/useToastStore';
-import getDatePart from '@/utils/getDatePart'; // getDatePart 함수 임포트
+import getDatePart from '@/utils/getDatePart';
+import { useGuestbooks } from '@/pages/mypage/service/myGuestbooks';
 
 interface MainCardProps {
   gathering: GatheringListItem;
@@ -15,16 +16,22 @@ interface MainCardProps {
     onCancelParticipation?: (gatheringId: number) => void;
   };
 }
-export default function MainCard({
+
+export default memo(function MainCard({
   gathering,
   cancelProps: { onCancelGathering, onCancelParticipation },
 }: MainCardProps) {
-  console.log('MainCard rendering with gathering:', gathering);
-
-  // 훅 호출은 최상위에서
   const [showAlert, setShowAlert] = useState(false);
-  const [, setIsLoading] = useState(false); // API 호출 상태 관리
-  const showToast = useToastStore((state) => state.show);
+  const [, setIsLoading] = useState(false);
+  const { show: showToast } = useToastStore(); // 수정: 객체 구조분해할당으로 변경
+  
+  // 방명록 데이터 가져오기
+  const { data: guestbooksData } = useGuestbooks();
+  
+  // 해당 모임에 대한 방명록이 있는지 확인
+  const hasGuestbook = guestbooksData?.content?.some(
+    guestbook => guestbook.gatheringId === gathering.gatheringId
+  );
 
   if (!gathering) {
     console.error('No gathering provided to MainCard');
@@ -32,32 +39,41 @@ export default function MainCard({
   }
 
   const handleCancelClick = () => {
+    // 방명록이 있고 모임장이 아닌 경우
+    if (hasGuestbook && !gathering.captainStatus) {
+      showToast?.('방명록이 작성되어 참여취소가 불가능합니다.', 'caution');
+      return;
+    }
     setShowAlert(true);
   };
 
   const handleCancelConfirm = async () => {
-    setIsLoading(true); // 로딩 상태 시작
+    // 한번 더 체크 (안전장치)
+    if (hasGuestbook && !gathering.captainStatus) {
+      showToast?.('방명록이 작성되어 참여 취소가 불가능합니다.', 'caution');
+      return;
+    }
+
+    setIsLoading(true);
     try {
       if (gathering.captainStatus) {
-        // 모임 취소 API 호출
         await onCancelGathering?.(gathering.gatheringId);
       } else {
-        // 참여 취소 API 호출
         await onCancelParticipation?.(gathering.gatheringId);
       }
-      showToast('취소되었습니다.', 'check');
+      showToast?.('취소되었습니다.', 'check');
     } catch (error) {
       console.error('취소 실패:', error);
-      showToast('취소에 실패했습니다. 다시 시도해주세요.', 'error');
+      showToast?.('취소에 실패했습니다. 다시 시도해주세요.', 'error');
     } finally {
-      setIsLoading(false); // 로딩 상태 종료
+      setIsLoading(false);
       setShowAlert(false);
     }
   };
 
   const handleCancelDeny = () => {
     setShowAlert(false);
-    showToast('취소가 중단되었습니다.', 'caution');
+    showToast?.('취소가 중단되었습니다.', 'caution');
   };
 
   return (
@@ -87,8 +103,7 @@ export default function MainCard({
         <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.title}</h2>
         <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-2.5 sm:mb-[15px] lg:mb-5">
           <h4>
-            {getDatePart(gathering.startDate)} ~{' '}
-            {getDatePart(gathering.endDate)}
+            {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
           </h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
@@ -107,27 +122,33 @@ export default function MainCard({
           <Button
             name={gathering.captainStatus ? '모임 취소하기' : '참여 취소하기'}
             style={gathering.captainStatus ? 'custom' : 'cancel'}
-            className={
-              gathering.captainStatus
-                ? 'w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base'
-                : 'w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold'
-            }
+            className={`
+              w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base
+              ${gathering.captainStatus 
+                ? '' 
+                : (hasGuestbook 
+                    ? 'text-dark-700 outline-dark-700 cursor-not-allowed' 
+                    : 'text-primary font-semibold')
+              }
+            `}
             handleButtonClick={handleCancelClick}
           />
         </div>
       </div>
 
-      <Alert
-        isOpen={showAlert}
-        type="select"
-        message={
-          gathering.captainStatus
-            ? '모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다.'
-            : '참여를 취소하시겠습니까?'
-        }
-        onConfirm={handleCancelConfirm}
-        onCancel={handleCancelDeny}
-      />
+      {showAlert && (
+        <Alert
+          isOpen={showAlert}
+          type="select"
+          message={
+            gathering.captainStatus
+              ? '모임을 취소하시겠습니까? 모임을 취소하면 모집된 인원들도 취소됩니다.'
+              : '참여를 취소하시겠습니까?'
+          }
+          onConfirm={handleCancelConfirm}
+          onCancel={handleCancelDeny}
+        />
+      )}
     </div>
   );
-}
+});

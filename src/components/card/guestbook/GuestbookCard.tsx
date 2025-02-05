@@ -24,24 +24,20 @@ export default function GuestbookCard({
   onEdit,
   onDelete,
 }: GuestbookCardProps) {
-  console.log('GuestbookCard props:', {
-    guestbook,
-    gathering,
-    showActions,
-    hasOnEdit: !!onEdit,
-    hasOnDelete: !!onDelete,
-  });
+  // 이벤트 버블링 방지 핸들러
+  const handlePopoverClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Link 이벤트 방지
+    e.stopPropagation(); // 이벤트 버블링 방지
+  };
+
+  const gatheringLink = 'gatheringId' in guestbook
+    ? `/detail/${guestbook.gatheringId}`
+    : `/detail/${gathering?.gatheringId}`;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
-      {/* 이미지 영역 */}
-      <Link
-        href={
-          'gatheringId' in guestbook
-            ? `/detail/${guestbook.gatheringId}`
-            : `/detail/${gathering?.gatheringId}`
-        }
-      >
+    <Link href={gatheringLink}>
+      <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
+        {/* 이미지 영역 */}
         <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
           <Image
             src={
@@ -60,53 +56,54 @@ export default function GuestbookCard({
             }}
           />
         </div>
-      </Link>
 
-      <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
-        <div className="flex flex-col h-full">
-          {' '}
-          {/* flex container 추가 */}
-          <div className="flex justify-between items-start mb-4">
-            <Heart rating={guestbook.rating} />
-            {showActions &&
-              onEdit &&
-              onDelete &&
-              'gatheringId' in guestbook && (
-                <Popover
-                  type="dot"
-                  items={[
-                    {
-                      id: 'edit',
-                      label: '수정하기',
-                      onClick: () => onEdit(guestbook),
-                    },
-                    {
-                      id: 'delete',
-                      label: '삭제하기',
-                      onClick: () => onDelete(guestbook),
-                    },
-                  ]}
-                />
+        <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
+          <div className="flex flex-col h-full">
+            {/* flex container 추가 */}
+            <div className="flex justify-between items-start mb-4">
+              <Heart rating={guestbook.rating} />
+              {showActions &&
+                onEdit &&
+                onDelete &&
+                'gatheringId' in guestbook && (
+                  <div onClick={handlePopoverClick}>
+                    <Popover
+                      type="dot"
+                      items={[
+                        {
+                          id: 'edit',
+                          label: '수정하기',
+                          onClick: () => onEdit(guestbook),
+                        },
+                        {
+                          id: 'delete',
+                          label: '삭제하기',
+                          onClick: () => onDelete(guestbook),
+                        },
+                      ]}
+                    />
+                  </div>
+                )}
+            </div>
+            <p className="mb-2 lg:mb-4 break-all line-clamp-4">
+              {guestbook.content}
+            </p>
+            <div className="mt-auto pb-1">
+              {gathering && (
+                <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between">
+                  <p className="text-primary font-normal truncate flex-1 min-w-0">
+                    {gathering.title} | {gathering.mainLocation}{' '}
+                    {gathering.subLocation}
+                  </p>
+                  <p className="text-dark-700 font-medium whitespace-nowrap">
+                    {getDatePart(guestbook.createdAt)}
+                  </p>
+                </div>
               )}
-          </div>
-          <p className="mb-2 lg:mb-4 break-all line-clamp-4">
-            {guestbook.content}
-          </p>
-          <div className="mt-auto pb-1">
-            {gathering && (
-              <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between">
-                <p className="text-primary font-normal truncate flex-1 min-w-0">
-                  {gathering.title} | {gathering.mainLocation}{' '}
-                  {gathering.subLocation}
-                </p>
-                <p className="text-dark-700 font-medium whitespace-nowrap">
-                  {getDatePart(guestbook.createdAt)}
-                </p>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
