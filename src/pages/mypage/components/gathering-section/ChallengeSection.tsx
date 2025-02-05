@@ -45,15 +45,16 @@ export default function ChallengeSection({
     return { text: '참여중', style: 'bg-primary' };
   }, [gathering?.captainStatus]); // gathering이 undefined일 수 있으므로 안전한 접근 사용
   
-  if (!gathering) {
-    console.error('No gathering provided to ChallengeSection');
-    return null;
-  }
   // 배열 생성 작업을 메모이제이션
   const displayChallenges = useMemo(() => [
     ...(challenges?.inProgressChallenges || []).map(c => ({ ...c, isClosed: false })),
     ...(challenges?.doneChallenges || []).map(c => ({ ...c, isClosed: true }))
   ], [challenges?.inProgressChallenges, challenges?.doneChallenges]);
+
+  if (!gathering) {
+    console.error('No gathering provided to ChallengeSection');
+    return null;
+  }
 
   return (
     <>
