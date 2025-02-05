@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Null from '@/components/common/Null';
 import GuestbookCard from '@/components/card/guestbook/GuestbookCard';
 import { GatheringListItem, GuestbookItem } from '@/types';
 import Alert from '@/components/dialog/Alert';
@@ -28,29 +27,32 @@ export default function WrittenGuestbooks({
     setState((prev) => ({ ...prev, ...updates }));
   };
 
-  if (guestbooks.length === 0) {
-    return <Null message="아직 작성된 방명록이 없습니다." />;
-  }
-
   const handleDeleteClick = (guestbook: GuestbookItem) => {
+    console.log('Delete clicked:', guestbook);
     updateState({ selectedGuestbook: guestbook, showDeleteAlert: true });
   };
-
+  
   const handleDeleteConfirm = async () => {
     if (state.selectedGuestbook) {
+      console.log('Attempting to delete:', {
+        gatheringId: state.selectedGuestbook.gatheringId,
+        guestbookId: state.selectedGuestbook.guestbookId  // reviewId에서 변경
+      });
       try {
-        await deleteGuestbookMutation.mutateAsync({  // mutateAsync 사용
+        await deleteGuestbookMutation.mutateAsync({
           gatheringId: state.selectedGuestbook.gatheringId,
-          guestbookId: state.selectedGuestbook.reviewId
+          guestbookId: state.selectedGuestbook.guestbookId  // reviewId에서 변경
         });
+        console.log('Delete success');
         showToast('삭제가 완료되었습니다.', 'check');
-      } catch {
+      } catch (error) {
+        console.error('Delete error:', error);
         showToast('삭제에 실패했습니다.', 'error');
       }
     }
-    setState((prev) => ({ ...prev, showDeleteAlert: false, selectedGuestbook: null }));
   };
-
+  
+  
   const handleDeleteCancel = () => {
     setState((prev) => ({ ...prev, showDeleteAlert: false, selectedGuestbook: null }));
     showToast('삭제가 취소되었습니다.', 'caution');
@@ -60,7 +62,7 @@ export default function WrittenGuestbooks({
     <div className="space-y-6">
       {guestbooks.map((guestbook) => (
         <GuestbookCard
-          key={guestbook.reviewId}
+          key={guestbook.guestbookId}
           guestbook={guestbook}
           gathering={gatherings.find((g) => g.gatheringId === guestbook.gatheringId) || null}
           showActions={true}

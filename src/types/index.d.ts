@@ -11,13 +11,19 @@ export interface UserProfile {
 }
 
 export interface GatheringStateType {
-  gatheringJoinedFivePeopleImages: string[]?;
-  gatheringAverageRating: double;
-  gatheringGuestbookCount: number;
-  gatheringMaxPeopleCount: number;
-  gatheringMinPeopleCount: number;
-  gatheringJoinedPeopleCount: number;
-  gatheringStatus: string;
+  participants: Array<GatheringParticipants>;
+  minCount: number;
+  totalCount: number;
+  participantCount: number;
+  status: string;
+  averageRating: number;
+  guestBookCount: number;
+}
+
+interface GatheringParticipants {
+  memberId: number;
+  nickName: string;
+  profileImageUrl: string;
 }
 
 export interface GatheringChallengeType {
@@ -59,10 +65,10 @@ interface ChallengeProps {
 }
 
 export interface GuestbookItem {
-  reviewId: number;
+  guestbookId: number;  
   content: string;
   rating: number;
-  createDate: string;
+  createdAt: string; 
   writer: GuestbookWriter;
   reviewOwnerStatus: boolean;
   gatheringId: number;
@@ -90,6 +96,30 @@ export interface GatheringList {
   content: GatheringListItem[];
   hasNext: boolean;
 }
+
+export interface GatheringDetailType {
+  gatheringId: number;
+  captainStatus: boolean;
+  participantStatus: boolean;
+  title: string;
+  description: string;
+  mainType: '유산소형' | '무산소형' | '경기형';
+  subType: string;
+  imageUrl: string;
+  startDate: string;
+  endDate: string;
+  mainLocation: string;
+  subLocation: string;
+  minCount: number;
+  totalCount: number;
+  participantCount: number;
+  status: '시작전' | '진행중' | '종료됨' | '취소됨';
+  tags: string[];
+  participants: Participant[];
+  averageRating: number;
+  guestBookCount: number;
+}
+
 
 export interface GatheringListItem {
   gatheringId: number;
@@ -169,4 +199,39 @@ interface CalendarGathering {
   startDate: string;
   endDate: string;
   status: string;
+}
+
+export interface GatheringListParams {
+  pageParam?: number;
+  pageSize?: number;
+  mainType?: string;
+  subType?: string;
+  mainLocation?: string;
+  subLocation?: string;
+  searchDate?: string;
+  sortBy?: 'deadline' | 'participants';
+  sortDirection?: 'ASC' | 'DESC';
+}
+
+export interface GatheringDetailType {
+  gatheringId: number;
+  captainStatus: boolean;
+  participantStatus: boolean;
+  title: string;
+  description: string;
+  mainType: '유산소형' | '무산소형' | '경기형';
+  subType: string;
+  imageUrl: string;
+  startDate: string;
+  endDate: string;
+  mainLocation: string;
+  subLocation: string;
+  minCount: number;
+  totalCount: number;
+  participantCount: number;
+  status: '시작전' | '진행중' | '종료됨' | '취소됨';
+  tags: string[];
+  participants: Participant[];
+  averageRating: number;
+  guestBookCount: number;
 }

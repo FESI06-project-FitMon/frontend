@@ -1,22 +1,23 @@
 import Button from '@/components/common/Button';
-import useGatheringStore from '@/stores/useGatheringStore';
 import useToastStore from '@/stores/useToastStore';
 import uploadImage from '@/utils/uploadImage';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
+import { verificationChallenge } from '../api/challengeApi';
 
 export default function ChallengeCertificationModal({
   challengeId,
   setOpenModal,
+  setIsVerificated,
 }: {
   challengeId: number;
   setOpenModal: (openModal: boolean) => void;
+  setIsVerificated: (isVerified: boolean) => void;
 }) {
   const [challengeGatheringImagUrl, setChallengeGatheringImageUrl] =
     useState('');
 
-  const { verificationChallenge } = useGatheringStore();
   const showToast = useToastStore((state) => state.show);
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -44,6 +45,7 @@ export default function ChallengeCertificationModal({
       await verificationChallenge(challengeId, challengeGatheringImagUrl);
       setOpenModal(false);
       showToast('챌린지 인증에 성공했습니다.', 'check');
+      setIsVerificated(true);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       if (axiosError.response?.data?.message) {
@@ -51,6 +53,7 @@ export default function ChallengeCertificationModal({
       }
     }
   };
+
   return (
     <>
       {/* 이미지 첨부 */}

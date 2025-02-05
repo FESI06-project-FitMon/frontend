@@ -1,11 +1,8 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
 import Card from '@/components/card/gathering/Card';
-import { GatheringList } from '@/types';
-import postLikesGatherings, {
-  likesGatheringsProps,
-} from '../service/postLikesGathering';
+import { likesGatheringsProps } from '../api/postLikesGathering';
+import useLikesGatherings from '../api/postLikesGathering';
 
 export default function LikesGatheringsList({
   mainType,
@@ -19,13 +16,9 @@ export default function LikesGatheringsList({
     isFetchingNextPage,
     isLoading,
     error,
-  } = useInfiniteQuery<GatheringList, Error>({
-    queryKey: ['likesGatherings', mainType, subType],
-    queryFn: (context) => postLikesGatherings({ mainType, subType }, context),
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.content.length > 0 ? allPages.length : undefined;
-    },
-    initialPageParam: 0,
+  } = useLikesGatherings({
+    mainType,
+    subType,
   });
 
   // 무한 스크롤 옵저버 연결
@@ -76,7 +69,7 @@ export default function LikesGatheringsList({
         })}
       </div>
       {/* 무한 스크롤의 끝 감지용 요소 */}
-      {hasNextPage && <div ref={observerRef} style={{ height: '1px' }} />}
+      {hasNextPage && <div ref={observerRef} className="h-1" />}
     </>
   );
 }

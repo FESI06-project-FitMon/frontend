@@ -1,19 +1,21 @@
-import DatePickerCalendar from '@/components/common/DatePicker';
-import { CreateChallenge } from '@/types';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import DatePickerCalendar from '@/components/common/DatePicker';
 import NumberSelect from '@/components/common/NumberSelect';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
+import { CreateChallenge } from '@/types';
 
 interface ChallengeInfomationModalProps {
+  formData: CreateChallenge;
   onChange: (data: CreateChallenge) => void;
   gatheringEndDate: Date | null;
 }
 
 export default function ChallengeInfomationModal({
+  formData,
   onChange,
   gatheringEndDate,
 }: ChallengeInfomationModalProps) {
@@ -22,28 +24,21 @@ export default function ChallengeInfomationModal({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
-  const [formData, setFormData] = useState<CreateChallenge>({
-    title: '',
-    description: '',
-    imageUrl: null,
-    startDate: null,
-    endDate: null,
-    totalCount: 0,
-  });
+  const [localFormData, setLocalFormData] = useState<CreateChallenge>(formData);
+
+  useEffect(() => {
+    setLocalFormData(formData);
+  }, [formData]);
 
   const updateFormData = <K extends keyof CreateChallenge>(
     key: K,
     value: CreateChallenge[K],
   ) => {
-    const updatedForm = { ...formData, [key]: value };
-
-    const transformedData = {
-      ...updatedForm,
-      imageUrl: updatedForm.imageUrl || DEFAULT_IMAGE_URL,
-    };
-
-    setFormData(updatedForm);
-    onChange(transformedData);
+    setLocalFormData((prev) => {
+      const updatedForm = { ...prev, [key]: value };
+      onChange(updatedForm);
+      return updatedForm;
+    });
   };
 
   const { handleImageUpload, isUploading } = useImageUpload({
@@ -81,7 +76,7 @@ export default function ChallengeInfomationModal({
       endDate &&
       maxDate &&
       endDate > maxDate &&
-      !isSameDateTime(endDate, maxDate) // maxDate와 동일한 경우는 허용
+      !isSameDateTime(endDate, maxDate)
     ) {
       showToast(
         '챌린지 종료 날짜는 모임 종료 날짜를 초과할 수 없습니다.',
@@ -108,22 +103,17 @@ export default function ChallengeInfomationModal({
       <div id="information">
         <h2 className="mt-[30px] mb-[10px]">챌린지 정보</h2>
         <div className="flex-col md:flex-row flex items-start gap-[10px]">
-          <div className="relative rounded-[10px] bg-dark-400 border-dark-500  h-[106px] md:h-[130px] overflow-hidden">
+          <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[106px] md:h-[130px] overflow-hidden">
             <Image
               src={
-                !formData.imageUrl || formData.imageUrl === 'null'
+                !localFormData.imageUrl
                   ? DEFAULT_IMAGE_URL
-                  : formData.imageUrl
+                  : localFormData.imageUrl
               }
               alt="이미지 미리보기"
               width={106}
               height={106}
               className="rounded-[10px] object-cover md:w-[130px] md:h-[130px]"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = DEFAULT_IMAGE_URL;
-              }}
             />
             <ImageUploadOverlay
               fileInputRef={fileInputRef}
@@ -136,10 +126,8 @@ export default function ChallengeInfomationModal({
             <ModalInput
               type="title"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
-              value={formData.title}
-              onChange={(value) =>
-                setFormData((prev) => ({ ...prev, title: value }))
-              }
+              value={localFormData.title}
+              onChange={(value) => updateFormData('title', value)}
               onBlur={(value) => handleBlur(value, 'title')}
               className="outline-dark-500 mb-[7px]"
               maxLength={25}
@@ -148,10 +136,8 @@ export default function ChallengeInfomationModal({
             <ModalInput
               type="description"
               placeholder="설명을 입력해 주세요. (50자 제한)"
-              value={formData.description}
-              onChange={(value) =>
-                setFormData((prev) => ({ ...prev, description: value }))
-              }
+              value={localFormData.description}
+              onChange={(value) => updateFormData('description', value)}
               onBlur={(value) => handleBlur(value, 'description')}
               className="outline-dark-500 md:mb-[7px]"
               maxLength={50}
@@ -165,7 +151,7 @@ export default function ChallengeInfomationModal({
         <div id="max-people-count">
           <h2 className="mb-[10px]">최대 인원</h2>
           <NumberSelect
-            targetNumber={formData.totalCount}
+            targetNumber={localFormData.totalCount}
             setTargetNumber={(value) => updateFormData('totalCount', value)}
             className="w-[90px]"
             height="47px"
@@ -175,7 +161,7 @@ export default function ChallengeInfomationModal({
         <div id="start-date">
           <h2 className="mb-[10px]">시작 날짜</h2>
           <DatePickerCalendar
-            selectedDate={formData.startDate}
+            selectedDate={localFormData.startDate}
             setSelectedDate={(date) => updateFormData('startDate', date)}
             width="196px"
             height="47px"
@@ -184,15 +170,17 @@ export default function ChallengeInfomationModal({
         <div id="end-date">
           <h2 className="mb-[10px]">마감 날짜</h2>
           <DatePickerCalendar
-            selectedDate={formData.endDate}
+            selectedDate={localFormData.endDate}
             setSelectedDate={(date) => {
-              if (validateEndDate(formData.startDate, date, gatheringEndDate)) {
+              if (
+                validateEndDate(localFormData.startDate, date, gatheringEndDate)
+              ) {
                 updateFormData('endDate', date!);
               }
             }}
             width="196px"
             height="47px"
-            minDate={formData.startDate!}
+            minDate={localFormData.startDate!}
           />
         </div>
       </div>

@@ -1,22 +1,35 @@
-import { useParticipatingGatherings, useCancelParticipation, useGatheringChallenges } from '@/pages/mypage/service/myGathering';
+import {
+  useParticipatingGatherings,
+  useCancelParticipation,
+  useGatheringChallenges,
+} from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
-import Null from '@/components/common/Null';
+import { StateData } from '@/components/common/StateData';
+import { useState } from 'react';
 
 export default function JoinGathering() {
-  const { data: gatheringsData, isLoading } = useParticipatingGatherings();
+  const [currentPage, setCurrentPage] = useState(0);
+  const { data: gatheringsData, isLoading } = useParticipatingGatherings(currentPage);
   const { mutateAsync: cancelParticipation } = useCancelParticipation();
-  const { data: gatheringChallenges = {} } = useGatheringChallenges(gatheringsData, false);
+  const { data: gatheringChallenges = {} } = useGatheringChallenges(
+    gatheringsData,
+    false,
+  );
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!gatheringsData?.content?.length) return <Null message="참여한 모임이 없습니다." />;
+  if (isLoading || !gatheringsData?.content?.length) {
+    return (
+      <StateData isLoading={isLoading} emptyMessage="참여한 모임이 없습니다." />
+    );
+  }
 
   return (
     <GatheringList
-      gatherings={gatheringsData.content}
+      gatherings={gatheringsData}
       gatheringChallenges={gatheringChallenges}
-      emptyMessage="참여한 모임이 없습니다."
       onCancelAction={cancelParticipation}
       cancelActionType="participation"
+      currentPage={currentPage}
+      onPageChange={setCurrentPage}
     />
   );
 }

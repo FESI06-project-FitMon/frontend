@@ -11,17 +11,18 @@ export function ProfileImage({ imageUrl, size = 50, className = '' }: ProfileIma
   const imageSource = !imageUrl || imageUrl === 'null' ? defaultImage : imageUrl;
 
   return (
-    <Image
-      src={imageSource}
-      alt="프로필 이미지"
-      width={size}
-      height={size}
-      className={className}
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.onerror = null;
-        target.src = defaultImage;
-      }}
-    />
+    <div style={{ width: size, height: size }} className="relative">
+      <Image
+        src={imageSource}
+        alt="프로필 이미지"
+        fill
+        className={`object-cover ${className}`}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.src = defaultImage;
+        }}
+      />
+    </div>
   );
 }

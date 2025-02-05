@@ -61,7 +61,7 @@ export default function MainCard({
   };
 
   return (
-    <div className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-[10px] md:gap-[24px] lg:gap-[30px]">
+    <div className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-2.5 md:gap-6 lg:gap-[30px]">
       <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
         <Image
           src={gathering.imageUrl || '/assets/image/default_img.png'}
@@ -80,14 +80,15 @@ export default function MainCard({
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 px-[4px] md:px-0 py-[4px] lg:py-[20px]">
-        <h3 className="text-primary text-xs md:text-base font-normal mb-1 md:mb-3.5">
+      <div className="flex flex-col flex-1 px-1 md:px-0 py-1 lg:py-5">
+        <h3 className="text-primary text-xs md:text-base font-normal mb-2.5 md:mb-3.5">
           {gathering.subType} | {gathering.mainLocation} {gathering.subLocation}
         </h3>
         <h2 className="text-sm md:text-xl font-bold mb-3.5">{gathering.title}</h2>
-        <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-[10px] sm:mb-[15px] lg:mb-[20px]">
+        <div className="flex text-xs md:text-base items-center gap-[13px] text-dark-700 mb-2.5 sm:mb-[15px] lg:mb-5">
           <h4>
-            {getDatePart(gathering.startDate)} ~ {getDatePart(gathering.endDate)}
+            {getDatePart(gathering.startDate)} ~{' '}
+            {getDatePart(gathering.endDate)}
           </h4>
           <div className="flex items-center font-normal gap-2 text-white">
             <Image
@@ -96,18 +97,20 @@ export default function MainCard({
               width={18}
               height={18}
             />
-            <span>{gathering.participantCount}/{gathering.totalCount}</span>
+            <span>
+              {gathering.participantCount}/{gathering.totalCount}
+            </span>
           </div>
           <OpenStatus gatheringJoinedPeopleCount={gathering.participantCount} />
         </div>
-        <div className="w-[122px] h-[32px] md:w-[163px] md:h-[43px]">
+        <div className="w-[122px] h-8 md:w-[163px] md:h-[43px]">
           <Button
             name={gathering.captainStatus ? '모임 취소하기' : '참여 취소하기'}
             style={gathering.captainStatus ? 'custom' : 'cancel'}
             className={
               gathering.captainStatus
-                ? 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base'
-                : 'w-[122px] h-[32px] md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold'
+                ? 'w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base'
+                : 'w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base text-primary font-semibold'
             }
             handleButtonClick={handleCancelClick}
           />
@@ -128,4 +131,3 @@ export default function MainCard({
     </div>
   );
 }
-

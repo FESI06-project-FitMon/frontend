@@ -41,12 +41,11 @@ export function useCancelParticipation() {
     },
   });
 }
-
 export function useMyHostedGatherings(page = 0) {
   return useQuery({
-    queryKey: GATHERING_KEYS.hosted(),
+    queryKey: [...GATHERING_KEYS.hosted(), page], // page를 queryKey에 추가
     queryFn: async () => {
-      const data = await gatheringService.getMyHostedGatherings(page); // 내가 주최한 모임 조회 API 호출
+      const data = await gatheringService.getMyHostedGatherings(page);
       return data;
     },
     staleTime: 0,

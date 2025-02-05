@@ -6,7 +6,8 @@ import WrittenGuestbooks from '../guestbook/WrittenGuestbooks';
 import AvailableGuestbooks from '../guestbook/AvailableGuestbooks';
 import useToastStore from '@/stores/useToastStore';
 import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGuestbooks } from '@/pages/mypage/service/myGuestbooks';
-import { useParticipatingGatherings } from '../../service/myGathering';
+import { useParticipatingGatherings } from '../../service/myGathering';;
+import { StateData } from '@/components/common/StateData';
 
 export default function Guestbook() {
   const [modalState, setModalState] = useState<{
@@ -17,13 +18,13 @@ export default function Guestbook() {
   }>({ isOpen: false, isEditMode: false });
 
   const showToast = useToastStore((state) => state.show);
-  const { data: participatingGatherings = { content: [] } } = useParticipatingGatherings();
-  const { data: availableGuestbooks = [] } = useAvailableGuestbooks();
-  const { data: guestbooksData = { content: [] } } = useGuestbooks();
-  const [showWritten, setShowWritten] = useState(false);
-
+  const { data: participatingGatherings = { content: [] }, isLoading: isParticipatingLoading } = useParticipatingGatherings();
+  const { data: availableGuestbooks = [], isLoading: isAvailableLoading } = useAvailableGuestbooks();
+  const { data: guestbooksData = { content: [] }, isLoading: isGuestbooksLoading } = useGuestbooks();
   const createGuestbookMutation = useCreateGuestbook();
   const updateGuestbookMutation = useUpdateGuestbook();
+  const [showWritten, setShowWritten] = useState(false);
+
 
   const handleWriteClick = useCallback((gatheringId: number) => {
     setModalState({
@@ -44,9 +45,10 @@ export default function Guestbook() {
   const handleModalSubmit = useCallback(async (data: { content: string; rating: number }) => {
     try {
       if (modalState.isEditMode && modalState.guestbook) {
+        // reviewId 대신 guestbookId 사용
         await updateGuestbookMutation.mutateAsync({
           gatheringId: modalState.guestbook.gatheringId,
-          guestbookId: modalState.guestbook.reviewId,
+          guestbookId: modalState.guestbook.guestbookId, // 여기를 수정
           data,
         });
         showToast('방명록이 수정되었습니다.', 'check');
@@ -58,12 +60,18 @@ export default function Guestbook() {
         showToast('방명록이 작성되었습니다.', 'check');
       }
       setModalState({ isOpen: false, isEditMode: false });
-    } catch {
+    } catch (error) {
+      console.error('Submit error:', error);
       showToast('오류가 발생했습니다.', 'error');
     }
   }, [modalState, updateGuestbookMutation, createGuestbookMutation, showToast]);
-
+  
   const handleTabChange = (id: string) => setShowWritten(id === 'written');
+
+  const isLoading = isParticipatingLoading || isAvailableLoading || isGuestbooksLoading;
+  const isEmpty = showWritten
+    ? !guestbooksData.content.length
+    : !availableGuestbooks.length;
 
   return (
     <div className="pb-[30px] md:pb-[50px] xl:pb-20">
@@ -78,18 +86,32 @@ export default function Guestbook() {
           onTagChange={handleTabChange}
         />
       </div>
-      {showWritten ? (
-        <WrittenGuestbooks
-          guestbooks={guestbooksData.content}
-          gatherings={participatingGatherings?.content ?? []}
-          onEditClick={handleEditClick}
+
+      {isLoading || isEmpty ? (
+        <StateData
+          isLoading={isLoading}
+          emptyMessage={showWritten
+            ? "작성한 방명록이 없습니다."
+            : "작성 가능한 방명록이 없습니다."
+          }
         />
       ) : (
-        <AvailableGuestbooks
-          gatherings={availableGuestbooks as GatheringListItem[]}
-          onWriteClick={handleWriteClick}
-        />
+        <>
+          {showWritten ? (
+            <WrittenGuestbooks
+              guestbooks={guestbooksData.content}
+              gatherings={participatingGatherings?.content ?? []}
+              onEditClick={handleEditClick}
+            />
+          ) : (
+            <AvailableGuestbooks
+              gatherings={availableGuestbooks as GatheringListItem[]}
+              onWriteClick={handleWriteClick}
+            />
+          )}
+        </>
       )}
+
       {modalState.isOpen && (
         <GuestbookModal
           isEditMode={modalState.isEditMode}

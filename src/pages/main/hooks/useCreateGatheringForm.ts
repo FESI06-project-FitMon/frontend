@@ -6,7 +6,8 @@ const initialState: CreateGatheringForm = {
   description: '',
   mainType: '유산소형',
   subType: '런닝',
-  imageUrl: null,
+  imageUrl:
+    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png',
   startDate: null,
   endDate: null,
   mainLocation: '',
@@ -18,7 +19,8 @@ const initialState: CreateGatheringForm = {
     {
       title: '',
       description: '',
-      imageUrl: null,
+      imageUrl:
+        'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png',
       totalCount: 0,
       startDate: null,
       endDate: null,
@@ -45,6 +47,7 @@ export const useCreateGatheringForm = () => {
     currentStep,
     setCurrentStep,
     formData,
+    setFormData,
     updateFormData,
     handleChallengeUpdate,
   };

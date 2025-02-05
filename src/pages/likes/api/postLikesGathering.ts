@@ -2,7 +2,7 @@ import { GatheringList } from '@/types';
 import apiRequest from '@/utils/apiRequest';
 import { getLikes } from '@/utils/likesgathering';
 import { MainType } from '@/constants/MainList';
-import { QueryFunctionContext } from '@tanstack/react-query';
+import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query';
 
 export interface likesGatheringsProps {
   mainType: MainType;
@@ -15,7 +15,7 @@ interface RequestData {
 // 한 페이지당 모임 수
 const ROWS_PER_PAGE = 8;
 
-export default async function postLikesGatherings(
+async function postLikesGatherings(
   { mainType, subType }: likesGatheringsProps,
   { pageParam = 0 }: QueryFunctionContext,
 ) {
@@ -33,5 +33,20 @@ export default async function postLikesGatherings(
     param,
     method: 'post',
     requestData: { gatheringIds: getLikes() },
+  });
+}
+
+// React Query를 사용한 무한 스크롤 데이터 처리
+export default function useLikesGatherings({
+  mainType,
+  subType,
+}: likesGatheringsProps) {
+  return useInfiniteQuery<GatheringList, Error>({
+    queryKey: ['likesGatherings', mainType, subType],
+    queryFn: (context) => postLikesGatherings({ mainType, subType }, context),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.content.length > 0 ? allPages.length : undefined;
+    },
+    initialPageParam: 0,
   });
 }

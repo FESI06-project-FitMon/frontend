@@ -2,7 +2,6 @@ import BarChart from '@/components/chart/BarChart';
 import Button from '@/components/common/Button';
 import Heart from '@/components/common/Heart';
 import OpenStatus from '@/components/tag/OpenStatus';
-import useGatheringStore from '@/stores/useGatheringStore';
 import useToastStore from '@/stores/useToastStore';
 import {
   addGatheringId,
@@ -12,32 +11,43 @@ import {
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useGatheringStatus } from '../service/gatheringService';
+import Null from '@/components/common/Null';
+import { cancelGathering, participantGathering } from '../api/gatheringApi';
 
 export default function GatheringState({
   gatheringId,
+  participantStatus,
 }: {
   gatheringId: number;
+  participantStatus: boolean;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [heart, setHeart] = useState<boolean>(false);
+  const [isParticipant, setIsParticipant] = useState(participantStatus);
   const {
-    fetchGatheringStatus,
-    gatheringStatus,
-    gathering,
-    participantGathering,
-  } = useGatheringStore();
+    data: gatheringStatus,
+    isLoading,
+    error,
+  } = useGatheringStatus(gatheringId);
 
-  // 초기 상태 세팅
+  // 좋아요 초기 상태 세팅
   useEffect(() => {
-    fetchGatheringStatus(gatheringId);
     setHeart(gatheringIdInLikes(gatheringId));
   }, [gatheringId]);
 
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = async () => {
     try {
-      await participantGathering(gatheringId);
-      showToast('참여하기 완료되었습니다.', 'check');
+      if (isParticipant) {
+        await cancelGathering(gatheringId);
+        showToast('참여취소 완료되었습니다.', 'check');
+        setIsParticipant(false);
+      } else {
+        await participantGathering(gatheringId);
+        showToast('참여하기 완료되었습니다.', 'check');
+        setIsParticipant(true);
+      }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       if (axiosError.response?.data?.message) {
@@ -57,6 +67,8 @@ export default function GatheringState({
 
     addGatheringId(gatheringId);
   };
+
+  // 공유 버튼 클릭 핸들러
   const handleShareButtonClick = () => {
     const url = window.location.href;
     navigator.clipboard
@@ -65,8 +77,12 @@ export default function GatheringState({
       .catch(() => showToast('URL 복사를 실패했습니다.', 'error'));
   };
 
-  if (!gatheringStatus) {
-    return <div>{'Loading..'}</div>;
+  if (isLoading || !gatheringStatus) {
+    return <Null message="로딩중입니다." />;
+  }
+
+  if (error) {
+    return <div>error</div>;
   }
 
   return (
@@ -79,7 +95,7 @@ export default function GatheringState({
         <h3 className="mb-[18px] font-bold">{'모임 만족도'}</h3>
         <div className="flex">
           <Heart rating={gatheringStatus.averageRating} />
-          <span className="ml-[10px]">{`${gatheringStatus.averageRating} / 5.0`}</span>
+          <span className="ml-[10px]">{`${gatheringStatus.averageRating.toFixed(1)} / 5.0`}</span>
         </div>
         <div className="text-sm mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
       </div>
@@ -138,24 +154,13 @@ export default function GatheringState({
           </div>
         </div>
         <div className="flex mb-auto h-[56px]" id="buttons">
-          {gathering?.participantStatus ? (
-            <Button
-              className="ml-[25px] w-[242px]"
-              style="disabled"
-              height="100%"
-              name="참여 완료"
-              handleButtonClick={() => handleGatheringButtonClick()}
-            />
-          ) : (
-            <Button
-              className="ml-[25px] w-[242px]"
-              style="custom"
-              height="100%"
-              name="참여하기"
-              handleButtonClick={() => handleGatheringButtonClick()}
-            />
-          )}
-
+          <Button
+            className="ml-[25px] w-[242px]"
+            style="custom"
+            height="100%"
+            name={isParticipant ? '참여 취소' : '참여하기'}
+            handleButtonClick={() => handleGatheringButtonClick()}
+          />
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
               src={
