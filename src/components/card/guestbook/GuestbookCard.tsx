@@ -7,7 +7,7 @@ import {
   NormalizedGathering,
   NormalizedGuestbook,
 } from '../../../pages/guestBooks/utils/normalizeGuestbook';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface GuestbookCardProps {
   guestbook: GuestbookItem | NormalizedGuestbook;
@@ -32,37 +32,35 @@ export default function GuestbookCard({
     hasOnDelete: !!onDelete,
   });
 
-  const router = useRouter();
-  const handleClick = () => {
-    if ('gatheringId' in guestbook) {
-      router.push(`/detail/${guestbook.gatheringId}`);
-    } else {
-      router.push(`/detail/${gathering?.gatheringId}`);
-    }
-  };
-
   return (
     <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
       {/* 이미지 영역 */}
-      <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
-        <Image
-          src={
-            !gathering?.imageUrl || gathering.imageUrl === 'null'
-              ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
-              : gathering.imageUrl
-          }
-          alt={gathering?.title || '모임 이미지'}
-          layout="fill"
-          className="object-cover cursor-pointer"
-          onClick={handleClick}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null;
-            target.src =
-              'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
-          }}
-        />
-      </div>
+      <Link
+        href={
+          'gatheringId' in guestbook
+            ? `/detail/${guestbook.gatheringId}`
+            : `/detail/${gathering?.gatheringId}`
+        }
+      >
+        <div className="relative min-w-[343px] md:min-w-[696px] lg:min-w-[300px] h-[200px] rounded-[20px] overflow-hidden">
+          <Image
+            src={
+              !gathering?.imageUrl || gathering.imageUrl === 'null'
+                ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+                : gathering.imageUrl
+            }
+            alt={gathering?.title || '모임 이미지'}
+            layout="fill"
+            className="object-cover cursor-pointer"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src =
+                'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+            }}
+          />
+        </div>
+      </Link>
 
       <div className="flex-1 min-w-[343px] md:min-w-[696px] lg:w-[300px] h-[200px] px-2 lg:px-0 lg:py-6 lg:pr-6">
         <div className="flex flex-col h-full">
