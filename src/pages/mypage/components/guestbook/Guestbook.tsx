@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { GuestbookItem, GatheringListItem } from '@/types';
 import SubTag from '@/components/tag/SubTag';
-import GuestbookModal from '../guestbook/GuestbookModal';
-import WrittenGuestbooks from '../guestbook/WrittenGuestbooks';
-import AvailableGuestbooks from '../guestbook/AvailableGuestbooks';
+import GuestbookModal from './GuestbookModal';
+import WrittenGuestbooks from './WrittenGuestbooks';
+import AvailableGuestbooks from './AvailableGuestbooks';
 import useToastStore from '@/stores/useToastStore';
 import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGuestbooks } from '@/pages/mypage/service/myGuestbooks';
 import { useParticipatingGatherings } from '../../service/myGathering';;
