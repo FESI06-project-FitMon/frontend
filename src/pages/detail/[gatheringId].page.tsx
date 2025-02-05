@@ -28,7 +28,7 @@ export default function GatheringDetail() {
     return <div>{'데이터 없음...'}</div>;
   }
   return (
-    <div className="w-full sm:px-4 md:px-6 lg:w-[1200px] flex flex-col place-self-center ">
+    <div className="w-full px-4 md:px-6 lg:px-0 lg:w-[1200px] flex flex-col place-self-center ">
       <GatheringInformation gathering={data} />
       <GatheringState
         participantStatus={data.participantStatus}

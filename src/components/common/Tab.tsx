@@ -8,7 +8,7 @@ interface TabProps {
   rightElement?: React.ReactNode;
 }
 
-export default function Tab({
+export default function zTab({
   items,
   currentTab,
   onTabChange,
@@ -16,8 +16,6 @@ export default function Tab({
   rightElement, //버튼 만드는 조건 탭바 오른쪽에 버튼 생김
 }: TabProps) {
   const handleTabClick = (id: TabItem['id']) => {
-    // 여기도 수정
-    console.log('click');
     onTabChange(id);
   };
 
@@ -25,7 +23,7 @@ export default function Tab({
     <div className={`${className}`}>
       <div className="w-full flex items-center justify-between">
         <div className="flex w-full md:border-b-[2px] border-dark-400">
-          <div className="flex w-full justify-center md:justify-start">
+          <div className="flex w-full justify-start">
             {items.map((item) => (
               <button
                 key={item.id}
@@ -46,7 +44,7 @@ export default function Tab({
             ))}
           </div>
           {rightElement && (
-            <div className="hidden md:flex items-center px-4 ml-auto">
+            <div className="w-full justify-end flex absolute items-center px-4 ml-auto">
               {rightElement}
             </div>
           )}

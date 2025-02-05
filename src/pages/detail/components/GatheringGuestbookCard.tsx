@@ -21,8 +21,13 @@ export default function Guestbook({
 }) {
   return (
     <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 p-[30px]">
-      <Heart rating={guestbook.rating} />
-      <p className="w-full h-min-[72px] text-ellipsis overflow-hidden break-words">
+      <div className="flex justify-between">
+        <Heart rating={guestbook.rating} />
+        <p className="flex md:hidden text-[13px] md:text-sm text-dark-700 content-center">
+          {`${guestbook.createDate.substring(0, 10)}`}
+        </p>
+      </div>
+      <p className="w-full h-min-[72px] text-sm md:text-base text-ellipsis overflow-hidden break-words">
         {guestbook.content}
       </p>
       <div className="flex justify-between">
@@ -34,10 +39,10 @@ export default function Guestbook({
             alt="guestbook-profile"
             className="rounded-full"
           />
-          <p>{guestbook.writer.nickName}</p>
+          <p className="text-[13px] md:text-sm">{guestbook.writer.nickName}</p>
         </div>
         {/* 날짜 */}
-        <p className="text-sm text-dark-700 content-center">
+        <p className="hidden md:flex text-[13px] md:text-sm text-dark-700 content-center">
           {`${guestbook.createDate.substring(0, 10)}`}
         </p>
       </div>

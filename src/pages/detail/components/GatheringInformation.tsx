@@ -66,7 +66,7 @@ export default function GatheringInformation({
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">
-        <div className="flex mt-20 gap-[10px]s">
+        <div className="flex mt-[30px] md:mt-[50px] lg:mt-20 gap-[10px]">
           <p className="text-base md:text-lg font-semibold">
             {gathering.mainType ?? ''}
           </p>
@@ -89,12 +89,12 @@ export default function GatheringInformation({
           src={
             gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
           }
-          className="w-full h-[186px] rounded-[20px] object-cover md:w-[280px] md:h-[260px] lg:h-[300px] md:mr-5 lg:mr-[50px] sm:mb-5 md:mb-0"
+          className="w-full h-[186px] rounded-[20px] object-cover md:w-[280px] md:h-[260px] lg:h-[300px] md:mr-5 lg:mr-[50px] mb-5 md:mb-0"
         />
         <div id="detail-information" className="w-full">
           <div className="flex justify-between items-center">
             {' '}
-            <h3 className="text-xl md:text-2xl lg:text-[1.75rem] font-semibold h-12 md:h-[58px] lg:h-auto align-center">
+            <h3 className="text-xl md:text-2xl lg:text-[1.75rem] font-semibold h-12 md:h-[58px] lg:h-auto content-center">
               {gathering.title}
             </h3>
             {gathering.captainStatus && (

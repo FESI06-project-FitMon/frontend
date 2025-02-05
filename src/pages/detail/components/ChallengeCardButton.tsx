@@ -11,11 +11,13 @@ export default function ChallengeCardButton({
   challengeId,
   participantStatus,
   verificationStatus,
+  className,
 }: {
   inProgress: boolean;
   challengeId: number;
   participantStatus: boolean;
   verificationStatus: boolean;
+  className?: string;
 }) {
   const [openModal, setOpenModal] = useState(false);
   const [isParticipant, setIsParticipant] = useState(participantStatus);
@@ -44,7 +46,7 @@ export default function ChallengeCardButton({
       <Button
         style="disabled"
         name="마감된 챌린지"
-        className="w-40 h-10 font-semibold text-base"
+        className={`${className} w-full h-[42px] md:w-[120px] md:h-9 lg:w-40 lg:h-10 font-semibold text-base`}
       />
     );
   }
@@ -54,7 +56,7 @@ export default function ChallengeCardButton({
       <Button
         style="custom"
         name="참여하기"
-        className="w-40 h-10 font-semibold text-base"
+        className={`${className} w-full h-[42px] md:w-[120px] md:h-9 lg:w-40 lg:h-10 font-semibold text-base`}
         handleButtonClick={() => {
           handleParticipantChallengeButtonClick();
         }}
@@ -68,7 +70,7 @@ export default function ChallengeCardButton({
         <Button
           style="custom"
           name="인증하기"
-          className="w-40 h-10 font-semibold text-base"
+          className={`w-full h-[42px] md:w-[120px] md:h-9 lg:w-40 lg:h-10 font-semibold text-base ${className}`}
           handleButtonClick={() => handleGatheringButtonClick()}
         />
         <>
@@ -90,7 +92,7 @@ export default function ChallengeCardButton({
     <Button
       style="disabled"
       name="인증완료"
-      className="bg-dark-700 w-40 h-10 font-semibold text-base "
+      className={`bg-dark-700 w-full h-[42px] md:w-[120px] md:h-9 lg:w-40 lg:h-10 font-semibold text-base ${className}`}
     />
   );
 }

@@ -62,9 +62,11 @@ export default function GatheringState({
 
     if (gatheringIdInLikes(gatheringId)) {
       removeGatheringId(gatheringId);
+      showToast('찜하기 취소되었습니다.', 'check');
+
       return;
     }
-
+    showToast('찜하기 완료되었습니다.', 'check');
     addGatheringId(gatheringId);
   };
 
@@ -88,27 +90,38 @@ export default function GatheringState({
   return (
     <div
       id="gathering-state"
-      className="flex items-center mt-[25px] justify-between"
+      className="w-full flex flex-col lg:flex-row  mt-[25px] justify-between"
     >
-      {/* 모임 만족도와 평균 평점 */}
-      <div id="rating">
-        <h3 className="mb-[18px] font-bold">{'모임 만족도'}</h3>
-        <div className="flex">
-          <Heart rating={gatheringStatus.averageRating} />
-          <span className="ml-[10px]">{`${gatheringStatus.averageRating.toFixed(1)} / 5.0`}</span>
+      <div className="flex flex-col md:flex-row lg:w-[808px] justify-between">
+        {/* 모임 만족도와 평균 평점 */}
+        <div
+          id="rating"
+          className="flex flex-row-reverse justify-end md:flex-col mb-[22.5px] md:mb-0 "
+        >
+          <h3 className="hidden md:flex mb-[18px] font-bold">
+            {'모임 만족도'}
+          </h3>
+          <div className="flex">
+            <Heart rating={gatheringStatus.averageRating} />
+            <span className="ml-[10px]">{`${gatheringStatus.averageRating.toFixed(1)} / 5.0`}</span>
+          </div>
+          <div className="text-sm mr-[15px] md:mr-0 md:mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
         </div>
-        <div className="text-sm mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
-      </div>
-      <div className="flex">
-        <div className="gap-[15px] w-[388px]">
+
+        {/* 모임 참여 인원 수 */}
+        <div className="gap-[15px] w-full md:w-[388px]">
           <div className="flex justify-between items-center">
             <div id="joined-people" className="flex items-center">
               {/* 참가자 5인 프로필 이미지 */}
               <div className="flex -space-x-[10px]">
-                {gatheringStatus.participants?.map((image, index) => (
+                {gatheringStatus.participants?.map((participant, index) => (
                   <Image
                     key={index}
-                    src="/assets/image/fitmon.png"
+                    src={
+                      participant.profileImageUrl
+                        ? participant.profileImageUrl
+                        : `https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png`
+                    }
                     width={29}
                     height={29}
                     alt="profile"
@@ -153,14 +166,21 @@ export default function GatheringState({
             <p className="text-sm text-dark-700 mt-[15px]">{`최대 ${gatheringStatus.totalCount}명`}</p>
           </div>
         </div>
-        <div className="flex mb-auto h-[56px]" id="buttons">
-          <Button
-            className="ml-[25px] w-[242px]"
-            style="custom"
-            height="100%"
-            name={isParticipant ? '참여 취소' : '참여하기'}
-            handleButtonClick={() => handleGatheringButtonClick()}
-          />
+      </div>
+
+      {/* 버튼들 */}
+      <div
+        className="flex w-full lg:w-auto justify-between mb-auto h-[56px] mt-5 md:mt-[26px]"
+        id="buttons"
+      >
+        <Button
+          className="lg:ml-[25px] w-[219px] md:w-[566px] lg:w-[242px]"
+          style="custom"
+          height="100%"
+          name={isParticipant ? '참여 취소' : '참여하기'}
+          handleButtonClick={() => handleGatheringButtonClick()}
+        />
+        <div className="flex">
           <div className="flex flex-col items-center justify-center ml-[20px]">
             <Image
               src={
@@ -168,8 +188,8 @@ export default function GatheringState({
                   ? '/assets/image/heart-fill.svg'
                   : '/assets/image/heart-zzim.svg'
               }
-              width={28}
-              height={28}
+              width={26}
+              height={26}
               alt="heart-zzim"
               onClick={() => handleZzimButtonClick()}
               className="hover:cursor-pointer"
@@ -179,8 +199,8 @@ export default function GatheringState({
           <div className="flex flex-col items-center justify-center ml-[21px]">
             <Image
               src="/assets/image/share.svg"
-              width={28}
-              height={28}
+              width={26}
+              height={26}
               alt="share"
               onClick={() => handleShareButtonClick()}
               className="hover:cursor-pointer"
