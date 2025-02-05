@@ -1,13 +1,13 @@
 import Image from 'next/image';
 
 interface HeartProps {
-  rating: number;                // 현재 별점
+  rating: number; // 현재 별점
   onChange?: (value: number) => void; // 별점 변경 이벤트 핸들러
 }
 
 export default function Heart({ rating, onChange }: HeartProps) {
   const fill = Math.floor(rating); // 꽉 찬 하트 개수
-  const half = rating % 1;         // 반쪽 하트 여부
+  const half = rating % 1; // 반쪽 하트 여부
   const emptyCount = 5 - fill - (half > 0 ? 1 : 0); // 빈 하트 개수
 
   const handleClick = (value: number) => {
@@ -26,7 +26,7 @@ export default function Heart({ rating, onChange }: HeartProps) {
           height={22}
           key={`fill-${index}`}
           onClick={() => handleClick(index + 1)} // 클릭 시 별점 업데이트
-          className="cursor-pointer"
+          className={onChange ? 'cursor-pointer' : 'cursor-default'}
         />
       ))}
       {half > 0 && (
@@ -36,12 +36,12 @@ export default function Heart({ rating, onChange }: HeartProps) {
           width={22}
           height={22}
           onClick={() => handleClick(fill + 0.5)} // 반쪽 하트 클릭
-          className="cursor-pointer"
+          className={onChange ? 'cursor-pointer' : 'cursor-default'}
         />
       )}
       {[...Array(emptyCount)].map((_, index) => (
         <Image
-          className="cursor-pointer"
+          className={onChange ? 'cursor-pointer' : 'cursor-default'}
           src="/assets/image/heart-empty.svg"
           alt="heart"
           width={22}
@@ -53,4 +53,3 @@ export default function Heart({ rating, onChange }: HeartProps) {
     </div>
   );
 }
-
