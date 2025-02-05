@@ -7,6 +7,7 @@ import {
   NormalizedGathering,
   NormalizedGuestbook,
 } from '../../../pages/guestBooks/utils/normalizeGuestbook';
+import { useRouter } from 'next/router';
 
 interface GuestbookCardProps {
   guestbook: GuestbookItem | NormalizedGuestbook;
@@ -28,8 +29,18 @@ export default function GuestbookCard({
     gathering,
     showActions,
     hasOnEdit: !!onEdit,
-    hasOnDelete: !!onDelete
+    hasOnDelete: !!onDelete,
   });
+
+  const router = useRouter();
+  const handleClick = () => {
+    if ('gatheringId' in guestbook) {
+      router.push(`/detail/${guestbook.gatheringId}`);
+    } else {
+      router.push(`/detail/${gathering?.gatheringId}`);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[30px] bg-dark-900 rounded-lg">
       {/* 이미지 영역 */}
@@ -42,7 +53,8 @@ export default function GuestbookCard({
           }
           alt={gathering?.title || '모임 이미지'}
           layout="fill"
-          className="object-cover"
+          className="object-cover cursor-pointer"
+          onClick={handleClick}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
