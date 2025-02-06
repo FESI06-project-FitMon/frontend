@@ -113,7 +113,7 @@ export default function CreateGathering({
         {/* Step 컴포넌트 */}
         {currentStep < 3 && <Step currentStep={currentStep} />}
 
-        <div className="mt-4 overflow-y-auto flex flex-col justify-center max-h-[65vh] md:h-auto md:overflow-visible">
+        <div className="mt-4 overflow-y-auto flex flex-col justify-center  md:h-auto md:overflow-visible">
           <StepContent
             currentStep={currentStep}
             formData={formData}
