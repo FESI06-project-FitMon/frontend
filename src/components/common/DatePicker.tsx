@@ -119,7 +119,7 @@ export default function DatePickerCalendar({
           width={20}
           height={20}
           alt="calendar"
-          className="flex"
+          className="flex w-4 h-4 md:w-5 md:h-5"
         />
       </div>
     </div>

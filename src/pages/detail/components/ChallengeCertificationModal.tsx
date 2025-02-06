@@ -55,9 +55,9 @@ export default function ChallengeCertificationModal({
   };
 
   return (
-    <>
+    <div className="w-full h-full">
       {/* 이미지 첨부 */}
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center ">
         <div className="relative border-[1px] rounded-[10px] border-dark-500 w-[175px] h-[175px] mt-[30px] flex">
           <Image
             className=" border-[1px] rounded-[10px] border-dark-500 "
@@ -74,7 +74,14 @@ export default function ChallengeCertificationModal({
             alt="edit-image"
           />
 
-          <div className="absolute bg-black/80  w-full h-full z-10  border-[1px] rounded-[10px] border-dark-500 " />
+          <div
+            style={{
+              background: challengeGatheringImagUrl
+                ? 'rgba(0, 0, 0, 0.8)'
+                : '#2d2d2d',
+            }}
+            className="absolute  w-full h-full z-10  border-[1px] rounded-[10px] border-dark-500 "
+          />
 
           <div className="absolute w-[175px] h-[175px] z-20 flex flex-col justify-center items-center gap-2 hover:cursor-pointer">
             <input
@@ -91,21 +98,23 @@ export default function ChallengeCertificationModal({
               alt="pencil"
               onClick={handleImageEditButtonClick}
             />
-            <p
-              onClick={handleImageDeleteButtonClick}
-              className="text-sm text-dark-700 hover:cursor-pointer"
-            >
-              {'이미지 삭제'}
-            </p>
+            {challengeGatheringImagUrl && (
+              <p
+                onClick={handleImageDeleteButtonClick}
+                className="text-sm text-dark-700 hover:cursor-pointer"
+              >
+                {'이미지 삭제'}
+              </p>
+            )}
           </div>
         </div>
         <Button
           name="인증하기"
-          className="mt-[30px] w-[500px] h-[52px]"
+          className="px-[15px] mt-[30px] w-full h-[52px]"
           style="custom"
           handleButtonClick={() => handleCertificationButtonClick()}
         />
       </div>
-    </>
+    </div>
   );
 }

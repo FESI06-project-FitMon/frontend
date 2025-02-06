@@ -25,7 +25,7 @@ export default function Modal({ children, title, onClose }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-dark-300 rounded-[10px] w-full h-auto md:h-auto md:max-w-[560px] relative px-[15px] md:px-[30px] py-[35px] md:mt-10"
+        className="bg-dark-300 rounded-[10px] w-full h-auto md:h-auto md:max-w-[560px] relative px-[15px] md:px-[30px] py-6 md:py-[35px] md:mt-10"
         style={{ boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)' }}
         onClick={(e) => e.stopPropagation()}
       >

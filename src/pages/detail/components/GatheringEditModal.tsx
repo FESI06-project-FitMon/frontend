@@ -135,10 +135,11 @@ export default function GatheringEditModal({
   const { mutate, isPending } = useGatheringUpdate(gatheringId, queryClient);
 
   if (isPending) return <Null message="로딩중입니다" />;
+
   return (
     <div>
       {/* 모임 정보 */}
-      <div id="information">
+      <div id="information" className="relative">
         <div className="text-sm md:text-base mt-[30px] mb-[10px]">
           모임 정보
         </div>
@@ -315,7 +316,7 @@ export default function GatheringEditModal({
       <Button
         handleButtonClick={handleEditButtonClick}
         name="확인"
-        className="h-[52px] mt-[30px]"
+        className="h-[52px] mt-5 md:mt-[30px]"
       />
     </div>
   );

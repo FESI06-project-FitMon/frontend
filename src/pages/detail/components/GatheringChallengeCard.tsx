@@ -77,7 +77,7 @@ export default function GatheringChallengeCard({
             </p>
           </div>
           <div className="w-full flex flex-col md:flex-row justify-between">
-            <div className="w-full md:w-[283px] lg:w-[608px] mr-[92px]">
+            <div className="w-full md:w-[70%] lg:w-[608px] md:mr-8 mr-[92px]">
               <div className="flex justify-between">
                 {/* 인원 수 정보 */}
                 <div className="flex items-center justify-center gap-[6px] mb-[15px]">

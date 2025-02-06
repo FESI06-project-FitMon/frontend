@@ -44,7 +44,7 @@ export default function zTab({
             ))}
           </div>
           {rightElement && (
-            <div className="w-full justify-end flex absolute items-center px-4 ml-auto">
+            <div className="w-full justify-end flex absolute items-center  pl-4 md:px-4 ml-auto">
               {rightElement}
             </div>
           )}
