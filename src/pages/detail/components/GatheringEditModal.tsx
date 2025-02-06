@@ -135,12 +135,15 @@ export default function GatheringEditModal({
   const { mutate, isPending } = useGatheringUpdate(gatheringId, queryClient);
 
   if (isPending) return <Null message="로딩중입니다" />;
+
   return (
     <div>
       {/* 모임 정보 */}
-      <div id="information">
-        <div className="mt-[30px] mb-[10px]">모임 정보</div>
-        <div className="flex gap-[10px]">
+      <div id="information" className="relative">
+        <div className="text-sm md:text-base mt-[30px] mb-[10px]">
+          모임 정보
+        </div>
+        <div className="flex flex-col md:flex-row gap-2 md:gap-[10px]">
           <div className="relative border-[1px] rounded-[10px] border-dark-500 w-[130px] h-[130px] flex">
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
@@ -155,7 +158,12 @@ export default function GatheringEditModal({
               alt="edit-image"
             />
 
-            <div className="absolute bg-black/80  w-full h-full z-10  border-[1px] rounded-[10px] border-dark-500 " />
+            <div
+              style={{
+                background: imageUrl ? 'rgba(0, 0, 0, 0.8)' : '#2d2d2d',
+              }}
+              className="absolute  w-full h-full z-10  border-[1px] rounded-[10px] border-dark-500 "
+            />
 
             <div className="absolute w-[130px] h-[130px] z-20 flex flex-col justify-center items-center gap-2 hover:cursor-pointer">
               <input
@@ -172,25 +180,28 @@ export default function GatheringEditModal({
                 alt="pencil"
                 onClick={handleImageEditButtonClick}
               />
-              <p
-                onClick={handleImageDeleteButtonClick}
-                className="text-sm text-dark-700 hover:cursor-pointer"
-              >
-                {'이미지 삭제'}
-              </p>
+
+              {imageUrl && (
+                <p
+                  onClick={handleImageDeleteButtonClick}
+                  className="text-sm text-dark-700 hover:cursor-pointer"
+                >
+                  {'이미지 삭제'}
+                </p>
+              )}
             </div>
           </div>
-          <div className="w-[360px]">
+          <div className="w-full md:w-[360px]">
             <Input
               type="text"
               handleInputChange={(e) => handleGatheringTitleChange(e)}
               value={title}
-              className="outline-dark-500 bg-dark-400  mb-[7px] h-[47px]"
+              className="text-sm md:text-base h-[47px]  outline-dark-500 bg-dark-400 mb-[7px] "
             />
             <TextArea
               handleInputChange={(e) => handleGatheringDescriptionChange(e)}
               value={description}
-              className="h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words "
+              className="text-sm md:text-base h-[76px] md:h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words "
             />
           </div>
         </div>
@@ -198,15 +209,17 @@ export default function GatheringEditModal({
 
       {/* 모임 태그 */}
       <div id="tags">
-        <div className="mt-[20px] mb-[10px]">모임 태그</div>
+        <div className="text-sm md:text-base mt-[20px] mb-[10px]">
+          모임 태그
+        </div>
         <div className="relative">
           <div className="  h-[47px] bg-dark-400 border-dark-500 rounded-[8px] flex items-center gap-[10px] px-5 ">
             {tags.map((tag, index) => (
               <div
-                className=" h-[30px] w-[121px] flex items-center justify-center py-[7px] px-[10px] bg-dark-200 rounded-[10px] gap-2 z-10"
+                className="h-[30px] w-[121px] flex items-center justify-center py-[7px] px-[10px] bg-dark-200 rounded-[10px] gap-2 z-10"
                 key={index}
               >
-                <p className=" text-primary text-sm">{`#${tag}`}</p>
+                <p className=" text-primary text-xs md:text-sm">{`#${tag}`}</p>
                 <button onClick={() => handleTagDeleteButtonClick(tag)}>
                   <Image
                     src="/assets/image/cancel-tag.svg"
@@ -232,60 +245,68 @@ export default function GatheringEditModal({
 
       {/* 장소 및 최대 인원 */}
       <div className="flex gap-[10px]">
-        <div id="place">
-          <div className="mt-[20px] mb-[10px]">장소</div>
+        <div id="place" className="w-[66%]">
+          <div className="text-sm md:text-base mt-[20px] mb-[10px]">장소</div>
           <div className="flex">
             <Select
               items={placeSiItems}
               selectedItem={selectedPlaceSi}
               setSelectedItem={setSelectedPlaceSi}
-              width="175px"
+              width="100%"
               height="47px"
-              className="mr-[10px] w-[175px]"
+              className="text-sm md:text-base mr-[10px] w-[100%]"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             />
             <Select
               items={placeGuItems}
               selectedItem={selectedPlaceGu}
               setSelectedItem={setSelectedPlaceGu}
-              width="175px"
+              width="100%"
               height="47px"
+              className="text-sm md:text-base w-[100%]"
               currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
             />
           </div>
         </div>
 
-        <div id="max-people-count">
-          <div className="mt-[20px] mb-[10px]">최대인원</div>
+        <div id="max-people-count" className="w-[34%]">
+          <div className="text-sm md:text-base mt-[20px] mb-[10px]">
+            최대인원
+          </div>
           <NumberSelect
             min={2}
-            width="130px"
+            width="100%"
             height="47px"
             targetNumber={maxPeopleCount}
             setTargetNumber={setMaxPeopleCount}
+            className="text-sm md:text-base"
           />
         </div>
       </div>
 
-      <div className="flex gap-[10px]">
-        <div>
-          <div className="mt-[20px] mb-[10px]">시작 날짜</div>
+      <div className="flex gap-[10px] ">
+        <div className="w-[50%]">
+          <div className="text-sm md:text-base mt-[20px] mb-[10px]">
+            시작 날짜
+          </div>
           <DatePickerCalendar
             selectedDate={new Date(startDate)}
             setSelectedDate={(date: Date) => setStartDate(date.toISOString())}
-            className="w-[245px] h-[47px]"
-            width="245px"
+            className="text-sm md:text-base w-[100%] h-[47px]"
+            width="100%"
             height="47px"
           />
         </div>
 
-        <div>
-          <div className="mt-[20px] mb-[10px]">마감 날짜</div>
+        <div className="w-[50%]">
+          <div className="text-sm md:text-base mt-[20px] mb-[10px]">
+            마감 날짜
+          </div>
           <DatePickerCalendar
             selectedDate={new Date(endDate)}
             setSelectedDate={(date: Date) => setEndDate(date.toISOString())}
-            className="w-[245px] h-[47px]"
-            width="245px"
+            className="text-sm md:text-base w-[100%] h-[47px]"
+            width="100%"
             height="47px"
             minDate={new Date(startDate)}
           />
@@ -295,7 +316,7 @@ export default function GatheringEditModal({
       <Button
         handleButtonClick={handleEditButtonClick}
         name="확인"
-        className="h-[52px] mt-[30px]"
+        className="h-[52px] mt-5 md:mt-[30px]"
       />
     </div>
   );

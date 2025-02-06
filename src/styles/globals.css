@@ -25,7 +25,6 @@
 
     .react-datepicker-popper {
       display: flex;
-      width: 280px;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -114,7 +113,7 @@
 @media (max-width: 767px) {
   body .react-datepicker-popper {
     width: 98% !important;
-    min-width: 240px;
+    /* min-width: 240px; */
     left: 0% !important;
     transform: translate(0, -250px) !important;
   }
@@ -122,6 +121,7 @@
   body .react-datepicker,
   body .react-datepicker__day-names {
     width: 100%;
+    font-size: 12px;
   }
 
   body .react-datepicker__day {

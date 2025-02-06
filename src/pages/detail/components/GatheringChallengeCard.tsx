@@ -30,14 +30,13 @@ export default function GatheringChallengeCard({
 
   if (!challenge) return;
 
-  console.log(challenge);
   return (
-    <div className="w-full h-[250px] bg-dark-200 rounded-[10px]">
-      <div className="flex ">
+    <div className="w-full h-[463px] md:h-[188px] lg:h-[250px] bg-dark-200 rounded-[10px]">
+      <div className="w-full flex flex-col md:flex-row ">
         {/* 좌측 사진 */}
-        <div className="w-[258px]  h-[250px] relative ">
+        <div className="h-[188px] md:w-[200px] lg:w-[258px] lg:h-[250px] relative md:absolute ">
           <Image
-            className="rounded-bl-[10px] rounded-tl-[10px] l w-full h-full"
+            className="rounded-bl-[10px] rounded-tl-[10px] w-full h-full"
             src={
               challenge.imageUrl
                 ? challenge.imageUrl
@@ -48,9 +47,9 @@ export default function GatheringChallengeCard({
           />
         </div>
         {/* 우측 설명 */}
-        <div className="ml-[50px] mr-[30px] ">
-          <div className="flex flex-col mt-[30px] mb-[20px] gap-[10px] w-full">
-            <div className="flex justify-between">
+        <div className="px-[20px] md:ml-[220px] lg:ml-[308px] mr-[30px] w-full">
+          <div className="flex flex-col mt-5 lg:mt-[30px] lg:mb-[20px] gap-[10px] w-full">
+            <div className="w-full flex justify-between">
               {/* 날짜 */}
               <p className="text-sm text-dark-700">
                 {`${challenge.startDate.substring(0, 10)} ~ ${challenge.endDate.substring(0, 10)}`}
@@ -70,11 +69,15 @@ export default function GatheringChallengeCard({
               )}
             </div>
             {/* 제목, 설명 */}
-            <p className="text-2xl font-semibold">{challenge.title}</p>
-            <p className="text-dark-700 h-[50px]">{challenge.description}</p>
+            <p className="text-base lg:text-2xl font-semibold">
+              {challenge.title}
+            </p>
+            <p className="text-sm lg:text-base text-dark-700 h-[42px] lg:h-[50px]">
+              {challenge.description}
+            </p>
           </div>
-          <div className="w-full flex justify-between">
-            <div className="w-[608px] mr-[92px]">
+          <div className="w-full flex flex-col md:flex-row justify-between">
+            <div className="w-full md:w-[70%] lg:w-[608px] md:mr-8 mr-[92px]">
               <div className="flex justify-between">
                 {/* 인원 수 정보 */}
                 <div className="flex items-center justify-center gap-[6px] mb-[15px]">
@@ -83,11 +86,12 @@ export default function GatheringChallengeCard({
                     alt="참여자 아이콘"
                     width={28}
                     height={28}
+                    className="w-[22px] h-[22px] lg:w-[28px] lg:h-[28px]"
                   />
-                  <p>{`${challenge.successParticipantCount}/${challenge.participantCount}`}</p>
+                  <p className="text-sm lg:text-base">{`${challenge.successParticipantCount}/${challenge.participantCount}`}</p>
                 </div>
                 {/* 퍼센트 */}
-                <p className="text-2xl text-primary font-bold">
+                <p className="text-xl lg:text-2xl text-primary font-bold">
                   챌린지 성공률&nbsp;
                   {challenge.successParticipantCount === 0
                     ? 0
@@ -108,6 +112,7 @@ export default function GatheringChallengeCard({
               challengeId={challenge.challengeId}
               participantStatus={challenge.participantStatus}
               verificationStatus={challenge.verificationStatus}
+              className={'mt-5 md:mt-0'}
             />
           </div>
         </div>

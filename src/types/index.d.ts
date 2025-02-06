@@ -65,10 +65,10 @@ interface ChallengeProps {
 }
 
 export interface GuestbookItem {
-  guestbookId: number;  
+  guestbookId: number;
   content: string;
   rating: number;
-  createdAt: string; 
+  createdAt: string;
   writer: GuestbookWriter;
   reviewOwnerStatus: boolean;
   gatheringId: number;
@@ -119,7 +119,6 @@ export interface GatheringDetailType {
   averageRating: number;
   guestBookCount: number;
 }
-
 
 export interface GatheringListItem {
   gatheringId: number;
