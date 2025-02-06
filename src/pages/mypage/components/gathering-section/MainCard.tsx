@@ -8,6 +8,7 @@ import { GatheringListItem } from '@/types';
 import useToastStore from '@/stores/useToastStore';
 import getDatePart from '@/utils/getDatePart';
 import { useGuestbooks } from '@/pages/mypage/service/myGuestbooks';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 
 interface MainCardProps {
   gathering: GatheringListItem;
@@ -24,10 +25,10 @@ export default memo(function MainCard({
   const [showAlert, setShowAlert] = useState(false);
   const [, setIsLoading] = useState(false);
   const { show: showToast } = useToastStore(); // 수정: 객체 구조분해할당으로 변경
-  
+
   // 방명록 데이터 가져오기
   const { data: guestbooksData } = useGuestbooks();
-  
+
   // 해당 모임에 대한 방명록이 있는지 확인
   const hasGuestbook = guestbooksData?.content?.some(
     guestbook => guestbook.gatheringId === gathering.gatheringId
@@ -80,7 +81,7 @@ export default memo(function MainCard({
     <div className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-2.5 md:gap-6 lg:gap-[30px]">
       <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
         <Image
-          src={gathering.imageUrl || '/assets/image/default_img.png'}
+          src={gathering.imageUrl || DEFAULT_IMAGE}
           alt={gathering.title || '기본 이미지'}
           width={300}
           height={200}
@@ -88,7 +89,7 @@ export default memo(function MainCard({
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = '/assets/image/default_img.png';
+            target.src = DEFAULT_IMAGE;
           }}
         />
         <div className="absolute bottom-4 left-5">
@@ -124,11 +125,11 @@ export default memo(function MainCard({
             style={gathering.captainStatus ? 'custom' : 'cancel'}
             className={`
               w-[122px] h-8 md:w-[163px] md:h-[43px] text-sm md:text-base
-              ${gathering.captainStatus 
-                ? '' 
-                : (hasGuestbook 
-                    ? 'text-dark-700 !outline-dark-700 cursor-not-allowed' 
-                    : 'text-primary font-semibold')
+              ${gathering.captainStatus
+                ? ''
+                : (hasGuestbook
+                  ? 'text-dark-700 !outline-dark-700 cursor-not-allowed'
+                  : 'text-primary font-semibold')
               }
             `}
             handleButtonClick={handleCancelClick}
