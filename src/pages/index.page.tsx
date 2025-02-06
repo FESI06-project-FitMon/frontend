@@ -112,6 +112,7 @@ export default function Home({ dehydratedState }: HomeProps) {
         <Tab
           items={LISTPAGE_MAINTYPE}
           currentTab={filters.mainType ?? ''}
+          className="w-full relative"
           onTabChange={(newTab) => {
             setFilters((prev) => ({
               ...prev,
@@ -124,7 +125,7 @@ export default function Home({ dehydratedState }: HomeProps) {
               <Button
                 style="custom"
                 name="모임 만들기"
-                className="text-base my-2 h-9 w-[126px]"
+                className="text-base my-2 -mt-2 h-9 w-[126px]"
                 handleButtonClick={() =>
                   isLogin ? setShowCreateModal(true) : setShowAlert(true)
                 }
