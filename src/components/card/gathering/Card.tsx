@@ -29,10 +29,43 @@ export default function Card({ data }: CardProps) {
 
   const date = `${getDatePart(startDate)} ~ ${getDatePart(endDate)}`;
 
+  const today = new Date();
+  const endDateTime = new Date(endDate);
+
+  let timeLeftText = '';
+  if (
+    getDatePart(today.toISOString()) === getDatePart(endDateTime.toISOString())
+  ) {
+    const diffInMs = endDateTime.getTime() - today.getTime();
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor(
+      (diffInMs % (1000 * 60 * 60)) / (1000 * 60),
+    );
+
+    if (diffInHours > 0) {
+      timeLeftText = `오늘 ${diffInHours}시간 남음`;
+    } else if (diffInMinutes > 0) {
+      timeLeftText = `오늘 ${diffInMinutes}분 남음`;
+    } else {
+      timeLeftText = '마감됨';
+    }
+  }
+
   return (
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
-      <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]  ">
-        <div className="absolute bottom-2.5 left-1.5 md:left-2.5 z-10 ">
+      <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
+        {timeLeftText && (
+          <div className="absolute flex gap-1 top-2 right-1.5 bg-primary py-1 px-2 rounded-full text-sm z-10">
+            <Image
+              src={'/assets/image/alarm.svg'}
+              width={14}
+              height={14}
+              alt="알림"
+            />
+            {timeLeftText}
+          </div>
+        )}
+        <div className="absolute bottom-2.5 left-1.5 md:left-2.5 z-10">
           <StatusTag status={status} />
         </div>
         <div className="absolute bottom-2.5 right-1.5 md:right-2.5 z-10">
@@ -51,16 +84,14 @@ export default function Card({ data }: CardProps) {
         <h2 className="text-sm md:text-xl font-bold">{title}</h2>
         <span className="text-xs md:text-sm text-dark-700">{date}</span>
         <div className="flex gap-3">
-          {tags.map((tag) => {
-            return (
-              <div
-                key={tag}
-                className="bg-dark-200 text-[10px] md:text-sm md:py-1 md:px-2 rounded-[5px]"
-              >
-                #{tag}
-              </div>
-            );
-          })}
+          {tags.map((tag) => (
+            <div
+              key={tag}
+              className="bg-dark-200 text-[10px] md:text-sm md:py-1 md:px-2 rounded-[5px]"
+            >
+              #{tag}
+            </div>
+          ))}
         </div>
         <div className="flex justify-between">
           <div className="flex justify-start items-center gap-3">
