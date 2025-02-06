@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GuestbookItem, GatheringListItem } from '@/types';
+import { GuestbookItem } from '@/types';
 import SubTag from '@/components/tag/SubTag';
 import GuestbookModal from './GuestbookModal';
 import WrittenGuestbooks from './WrittenGuestbooks';
