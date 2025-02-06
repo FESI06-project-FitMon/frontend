@@ -8,6 +8,7 @@ import {
   NormalizedGuestbook,
 } from '../../../pages/guestBooks/utils/normalizeGuestbook';
 import Link from 'next/link';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 
 interface GuestbookCardProps {
   guestbook: GuestbookItem | NormalizedGuestbook;
@@ -42,7 +43,7 @@ export default function GuestbookCard({
           <Image
             src={
               !gathering?.imageUrl || gathering.imageUrl === 'null'
-                ? 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
+                ? DEFAULT_IMAGE
                 : gathering.imageUrl
             }
             alt={gathering?.title || '모임 이미지'}
@@ -51,8 +52,7 @@ export default function GuestbookCard({
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
-              target.src =
-                'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
+              target.src = DEFAULT_IMAGE;
             }}
           />
         </div>
