@@ -87,7 +87,9 @@ export default function GatheringInformation({
           height={300}
           alt="gathering-image"
           src={
-            gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
+            gathering.imageUrl
+              ? gathering.imageUrl
+              : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
           }
           className="w-full h-[186px] rounded-[20px] object-cover md:w-[280px] md:h-[260px] lg:h-[300px] md:mr-5 lg:mr-[50px] mb-5 md:mb-0"
         />

@@ -148,10 +148,9 @@ export default function GatheringEditModal({
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
               src={
-                imageUrl &&
-                ['https', 'http', 'blob'].indexOf(imageUrl.split(':')[0]) !== -1
+                imageUrl
                   ? imageUrl
-                  : '/assets/image/fitmon.png'
+                  : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
               }
               width={130}
               height={130}

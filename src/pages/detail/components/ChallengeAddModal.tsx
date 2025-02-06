@@ -8,15 +8,15 @@ import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 import { useChallengeCreate } from '../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChallengeCreateRequest } from '../dto/requestDto';
+import { GatheringDetailType } from '@/types';
 
 interface ChallengeAddModalProps {
   onClose: () => void;
-  gatheringId: number;
+  gathering: GatheringDetailType;
 }
 export default function ChallengeAddModal({
   onClose,
-  gatheringId,
+  gathering,
 }: ChallengeAddModalProps) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1); // 오늘 날짜 +1일
@@ -29,13 +29,6 @@ export default function ChallengeAddModal({
     startDate: tomorrow,
     endDate: tomorrow,
   });
-
-  // const [challengeTitle, setChallengeTitle] = useState('');
-  // const [challengeDescription, setChallengeDescription] = useState('');
-  // const [challengeImageUrl, setChallengeImageUrl] = useState('');
-  // const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  // const [startDate, setStartDate] = useState<Date>(tomorrow);
-  // const [endDate, setEndDate] = useState<Date>(tomorrow);
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewChallenge({ ...newChallenge, title: e.target.value });
@@ -82,7 +75,8 @@ export default function ChallengeAddModal({
     onClose();
   };
   const queryClient = useQueryClient();
-  const { mutate } = useChallengeCreate(gatheringId, queryClient);
+
+  const { mutate } = useChallengeCreate(gathering.gatheringId, queryClient);
   return (
     <>
       {/* 챌린지 정보 */}
@@ -167,12 +161,17 @@ export default function ChallengeAddModal({
             <NumberSelect
               min={2}
               targetNumber={newChallenge.totalCount}
-              setTargetNumber={(targetNumber: number) =>
-                setNewChallenge({
-                  ...newChallenge,
-                  totalCount: targetNumber,
-                })
-              }
+              setTargetNumber={(targetNumber: number) => {
+                if (
+                  targetNumber >= gathering.minCount &&
+                  targetNumber <= gathering.totalCount
+                ) {
+                  setNewChallenge({
+                    ...newChallenge,
+                    totalCount: targetNumber,
+                  });
+                }
+              }}
               className="text-sm md:text-base  w-[90px] h-[47px]"
             />
           </div>

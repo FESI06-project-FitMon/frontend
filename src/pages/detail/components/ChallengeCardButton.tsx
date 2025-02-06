@@ -3,17 +3,20 @@ import Modal from '@/components/dialog/Modal';
 import ChallengeCertificationModal from './ChallengeCertificationModal';
 import useToastStore from '@/stores/useToastStore';
 import { useState } from 'react';
-import { participantChallenge } from '../api/challengeApi';
 import { AxiosError } from 'axios';
+import { useChallengeParticipate } from '../service/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ChallengeCardButton({
   inProgress,
+  gatheringId,
   challengeId,
   participantStatus,
   verificationStatus,
   className,
 }: {
   inProgress: boolean;
+  gatheringId: number;
   challengeId: number;
   participantStatus: boolean;
   verificationStatus: boolean;
@@ -24,14 +27,19 @@ export default function ChallengeCardButton({
   const [isVerificated, setIsVerificated] = useState(verificationStatus);
   const showToast = useToastStore((state) => state.show);
 
-  console.log(isParticipant, isVerificated);
   const handleGatheringButtonClick = () => {
     setOpenModal(true);
   };
 
+  const queryClient = useQueryClient();
+  const { mutate } = useChallengeParticipate(
+    gatheringId,
+    challengeId,
+    queryClient,
+  );
   const handleParticipantChallengeButtonClick = async () => {
     try {
-      await participantChallenge(challengeId);
+      mutate();
       showToast('챌린지에 참가하였습니다.', 'check');
       setIsParticipant(true);
     } catch (error) {
@@ -78,6 +86,7 @@ export default function ChallengeCardButton({
           {openModal && (
             <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
               <ChallengeCertificationModal
+                gatheringId={gatheringId}
                 challengeId={challengeId}
                 setOpenModal={setOpenModal}
                 setIsVerificated={setIsVerificated}

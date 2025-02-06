@@ -119,6 +119,7 @@ export default function GatheringChallengeCard({
             {/* 참여했다면 인증하기 버튼, 참여하지 않았다면 참여하기 버튼 */}
             <ChallengeCardButton
               inProgress={inProgress}
+              gatheringId={gatheringId}
               challengeId={challenge.challengeId}
               participantStatus={challenge.participantStatus}
               verificationStatus={challenge.verificationStatus}

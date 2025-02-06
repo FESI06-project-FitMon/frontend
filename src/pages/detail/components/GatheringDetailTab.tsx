@@ -2,15 +2,16 @@ import Tab from '@/components/common/Tab';
 import Modal from '@/components/dialog/Modal';
 import ChallengeAddModal from './ChallengeAddModal';
 import { useState } from 'react';
+import { GatheringDetailType } from '@/types';
 
 interface GatheringDetailTabProps {
-  gatheringId: number;
+  gathering: GatheringDetailType;
   captainStatus: boolean;
   currentTab: string;
   setCurrentTab: (tab: string) => void;
 }
 export default function GatheringDetailTab({
-  gatheringId,
+  gathering,
   captainStatus,
   currentTab,
   setCurrentTab,
@@ -60,7 +61,7 @@ export default function GatheringDetailTab({
         >
           <ChallengeAddModal
             onClose={() => setShowModal(false)}
-            gatheringId={gatheringId}
+            gathering={gathering}
           />
         </Modal>
       )}

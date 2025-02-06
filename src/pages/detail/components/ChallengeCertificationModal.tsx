@@ -4,18 +4,21 @@ import uploadImage from '@/utils/uploadImage';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
-import { verificationChallenge } from '../api/challengeApi';
+import { useChallengeVerify } from '../service/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ChallengeCertificationModal({
+  gatheringId,
   challengeId,
   setOpenModal,
   setIsVerificated,
 }: {
+  gatheringId: number;
   challengeId: number;
   setOpenModal: (openModal: boolean) => void;
   setIsVerificated: (isVerified: boolean) => void;
 }) {
-  const [challengeGatheringImagUrl, setChallengeGatheringImageUrl] =
+  const [challengeGatheringImageUrl, setChallengeGatheringImageUrl] =
     useState('');
 
   const showToast = useToastStore((state) => state.show);
@@ -39,11 +42,23 @@ export default function ChallengeCertificationModal({
   const handleImageDeleteButtonClick = () => {
     setChallengeGatheringImageUrl('');
   };
+  const queryClient = useQueryClient();
+  const { mutate } = useChallengeVerify(
+    gatheringId,
+    challengeId,
+    queryClient,
+    challengeGatheringImageUrl,
+  );
 
   const handleCertificationButtonClick = async () => {
+    if (!challengeGatheringImageUrl) {
+      showToast('인증할 이미지를 선택해주세요.', 'error');
+      return;
+    }
+
     try {
-      await verificationChallenge(challengeId, challengeGatheringImagUrl);
       setOpenModal(false);
+      mutate();
       showToast('챌린지 인증에 성공했습니다.', 'check');
       setIsVerificated(true);
     } catch (error) {
@@ -62,12 +77,9 @@ export default function ChallengeCertificationModal({
           <Image
             className=" border-[1px] rounded-[10px] border-dark-500 "
             src={
-              challengeGatheringImagUrl &&
-              ['https', 'http', 'blob'].indexOf(
-                challengeGatheringImagUrl.split(':')[0],
-              ) !== -1
-                ? challengeGatheringImagUrl
-                : '/assets/image/fitmon.png'
+              challengeGatheringImageUrl
+                ? challengeGatheringImageUrl
+                : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
             }
             width={175}
             height={175}
@@ -76,7 +88,7 @@ export default function ChallengeCertificationModal({
 
           <div
             style={{
-              background: challengeGatheringImagUrl
+              background: challengeGatheringImageUrl
                 ? 'rgba(0, 0, 0, 0.8)'
                 : '#2d2d2d',
             }}
@@ -98,7 +110,7 @@ export default function ChallengeCertificationModal({
               alt="pencil"
               onClick={handleImageEditButtonClick}
             />
-            {challengeGatheringImagUrl && (
+            {challengeGatheringImageUrl && (
               <p
                 onClick={handleImageDeleteButtonClick}
                 className="text-sm text-dark-700 hover:cursor-pointer"

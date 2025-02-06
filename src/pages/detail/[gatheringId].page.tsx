@@ -35,7 +35,7 @@ export default function GatheringDetail() {
         gatheringId={gatheringId}
       />
       <GatheringDetailTab
-        gatheringId={gatheringId}
+        gathering={data}
         captainStatus={data.captainStatus}
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
