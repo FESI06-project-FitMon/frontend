@@ -2,7 +2,7 @@ import Navigation from './Navigation';
 import SideBar from './Sidebar';
 import Toast from '@/components/dialog/Toast';
 import useToastStore from '@/stores/useToastStore';
-import AdPopup from '@/components/dialog/AdPopup';  // 추가
+// import AdPopup from '@/components/dialog/AdPopup';  // 추가
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
         type={type}
         message={message}
       />
-      <AdPopup />  {/* 여기에 추가 */}
+      {/* <AdPopup />  여기에 추가 */}
     </div>
   );
 }
