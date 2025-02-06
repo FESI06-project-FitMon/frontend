@@ -86,7 +86,7 @@ export default memo(function MainCard({
           width={300}
           height={200}
           priority //
-          quality={75} // 화
+          quality={75} 
           loading="eager"
           decoding="async"
           className="w-full h-full object-cover"
