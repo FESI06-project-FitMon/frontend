@@ -43,7 +43,7 @@ export default function GatheringChallenge({
 
   return (
     <div>
-      <div className="mt-[43px] ">
+      <div className="mt-5 lg:mt-[43px] ">
         <div className="flex items-center justify-between">
           <SubTag
             tags={challengeSubTagItems}
@@ -51,10 +51,32 @@ export default function GatheringChallenge({
             onTagChange={(newTag) => handleTagChange(newTag)}
           />
 
-          <div className="flex">
+          <div className="md:hidden flex">
+            <div
+              onClick={() =>
+                setCurrentInquiryState(
+                  currentInquiryState === 'list' ? 'calendar' : 'list',
+                )
+              }
+              className="flex items-center justify-center mr-[17px] hover:cursor-pointer"
+            >
+              <Image
+                src={'/assets/image/arrow-updown.svg'}
+                alt="list-ul"
+                width={14}
+                height={14}
+                className="mr-[7px]"
+              />
+
+              <p className="text-sm">
+                {currentInquiryState === 'list' ? '달력 보기' : '리스트 보기'}
+              </p>
+            </div>
+          </div>
+          <div className="hidden md:flex">
             <div
               onClick={() => setCurrentInquiryState('list')}
-              className="flex items-center justify-center mr-[17px]"
+              className="flex items-center justify-center mr-[17px] hover:cursor-pointer"
               style={{
                 color: currentInquiryState === 'list' ? '#FF2140' : 'white',
               }}
@@ -75,7 +97,7 @@ export default function GatheringChallenge({
             </div>
             <div
               onClick={() => setCurrentInquiryState('calendar')}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center hover:cursor-pointer"
               style={{
                 color: currentInquiryState === 'calendar' ? '#FF2140' : 'white',
               }}

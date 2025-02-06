@@ -42,12 +42,12 @@ export default function GatheringDetailTab({
           className="w-full absolute flex text-lg font-bold z-20"
           rightElement={
             captainStatus && (
-              <button
+              <div
                 onClick={() => handleChallengeAddButtonClick()}
-                className="text-lg hover:cursor-pointer"
+                className="text-sm md:text-base lg:text-lg hover:cursor-pointer"
               >
                 {'+ 챌린지 추가하기'}
-              </button>
+              </div>
             )
           }
         />

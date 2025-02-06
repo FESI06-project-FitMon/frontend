@@ -66,20 +66,22 @@ export default function GatheringInformation({
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">
-        <div className="flex mt-20 gap-[10px]">
-          <p className="text-lg font-semibold">{gathering.mainType ?? ''}</p>
+        <div className="flex mt-[30px] md:mt-[50px] lg:mt-20 gap-[10px]">
+          <p className="text-base md:text-lg font-semibold">
+            {gathering.mainType ?? ''}
+          </p>
           <Image
             src="/assets/image/arrow-right.svg"
             alt="arrow"
             width={12}
             height={12}
           />
-          <p className="text-primary text-lg font-semibold">
+          <p className="text-primary text-base md:text-lg font-semibold">
             {gathering.subType}
           </p>
         </div>
       </div>
-      <div id="image-and-description" className="flex mt-[30px]">
+      <div id="image-and-description" className="md:flex mt-[30px]">
         <Image
           width={280}
           height={300}
@@ -87,12 +89,14 @@ export default function GatheringInformation({
           src={
             gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
           }
-          className="rounded-[20px] mr-[50px] w-[280px] h-[300px] object-cover"
+          className="w-full h-[186px] rounded-[20px] object-cover md:w-[280px] md:h-[260px] lg:h-[300px] md:mr-5 lg:mr-[50px] mb-5 md:mb-0"
         />
-        <div id="detail-information" className=" w-full">
-          <div className="flex justify-between">
+        <div id="detail-information" className="w-full">
+          <div className="flex justify-between items-center">
             {' '}
-            <h3 className="text-[1.75rem] font-semibold">{gathering.title}</h3>
+            <h3 className="text-xl md:text-2xl lg:text-[1.75rem] font-semibold h-12 md:h-[58px] lg:h-auto content-center">
+              {gathering.title}
+            </h3>
             {gathering.captainStatus && (
               <>
                 <Popover items={popoverItems} type="setting" />
@@ -119,15 +123,16 @@ export default function GatheringInformation({
             )}
           </div>
 
-          <p className="text-[1.125rem] text-dark-700 mt-[3px]">
+          <p className="text-sm md:text-base lg:text-[1.125rem] text-dark-700 mt-[10px] lg:mt-4 h-[24px] md:h-12 lg:h-auto">
             {gathering.description}
           </p>
-          <div id="tags" className="mt-5">
+
+          <div id="tags" className="mt-[15px] lg:mt-[25px]">
             <TagList tagList={gathering.tags} />
           </div>
           <div
             id="range-and-place"
-            className="w-full mt-[25px] py-[30px] bg-dark-200 rounded-[20px]"
+            className="w-full mt-5 lg:py-[30px] lg:bg-dark-200 rounded-[20px]"
           >
             <div id="range" className="flex items-center mb-[8px]">
               <Image
@@ -135,9 +140,11 @@ export default function GatheringInformation({
                 width={14}
                 height={14}
                 alt="time"
-                className="ml-[25px] mr-2"
+                className="lg:ml-[25px] mr-3 lg:mr-2"
               />
-              <h1 className="font-semibold text-lg">{'모임 기간'}</h1>
+              <h1 className="font-semibold text-base lg:text-lg">
+                {'모임 기간'}
+              </h1>
               <p className="bg-dark-500 h-[12px] w-[1px] mx-[15px]"></p>{' '}
               <p className="text-lg">{`${getDatePart(gathering.startDate)}~${getDatePart(gathering.endDate)}`}</p>
             </div>
@@ -147,7 +154,7 @@ export default function GatheringInformation({
                 width={14}
                 height={14}
                 alt="place"
-                className="ml-[25px] mr-2"
+                className="lg:ml-[25px] mr-3 lg:mr-2"
               />
               <h1 className="font-semibold text-lg">{'모임 장소'}</h1>
               <p className="bg-dark-500 h-[12px] w-[1px] mx-[15px]"></p>

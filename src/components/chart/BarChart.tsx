@@ -9,7 +9,7 @@ export default function BarChart({ total, value }: BarChartProps) {
     <div className="relative w-full">
       <div
         style={{ width: valueBarWidth }}
-        className="absolute bg-primary z-20 h-[2px]"
+        className="absolute bg-primary w-full z-20 h-[2px]"
       />
       <div className="absolute bg-dark-400 w-full z-10 h-[2px]" />
     </div>

@@ -2,13 +2,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { guestbookService } from '@/pages/mypage/api/guestbookService';
 import { useGatheringChallenges, useParticipatingGatherings } from './myGathering';
-import { GuestbookRequest } from '@/types';
+import { GatheringListItem, GuestbookRequest, PageResponse } from '@/types';
 
 export const GUESTBOOK_KEYS = {
   all: ['guestbooks'] as const,
   lists: () => [...GUESTBOOK_KEYS.all, 'list'] as const,
   list: (page: number, pageSize: number) => [...GUESTBOOK_KEYS.lists(), { page, pageSize }] as const,
-  available: () => [...GUESTBOOK_KEYS.all, 'available'] as const,
+  available: (page?: number) => [...GUESTBOOK_KEYS.all, 'available', { page }] as const,
 };
 
 export function useGuestbooks(page = 0, pageSize = 10) {
@@ -70,17 +70,24 @@ export function useDeleteGuestbook() {
 }
 
 
-export function useAvailableGuestbooks() {
+export function useAvailableGuestbooks({ page = 0 } = {}) {
   const { data: participatingGatherings } = useParticipatingGatherings();
   const { data: challengesMap } = useGatheringChallenges(participatingGatherings, false);
   const { data: guestbooksData } = useGuestbooks();
 
   return useQuery({
-    queryKey: GUESTBOOK_KEYS.available(),
+    queryKey: GUESTBOOK_KEYS.available(page),
     queryFn: async () => {
-      if (!participatingGatherings?.content || !challengesMap || !guestbooksData) return [];
+      if (!participatingGatherings?.content || !challengesMap || !guestbooksData) {
+        return {
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          currentPage: page
+        } as PageResponse<GatheringListItem>;
+      }
 
-      return participatingGatherings.content.filter((gathering) => {
+      const filteredGatherings = participatingGatherings.content.filter((gathering) => {
         const challenges = challengesMap[gathering.gatheringId];
         const hasWrittenGuestbook = guestbooksData.content?.some(
           guestbook => guestbook.gatheringId === gathering.gatheringId
@@ -94,6 +101,19 @@ export function useAvailableGuestbooks() {
           !hasWrittenGuestbook
         );
       });
+
+      // 페이지네이션 처리
+      const pageSize = 10;
+      const start = page * pageSize;
+      const end = start + pageSize;
+      const paginatedGatherings = filteredGatherings.slice(start, end);
+
+      return {
+        content: paginatedGatherings,
+        totalElements: filteredGatherings.length,
+        totalPages: Math.ceil(filteredGatherings.length / pageSize),
+        currentPage: page
+      } as PageResponse<GatheringListItem>;
     },
     enabled: !!participatingGatherings?.content && !!challengesMap && !!guestbooksData,
     refetchOnMount: true,

@@ -20,7 +20,7 @@ export default function GatheringGuestbook({
     <Null message="로딩중입니다." />;
   }
   return (
-    <div className="mt-[43px] mb-[130px] w-full">
+    <div className="w-full mt-5 lg:mt-[43px] mb-10 md:mb-[87px] lg:mb-[130px] ">
       {/* 방명록 리스트 */}
       <div className=" flex flex-col gap-5 mb-[33px] w-full">
         {data && (data as GatheringGuestbookResponse).content.length > 0 ? (

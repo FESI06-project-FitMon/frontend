@@ -7,6 +7,7 @@ import ImageUploadOverlay from '@/components/common/ImageUploadOverlay';
 import useToastStore from '@/stores/useToastStore';
 import ModalInput from '@/components/common/ModalInput';
 import { CreateChallenge } from '@/types';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 
 interface ChallengeInfomationModalProps {
   formData: CreateChallenge;
@@ -19,9 +20,6 @@ export default function ChallengeInfomationModal({
   onChange,
   gatheringEndDate,
 }: ChallengeInfomationModalProps) {
-  const DEFAULT_IMAGE_URL =
-    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png';
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useToastStore((state) => state.show);
   const [localFormData, setLocalFormData] = useState<CreateChallenge>(formData);
@@ -106,9 +104,7 @@ export default function ChallengeInfomationModal({
           <div className="relative rounded-[10px] bg-dark-400 border-dark-500 h-[106px] md:h-[130px] overflow-hidden">
             <Image
               src={
-                !localFormData.imageUrl
-                  ? DEFAULT_IMAGE_URL
-                  : localFormData.imageUrl
+                !localFormData.imageUrl ? DEFAULT_IMAGE : localFormData.imageUrl
               }
               alt="이미지 미리보기"
               width={106}

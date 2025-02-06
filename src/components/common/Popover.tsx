@@ -4,7 +4,7 @@ import { useState } from 'react';
 interface PopoverProps {
   items: Array<PopoverItem>;
   type: 'setting' | 'dot' | 'user';
-  children?: React.ReactNode;  // 추가
+  children?: React.ReactNode; // 추가
 }
 
 interface PopoverItem {

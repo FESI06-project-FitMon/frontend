@@ -33,7 +33,7 @@ export default function Input({
       placeholder={placeholder}
       onChange={handleChange}
       onBlur={handleBlur}
-      className={`w-full h-[52px] md:h-[70px] rounded-[10px] px-5 py-6 text-[1rem] outline outline-1 outline-dark-400 bg-dark-300 focus:outline-1 placeholder:text-dark-700 focus:outline-[#FF7487] ${className}`}
+      className={`w-full rounded-[10px] px-5 py-6 text-[1rem] outline outline-1 outline-dark-400 bg-dark-300 focus:outline-1 placeholder:text-dark-700 focus:outline-[#FF7487] ${className}`}
     />
   );
 }

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { CreateChallenge, CreateGatheringForm } from '@/types';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 
 const initialState: CreateGatheringForm = {
   title: '',
   description: '',
   mainType: '유산소형',
   subType: '런닝',
-  imageUrl:
-    'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png',
+  imageUrl: DEFAULT_IMAGE,
   startDate: null,
   endDate: null,
   mainLocation: '',
@@ -19,8 +19,7 @@ const initialState: CreateGatheringForm = {
     {
       title: '',
       description: '',
-      imageUrl:
-        'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png',
+      imageUrl: DEFAULT_IMAGE,
       totalCount: 0,
       startDate: null,
       endDate: null,
