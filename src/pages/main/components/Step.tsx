@@ -32,7 +32,7 @@ export default function Step({ currentStep }: StepProps) {
   };
 
   return (
-    <div className="relative flex items-center justify-center w-full md:max-w-lg pt-4 mb-5">
+    <div className="relative hidden md:flex items-center justify-center w-full md:max-w-lg pt-4 mb-5">
       {steps.map((step, index) => (
         <div key={index} className="flex flex-col items-center w-24">
           {/* 동그라미 */}
