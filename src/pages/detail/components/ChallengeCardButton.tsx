@@ -24,6 +24,7 @@ export default function ChallengeCardButton({
   const [isVerificated, setIsVerificated] = useState(verificationStatus);
   const showToast = useToastStore((state) => state.show);
 
+  console.log(isParticipant, isVerificated);
   const handleGatheringButtonClick = () => {
     setOpenModal(true);
   };

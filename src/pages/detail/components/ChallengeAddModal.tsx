@@ -20,20 +20,30 @@ export default function ChallengeAddModal({
 }: ChallengeAddModalProps) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1); // 오늘 날짜 +1일
-  const [challengeTitle, setChallengeTitle] = useState('');
-  const [challengeDescription, setChallengeDescription] = useState('');
-  const [challengeImageUrl, setChallengeImageUrl] = useState('');
-  const [maxPeopleCount, setMaxPeopleCount] = useState(0);
-  const [startDate, setStartDate] = useState<Date>(tomorrow);
-  const [endDate, setEndDate] = useState<Date>(tomorrow);
+
+  const [newChallenge, setNewChallenge] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    totalCount: 0,
+    startDate: tomorrow,
+    endDate: tomorrow,
+  });
+
+  // const [challengeTitle, setChallengeTitle] = useState('');
+  // const [challengeDescription, setChallengeDescription] = useState('');
+  // const [challengeImageUrl, setChallengeImageUrl] = useState('');
+  // const [maxPeopleCount, setMaxPeopleCount] = useState(0);
+  // const [startDate, setStartDate] = useState<Date>(tomorrow);
+  // const [endDate, setEndDate] = useState<Date>(tomorrow);
 
   const handleChallengeTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setChallengeTitle(e.target.value);
+    setNewChallenge({ ...newChallenge, title: e.target.value });
   };
   const handleChallengeDescriptionChange = (
     e: ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    setChallengeDescription(e.target.value);
+    setNewChallenge({ ...newChallenge, description: e.target.value });
   };
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +52,10 @@ export default function ChallengeAddModal({
     const file = e.target.files[0];
     if (file) {
       const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
-      setChallengeImageUrl(imageUrl);
+      setNewChallenge({
+        ...newChallenge,
+        imageUrl: imageUrl,
+      });
     }
   };
 
@@ -54,19 +67,18 @@ export default function ChallengeAddModal({
   };
 
   const handleImageDeleteButtonClick = () => {
-    setChallengeImageUrl('');
+    setNewChallenge({
+      ...newChallenge,
+      imageUrl: '',
+    });
   };
 
   const handleChallengeAddButtonClick = async () => {
-    const newChallenge: ChallengeCreateRequest = {
-      title: challengeTitle,
-      description: challengeDescription,
-      imageUrl: challengeImageUrl,
-      totalCount: maxPeopleCount,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-    };
-    mutate(newChallenge);
+    mutate({
+      ...newChallenge,
+      startDate: newChallenge.startDate.toISOString(),
+      endDate: newChallenge.endDate.toISOString(),
+    });
     onClose();
   };
   const queryClient = useQueryClient();
@@ -85,8 +97,8 @@ export default function ChallengeAddModal({
           <div className="relative border-[1px] rounded-[10px] w-[106px] h-[106px] md:w-[130px] md:h-[130px] border-dark-500 flex justify-center items-center">
             <Image
               src={
-                challengeImageUrl
-                  ? challengeImageUrl
+                newChallenge.imageUrl
+                  ? newChallenge.imageUrl
                   : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
               }
               width={106}
@@ -97,7 +109,7 @@ export default function ChallengeAddModal({
 
             <div
               style={{
-                background: challengeImageUrl
+                background: newChallenge.imageUrl
                   ? 'rgba(0, 0, 0, 0.8)'
                   : '#2d2d2d',
               }}
@@ -119,7 +131,7 @@ export default function ChallengeAddModal({
                 alt="pencil"
                 onClick={handleImageEditButtonClick}
               />
-              {challengeImageUrl && (
+              {newChallenge.imageUrl && (
                 <p
                   onClick={handleImageDeleteButtonClick}
                   className="text-sm text-dark-700 hover:cursor-pointer"
@@ -127,12 +139,6 @@ export default function ChallengeAddModal({
                   {'이미지 삭제'}
                 </p>
               )}
-              <p
-                onClick={handleImageDeleteButtonClick}
-                className="text-sm text-dark-700 hover:cursor-pointer"
-              >
-                {'이미지 삭제'}
-              </p>
             </div>
           </div>
           {/* 이름, 설명 입력 */}
@@ -140,13 +146,13 @@ export default function ChallengeAddModal({
             <Input
               type="text"
               handleInputChange={(e) => handleChallengeTitleChange(e)}
-              value={challengeTitle}
+              value={newChallenge.title}
               className="text-sm md:text-base  outline-dark-500 bg-dark-400  mb-[7px] h-[47px]"
               placeholder="챌린지 이름을 입력해 주세요. (25자 제한)"
             />
             <TextArea
               handleInputChange={(e) => handleChallengeDescriptionChange(e)}
-              value={challengeDescription}
+              value={newChallenge.description}
               className="text-sm md:text-base h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words "
               placeholder="설명을 입력해 주세요. (50자 제한)"
             />
@@ -160,8 +166,13 @@ export default function ChallengeAddModal({
             <p className="text-sm md:text-base  mb-[10px]">최대 인원</p>
             <NumberSelect
               min={2}
-              targetNumber={maxPeopleCount}
-              setTargetNumber={setMaxPeopleCount}
+              targetNumber={newChallenge.totalCount}
+              setTargetNumber={(targetNumber: number) =>
+                setNewChallenge({
+                  ...newChallenge,
+                  totalCount: targetNumber,
+                })
+              }
               className="text-sm md:text-base  w-[90px] h-[47px]"
             />
           </div>
@@ -171,8 +182,10 @@ export default function ChallengeAddModal({
             <div className="w-[50%]">
               <p className="text-sm md:text-base  mb-[10px]">시작 날짜</p>
               <DatePickerCalendar
-                selectedDate={startDate}
-                setSelectedDate={setStartDate}
+                selectedDate={newChallenge.startDate}
+                setSelectedDate={(date: Date) =>
+                  setNewChallenge({ ...newChallenge, startDate: date })
+                }
                 minDate={tomorrow}
                 width="100%"
                 height="47px"
@@ -184,9 +197,11 @@ export default function ChallengeAddModal({
             <div className="w-[50%]">
               <p className="text-sm md:text-base  mb-[10px]">마감 날짜</p>
               <DatePickerCalendar
-                selectedDate={endDate}
-                setSelectedDate={setEndDate}
-                minDate={startDate!}
+                selectedDate={newChallenge.endDate}
+                setSelectedDate={(date: Date) =>
+                  setNewChallenge({ ...newChallenge, endDate: date })
+                }
+                minDate={newChallenge.startDate!}
                 width="100%"
                 height="47px"
                 className="text-sm md:text-base"

@@ -1,5 +1,6 @@
 import {
   QueryClient,
+  QueryFunctionContext,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -11,7 +12,7 @@ import {
   GatheringUpdateRequest,
 } from '../dto/requestDto';
 import { deleteGathering, updateGathering } from '../api/gatheringApi';
-import { createChallenge } from '../api/challengeApi';
+import { createChallenge, deleteChallenge } from '../api/challengeApi';
 
 export const queryKeys = {
   gathering: (gatheringId: number) => [`gathering`, gatheringId],
@@ -105,12 +106,10 @@ export const useGatheringUpdate = (
       return { previousGathering, previousGatheringStatus };
     },
 
-    onSuccess: (newGathering: GatheringUpdateRequest) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.gathering(gatheringId),
       });
-
-      console.log('newGathering', newGathering);
     },
 
     onError: (error: Error) => {
@@ -147,10 +146,6 @@ export const useChallengeCreate = (
         ...newChallenge,
       };
 
-      console.log(
-        previousGatheringChallenges,
-        typeof previousGatheringChallenges,
-      );
       const newChallenges = {
         ...previousGatheringChallenges,
         pages: [
@@ -165,6 +160,7 @@ export const useChallengeCreate = (
       };
 
       if (previousGatheringChallenges) {
+        console.log(newChallenges);
         queryClient.setQueryData(
           queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
           previousGatheringChallenges.pages?.length > 0
@@ -173,7 +169,7 @@ export const useChallengeCreate = (
         );
       }
 
-      return { challenge };
+      return { newChallenges };
     },
 
     onSuccess: () => {
@@ -184,6 +180,12 @@ export const useChallengeCreate = (
 
     onError: (error: Error) => {
       console.log(error);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
+      });
     },
   });
 };
@@ -203,6 +205,34 @@ export const useGatheringDelete = (
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.gathering(gatheringId),
+      });
+    },
+  });
+};
+
+export const useChallengeDelete = (
+  gatheringId: number,
+  challengeId: number,
+  queryClient: QueryClient,
+  inProgress: boolean,
+) => {
+  return useMutation({
+    mutationFn: () => deleteChallenge(challengeId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.gatheringChallenges(
+          gatheringId,
+          inProgress ? 'IN_PROGRESS' : 'CLOSED',
+        ),
+      });
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringChallenges(
+          gatheringId,
+          inProgress ? 'IN_PROGRESS' : 'CLOSED',
+        ),
       });
     },
   });

@@ -138,6 +138,7 @@ export default function GatheringChallenge({
                   (challenge, index) => (
                     <GatheringChallengeCard
                       key={index}
+                      gatheringId={gatheringId}
                       challenge={{ ...challenge, captainStatus }}
                       inProgress={currentTag === 'inProgress'}
                     />
