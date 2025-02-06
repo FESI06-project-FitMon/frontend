@@ -1,4 +1,6 @@
+import { useLogoutMutation } from '@/pages/login/service/postLogout';
 import useLayoutStore from '@/stores/useLayoutStore';
+import useMemberStore from '@/stores/useMemberStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,9 +16,10 @@ export default function SideBar() {
     { label: '찜한 모임', path: '/likes' },
     { label: '모든 방명록', path: '/guestBooks' },
   ];
+  const loginContents = { label: '로그인', path: '/login' };
   const mypageContents = [
     { label: '마이페이지', path: '/mypage' },
-    { label: '로그아웃', path: '/logout' },
+    { label: '로그아웃', path: '/' },
   ];
 
   const isActive = (isActive: boolean) => {
@@ -30,6 +33,9 @@ export default function SideBar() {
     toggleListExpanded(); // 사이드바 닫기
     router.push(path); // 라우터를 통해 페이지 이동
   };
+
+  const { isLogin } = useMemberStore();
+  const { mutate: logoutMutation } = useLogoutMutation();
 
   return (
     <>
@@ -66,42 +72,74 @@ export default function SideBar() {
                 {sideBarContents.map((content, index) => (
                   <li
                     key={index}
-                    className={`${isActive(index === selectedIndex)}`}
+                    className={`cursor-pointer ${isActive(index === selectedIndex)}`}
                     onClick={() => handleNavigation(content.path, index)}
                   >
                     {content.label}
                   </li>
                 ))}
               </ul>
-              {/* 마이페이지 요소 */}
-              <p className="text-white text-sm mt-[50px] ml-[3px] mb-5">
-                {'MYPAGE'}
-              </p>
-              <ul className="flex flex-col gap-y-4 justify-center">
-                {mypageContents.map((content, index) => (
-                  <li
-                    key={index}
-                    className={`${isActive(index + 3 === selectedIndex)}`}
-                    onClick={() => handleNavigation(content.path, index + 3)}
+
+              {!isLogin ? (
+                <>
+                  {/* (비로그인 상태) 로그인 요소 */}
+                  <div
+                    className={`mt-4 cursor-pointer ${isActive(3 === selectedIndex)}`}
+                    onClick={() => handleNavigation(loginContents.path, 3)}
                   >
-                    {content.label}
-                    {/* 로그아웃 이미지 */}
-                    {content.label === '로그아웃' && (
+                    {loginContents.label}
+                    {/* 로그인 이미지 */}
+                    {loginContents.label === '로그인' && (
                       <Image
                         className="ml-2"
                         src={`${
-                          index + 3 === selectedIndex
-                            ? '/assets/image/logout-primary.svg'
-                            : '/assets/image/logout.svg'
+                          3 === selectedIndex
+                            ? '/assets/image/login-primary.svg'
+                            : '/assets/image/login.svg'
                         }`}
-                        alt="logout button"
+                        alt="login button"
                         width={16}
                         height={16}
                       />
                     )}
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* (로그인 상태) 마이페이지 요소 */}
+                  <p className="text-white text-sm mt-[50px] ml-[3px] mb-5">
+                    {'MYPAGE'}
+                  </p>
+                  <ul className="flex flex-col gap-y-4 justify-center">
+                    {mypageContents.map((content, index) => (
+                      <li
+                        key={index}
+                        className={`cursor-pointer ${isActive(index + 4 === selectedIndex)}`}
+                        onClick={() => {
+                          handleNavigation(content.path, index + 4);
+                          logoutMutation();
+                        }}
+                      >
+                        {content.label}
+                        {/* 로그아웃 이미지 */}
+                        {content.label === '로그아웃' && (
+                          <Image
+                            className="ml-2"
+                            src={`${
+                              index + 4 === selectedIndex
+                                ? '/assets/image/logout-primary.svg'
+                                : '/assets/image/logout.svg'
+                            }`}
+                            alt="logout button"
+                            width={16}
+                            height={16}
+                          />
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           </div>
         </>
@@ -109,4 +147,3 @@ export default function SideBar() {
     </>
   );
 }
-
