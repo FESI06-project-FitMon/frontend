@@ -85,6 +85,10 @@ export default memo(function MainCard({
           alt={gathering.title || '기본 이미지'}
           width={300}
           height={200}
+          priority //
+          quality={75} // 화
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-cover"
           onError={(e) => {
             const target = e.target as HTMLImageElement;

@@ -28,11 +28,11 @@ export default function ChallengeSection({
     e.stopPropagation();
   };
 
-  
+
   // 복잡한 조건부 로직이므로 useCallback 사용
   const getStatusInfo = useCallback((challenge: ChallengeWithStatus) => {
     if (!gathering) return { text: '미참여', style: 'bg-dark-500' };
-    
+
     if (challenge.verificationStatus && challenge.participantStatus) {
       return { text: '참여완료', style: 'bg-dark-500' };
     }
@@ -44,7 +44,7 @@ export default function ChallengeSection({
     }
     return { text: '참여중', style: 'bg-primary' };
   }, [gathering?.captainStatus]); // gathering이 undefined일 수 있으므로 안전한 접근 사용
-  
+
   // 배열 생성 작업을 메모이제이션
   const displayChallenges = useMemo(() => [
     ...(challenges?.inProgressChallenges || []).map(c => ({ ...c, isClosed: false })),
@@ -93,8 +93,8 @@ export default function ChallengeSection({
                 >
                   <div className="bg-dark-300 h-[168px] px-7 py-[25px] rounded-lg cursor-pointer relative overflow-visible">
                     {challenge.isClosed && (
-                      <div className="absolute top-4 right-4 bg-dark-500 w-[45px] h-[45px] rounded-full flex items-center justify-center shadow-md z-10 text-sm">
-                        마감
+                      <div className="absolute top-2 right-2 md:top-3 md:right-3 lg:top-4 lg:right-4 bg-dark-500 w-8 h-8 md:w-10 md:h-10 lg:w-[45px] lg:h-[45px] rounded-full flex items-center justify-center shadow-md z-10">
+                        <span className="text-xs md:text-sm lg:text-base">마감</span>
                       </div>
                     )}
                     <div className="flex items-start gap-[17px]">
