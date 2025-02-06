@@ -33,7 +33,7 @@ const Profile = memo(function Profile() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="font-medium">{user.nickName || '닉네임 없음'}</h1>
-              <p className="text-dark-600 font-light">
+              <p className="text-dark-700 font-light">
                 {user.email || '이메일 없음'}
               </p>
             </div>
