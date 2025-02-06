@@ -16,6 +16,7 @@ export interface GuestBooksListItem {
   guestbookId: number;
   guestbookScore: number;
   guestBookContent: string;
+  gatheringId: number;
   mainType: '유산소형' | '무산소형' | '경기형';
   subType: string;
   gatheringTitle: string;

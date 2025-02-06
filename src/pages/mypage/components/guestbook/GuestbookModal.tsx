@@ -50,22 +50,30 @@ export default function GuestbookModal({
       onValidationFail();
     }
   };
-  
+
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
         <form onSubmit={handleSubmit} className="w-full flex flex-col items-center md:items-start">
-          <div className="mb-3 md:my-4 flex items-center justify-center md:justify-start w-full">
+          <div className="mb-3 md:my-4 flex items-center justify-between w-full">
             <Heart rating={rating} onChange={(value) => setRating(value)} />
+            <span className="text-xs text-primary">
+              {content.length}/200
+            </span>
           </div>
 
+
           <div className="w-full">
-            <ModalInput
+          <ModalInput
               type="description"
               value={content}
-              onChange={(value) => setContent(value)}
+              onChange={(value) => {
+                if (value.length <= 200) { 
+                  setContent(value);
+                }
+              }}
               placeholder="방명록을 작성해주세요."
-              maxLength={300}
+              maxLength={200}  
               height="220px"
               onValidationFail={onValidationFail}
             />

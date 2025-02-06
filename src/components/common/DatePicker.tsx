@@ -8,7 +8,7 @@ interface DatePickerCalendarProps {
   className?: string;
   width?: string;
   height?: string;
-  minDate?: Date;
+  minDate?: Date | null;
   maxDate?: Date;
 }
 
@@ -57,7 +57,7 @@ export default function DatePickerCalendar({
       <DatePicker
         className="datepicker"
         dateFormat="yyyy-MM-dd"
-        minDate={minDate}
+        minDate={minDate ?? undefined}
         maxDate={maxDate}
         selected={selectedDate}
         onChange={handleDateChange} // 날짜 선택 시 UTC 자정으로 강제 설정

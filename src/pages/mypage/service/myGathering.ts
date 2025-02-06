@@ -41,12 +41,11 @@ export function useCancelParticipation() {
     },
   });
 }
-
 export function useMyHostedGatherings(page = 0) {
   return useQuery({
-    queryKey: GATHERING_KEYS.hosted(),
+    queryKey: [...GATHERING_KEYS.hosted(), page], // page를 queryKey에 추가
     queryFn: async () => {
-      const data = await gatheringService.getMyHostedGatherings(page); // 내가 주최한 모임 조회 API 호출
+      const data = await gatheringService.getMyHostedGatherings(page);
       return data;
     },
     staleTime: 0,
@@ -86,16 +85,17 @@ export function useGatheringChallenges(gatheringsData: PageResponse<GatheringLis
           const inProgressResponse = await gatheringService.getChallenges(gatheringId, 'IN_PROGRESS');
           const closedResponse = await gatheringService.getChallenges(gatheringId, 'CLOSED');
 
-          // 내가 참여한 모임일 경우 참여한 챌린지만 필터링
-          if (!isCaptain) {
-            challengesMap[gatheringId] = {
-              inProgressChallenges: inProgressResponse.content.filter(c => c.participantStatus),
-              doneChallenges: closedResponse.content.filter(c => c.participantStatus)
-            };
-          } else {
+          // 주최자일 경우 모든 챌린지 표시
+          if (isCaptain) {
             challengesMap[gatheringId] = {
               inProgressChallenges: inProgressResponse.content,
               doneChallenges: closedResponse.content
+            };
+          } else {
+            // 참여자일 경우 참여한 챌린지만 필터링 (진행중 + 마감된 챌린지 모두)
+            challengesMap[gatheringId] = {
+              inProgressChallenges: inProgressResponse.content.filter(c => c.participantStatus),
+              doneChallenges: closedResponse.content.filter(c => c.participantStatus)
             };
           }
         })

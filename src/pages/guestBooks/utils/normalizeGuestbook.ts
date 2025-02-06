@@ -1,14 +1,15 @@
 import { GuestBooksListItem } from '../api/getGuestBooks';
 
 export interface NormalizedGuestbook {
-  writer: string;
-  reviewId: number;
+  guestbookId: number;
   rating: number;
   content: string;
-  createDate: string;
+  createdAt: string;
+  writer: string;
 }
 
 export interface NormalizedGathering {
+  gatheringId: number;
   imageUrl: string;
   title: string;
   mainLocation: string;
@@ -19,14 +20,15 @@ export interface NormalizedGathering {
 
 export default function normalizeGuestbook(guestbook: GuestBooksListItem) {
   const guestbookData = {
-    writer: guestbook.nickName,
-    reviewId: guestbook.guestbookId,
+    guestbookId: guestbook.guestbookId,
     rating: guestbook.guestbookScore,
     content: guestbook.guestBookContent,
-    createDate: guestbook.guestbookCreatedDate,
+    createdAt: guestbook.guestbookCreatedDate,
+    writer: guestbook.nickName,
   };
 
   const gatheringData = {
+    gatheringId: guestbook.gatheringId,
     imageUrl: guestbook.gatheringImageUrl,
     title: guestbook.gatheringTitle,
     mainLocation: guestbook.mainLocation,

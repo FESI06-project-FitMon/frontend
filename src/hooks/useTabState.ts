@@ -1,5 +1,5 @@
 // hooks/useTabState.ts
-import { useState} from 'react';
+import { useState } from 'react';
 import type { TabItem } from '@/types';
 
 interface UseTabStateProps {
@@ -10,14 +10,16 @@ interface UseTabStateProps {
 export default function useTabState({ tabs, storageKey }: UseTabStateProps) {
   const [currentTab, setCurrentTab] = useState<TabItem['id']>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem(storageKey) as TabItem['id'] || tabs[0].id;
+      // localStorage -> sessionStorage로 변경
+      return sessionStorage.getItem(storageKey) as TabItem['id'] || tabs[0].id;
     }
     return tabs[0].id;
   });
 
   const handleTabChange = (id: TabItem['id']) => {
     setCurrentTab(id);
-    localStorage.setItem(storageKey, id);
+    // localStorage -> sessionStorage로 변경
+    sessionStorage.setItem(storageKey, id);
   };
 
   return {
