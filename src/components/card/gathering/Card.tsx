@@ -43,9 +43,9 @@ export default function Card({ data }: CardProps) {
     );
 
     if (diffInHours > 0) {
-      timeLeftText = `오늘 ${diffInHours}시간 남음`;
+      timeLeftText = `${diffInHours}시간 남음`;
     } else if (diffInMinutes > 0) {
-      timeLeftText = `오늘 ${diffInMinutes}분 남음`;
+      timeLeftText = `${diffInMinutes}분 남음`;
     } else {
       timeLeftText = '마감됨';
     }
@@ -55,7 +55,7 @@ export default function Card({ data }: CardProps) {
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
       <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
         {timeLeftText && (
-          <div className="absolute flex gap-1 top-2 right-1.5 bg-primary py-1 px-2 rounded-full text-sm z-10">
+          <div className="absolute flex gap-1 top-1 right-0.5 bg-primary py-1 px-2 rounded-full text-sm z-10">
             <Image
               src={'/assets/image/alarm.svg'}
               width={14}
