@@ -51,7 +51,7 @@ export default function CardList({ filters }: CardListProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-[20px] lg:gap-5">
         {data?.pages.flatMap((page) =>
           page.content.map((gathering) => (
             <Card key={gathering.gatheringId} data={gathering} />
