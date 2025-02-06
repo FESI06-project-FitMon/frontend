@@ -158,7 +158,7 @@ export default function FilterModal({
             items={placeSiItems}
             selectedItem={localFilters.mainLocation || ''}
             setSelectedItem={handleSiChange}
-            className="mr-[10px] min-w-[100px] md:w-[175px]"
+            className="mr-[10px] w-[175px]"
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
             width="200px"
             height="47px"
@@ -170,12 +170,12 @@ export default function FilterModal({
               setLocalFilters({ ...localFilters, subLocation: value })
             }
             currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
-            className="mr-[10px]  min-w-[100px] md:w-[175px]"
+            className="mr-[10px] w-[175px]"
             width="200px"
             height="47px"
           />
           {/* 초기화 버튼 */}
-          <div className="flex md:justify-end mt-2 ml-2 w-full">
+          <div className="flex md:justify-end mt-2 ml-2">
             <button
               className="flex items-center gap-1 text-sm text-dark-700 transition-all"
               onClick={resetLocation}
@@ -212,7 +212,7 @@ export default function FilterModal({
             minDate={null}
           />
           {/* 초기화 버튼 */}
-          <div className="flex justify-end ml-3">
+          <div className="flex justify-end ml-4">
             <button
               className="flex items-center gap-1 text-sm text-dark-700 transition-all"
               onClick={resetDate}
