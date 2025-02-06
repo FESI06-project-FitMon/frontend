@@ -3,6 +3,7 @@ import { GatheringListItem } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import getDatePart from '@/utils/getDatePart';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 
 interface AvailableGuestbooksProps {
   gatherings: GatheringListItem[];
@@ -32,7 +33,7 @@ export default function AvailableGuestbooks({
           >
             <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
               <Image
-                src={gathering.imageUrl || '/assets/image/default_img.png'}
+                src={gathering.imageUrl || DEFAULT_IMAGE}
                 alt={gathering.title}
                 width={300}
                 height={200}
@@ -40,7 +41,7 @@ export default function AvailableGuestbooks({
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
-                  target.src = '/assets/image/default_img.png';
+                  target.src = 'DEFAULT_IMAGE';
                 }}
               />
             </div>
