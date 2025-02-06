@@ -1,5 +1,6 @@
 import RingChart from '@/components/chart/RingChart';
 import ZzimHeart from '@/components/common/ZzimHeart';
+import OpenStatus from '@/components/tag/OpenStatus';
 import StatusTag from '@/components/tag/StatusTag';
 import { GatheringListItem } from '@/types';
 import getDatePart from '@/utils/getDatePart';
@@ -39,7 +40,11 @@ export default function Card({ data }: CardProps) {
         </div>
         <Image src={imageUrl} fill alt="모임 사진" className="rounded-[20px]" />
       </div>
-      <div className="flex flex-col gap-2 md:gap-2.5 w-full">
+      <div className="flex flex-col gap-2 md:gap-2.5 w-full relative">
+        <OpenStatus
+          gatheringJoinedPeopleCount={participantCount}
+          className="absolute right-0 top-0"
+        />
         <span className="text-primary font-normal text-xs md:text-base">
           {subType} | {mainLocation} {subLocation}
         </span>
