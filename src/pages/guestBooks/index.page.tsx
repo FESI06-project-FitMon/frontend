@@ -17,6 +17,7 @@ import { GetServerSideProps } from 'next';
 import GuestbooksList from './components/GuestbooksList';
 import { GuestBooksList } from './api/getGuestBooks';
 import ReviewScore from './components/ReviewScore';
+import { Metadata } from '@/components/common/Metadata';
 
 interface GuestBooksProps {
   dehydratedState: DehydratedState;
@@ -64,39 +65,45 @@ export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
   const [subType, setSubType] = useState('전체'); // 서브 타입 상태
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
-      {/* 메인 타입 탭 */}
-      <div>
-        <Tab
-          items={LISTPAGE_MAINTYPE}
-          currentTab={mainType}
-          onTabChange={(newTab) => {
-            setMainType(newTab as MainType);
-            setSubType('전체'); // 메인 타입 변경 시 서브 타입 초기화
-          }}
-        />
-      </div>
-
-      {/* 서브 타입 태그 */}
-      <div className="mt-7">
-        {mainType !== '전체' && (
-          <SubTag
-            tags={LISTPAGE_SUBTYPE[mainType]}
-            currentTag={subType}
-            onTagChange={(newTag) => setSubType(newTag)}
+    <>
+      <Metadata
+        title="모든 방명록"
+        description="FitMon의 모임에 참여한 사람들의 후기를 확인해보세요."
+      />
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
+        {/* 메인 타입 탭 */}
+        <div>
+          <Tab
+            items={LISTPAGE_MAINTYPE}
+            currentTab={mainType}
+            onTabChange={(newTab) => {
+              setMainType(newTab as MainType);
+              setSubType('전체'); // 메인 타입 변경 시 서브 타입 초기화
+            }}
           />
-        )}
+        </div>
+
+        {/* 서브 타입 태그 */}
+        <div className="mt-7">
+          {mainType !== '전체' && (
+            <SubTag
+              tags={LISTPAGE_SUBTYPE[mainType]}
+              currentTag={subType}
+              onTagChange={(newTag) => setSubType(newTag)}
+            />
+          )}
+        </div>
+        {/* 방명록 점수 */}
+        <div className="mt-5 lg:mt-[30px]">
+          <ReviewScore mainType={mainType} subType={subType} />
+        </div>
+        {/* 방명록 리스트 */}
+        <div className="mt-5 lg:mt-10 pb-20">
+          <HydrationBoundary state={dehydratedState}>
+            <GuestbooksList mainType={mainType} subType={subType} />
+          </HydrationBoundary>
+        </div>
       </div>
-      {/* 방명록 점수 */}
-      <div className="mt-5 lg:mt-[30px]">
-        <ReviewScore mainType={mainType} subType={subType} />
-      </div>
-      {/* 방명록 리스트 */}
-      <div className="mt-5 lg:mt-10 pb-20">
-        <HydrationBoundary state={dehydratedState}>
-          <GuestbooksList mainType={mainType} subType={subType} />
-        </HydrationBoundary>
-      </div>
-    </div>
+    </>
   );
 }
