@@ -105,7 +105,7 @@ export default function Guestbook() {
             isLoading={isLoading}
             emptyMessage={showWritten
               ? "작성한 방명록이 없습니다."
-              : "작성 가능한 방명록이 없습니다. 참여한 챌린지를 인증하고 방명록을 작성해보세요!"
+              : "작성 가능한 방명록이 없습니다."
             }
           />
         ) : (
