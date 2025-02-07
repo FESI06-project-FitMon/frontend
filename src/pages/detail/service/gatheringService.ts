@@ -5,7 +5,11 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { GatheringQueries } from './gatheringQueries';
-import { GatheringDetailType, GatheringStateType } from '@/types';
+import {
+  ChallengeType,
+  GatheringDetailType,
+  GatheringStateType,
+} from '@/types';
 import {
   ChallengeCreateRequest,
   GatheringUpdateRequest,
@@ -22,7 +26,6 @@ import {
   fetchAllChallengesByGatheringId,
   verificationChallenge,
 } from '../api/challengeApi';
-import { getEventColor } from '@/pages/mypage/service/myCalendar';
 
 export const queryKeys = {
   gathering: (gatheringId: number) => [`gathering`, gatheringId],
@@ -319,21 +322,12 @@ export function useCalendarChallenges(gatheringId: number) {
       const data = await fetchAllChallengesByGatheringId(gatheringId);
 
       const events =
-        data.content
-          ?.filter((gathering) => gathering.status !== '취소됨')
-          ?.map((gathering) => ({
-            id: gathering.gatheringId.toString(),
-            start: gathering.startDate,
-            end: gathering.endDate,
-            title: gathering.title,
-            backgroundColor: getEventColor(gathering.mainType),
-            borderColor: getEventColor(gathering.mainType),
-            textColor: gathering.mainType,
-            extendedProps: {
-              isHost: gathering.captainStatus,
-              type: gathering.mainType,
-            },
-          })) ?? [];
+        data.content?.map((challenge: ChallengeType) => ({
+          id: challenge.gatheringId.toString(),
+          start: challenge.startDate,
+          end: challenge.endDate,
+          title: challenge.title,
+        })) ?? [];
 
       return {
         ...data,
