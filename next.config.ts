@@ -9,7 +9,11 @@ const nextConfig: NextConfig = {
   pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js'],
 
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production', // ✅ Vercel 배포 시 console.log 자동 제거
+    // 배포 시 console.log 자동 제거
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
   },
 };
 
