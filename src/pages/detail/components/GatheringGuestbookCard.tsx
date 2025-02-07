@@ -7,7 +7,7 @@ interface GuestbookProps {
     guestbookId: number;
     content: string;
     rating: number;
-    createDate: string;
+    createdAt: string;
     writer: {
       memberId: number;
       nickName: string;
@@ -17,13 +17,13 @@ interface GuestbookProps {
 }
 
 export default function Guestbook({ guestbook }: GuestbookProps) {
-  console.log(guestbook);
+  console.log('guestbook', guestbook);
   return (
-    <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 p-[30px]">
+    <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 px-5 lg:px-[30px] py-[34px] md:py-[30px] ">
       <div className="flex justify-between">
-        <Heart rating={guestbook.rating} />
-        <p className="flex md:hidden text-[13px] md:text-sm text-dark-700 content-center">
-          {`${guestbook.createDate.substring(0, 10)}`}
+        <Heart rating={guestbook.rating} type="guestbook" />
+        <p className="flex md:hidden text-[14px] md:text-sm text-dark-700 content-center">
+          {`${guestbook.createdAt.substring(0, 10)}`}
         </p>
       </div>
       <p className="w-full h-min-[72px] text-sm md:text-base text-ellipsis overflow-hidden break-words">
@@ -42,7 +42,7 @@ export default function Guestbook({ guestbook }: GuestbookProps) {
         </div>
         {/* 날짜 */}
         <p className="hidden md:flex text-[13px] md:text-sm text-dark-700 content-center">
-          {`${guestbook.createDate.substring(0, 10)}`}
+          {`${guestbook.createdAt.substring(0, 10)}`}
         </p>
       </div>
     </div>

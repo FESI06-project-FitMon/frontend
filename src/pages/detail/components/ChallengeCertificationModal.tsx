@@ -26,9 +26,17 @@ export default function ChallengeCertificationModal({
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
-    if (file) {
-      const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
-      setChallengeGatheringImageUrl(imageUrl);
+
+    try {
+      if (file) {
+        const imageUrl = (await uploadImage(file, 'CHALLENGE')).imageUrl;
+        setChallengeGatheringImageUrl(imageUrl);
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
     }
   };
 
