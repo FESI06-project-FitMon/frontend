@@ -27,6 +27,7 @@ import {
   LISTPAGE_SUBTYPE,
   MainType,
 } from '@/constants/MainList';
+import { Metadata } from '@/components/common/Metadata';
 
 interface HomeProps {
   dehydratedState: DehydratedState;
@@ -98,144 +99,153 @@ export default function Home({ dehydratedState }: HomeProps) {
   }, [filters]);
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
-      <h2 className="text-xl md:text-[1.75rem] font-semibold pb-5 md:pb-[30px]">
-        지금 핫한 챌린지 🔥
-      </h2>
+    <>
+      <Metadata
+        title="Home"
+        description="모임에 가입하고, 챌린지에 참여해 성공률을 높여보세요!"
+      />
 
-      <div className="overflow-hidden">
-        <ListChallenge />
-      </div>
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
+        <h2 className="text-xl md:text-[1.75rem] font-semibold pb-5 md:pb-[30px]">
+          지금 핫한 챌린지 🔥
+        </h2>
 
-      {/* 메인 탭 */}
-      <div className="w-full mt-[30px] md:mt-[50px] lg:mt-20">
-        <Tab
-          items={LISTPAGE_MAINTYPE}
-          currentTab={filters.mainType ?? ''}
-          className="w-full relative"
-          onTabChange={(newTab) => {
-            setFilters((prev) => ({
-              ...prev,
-              mainType: newTab,
-              subType: '전체',
-            }));
-          }}
-          rightElement={
-            <div className="hidden lg:flex w-full justify-end">
-              <Button
-                style="custom"
-                name="모임 만들기"
-                className="text-base my-2 -mt-2 h-9 w-[126px]"
-                handleButtonClick={() =>
-                  isLogin ? setShowCreateModal(true) : setShowAlert(true)
-                }
-              />
-            </div>
-          }
-        />
-
-        {/* 모바일/태블릿용 고정 버튼 */}
-        <div className="lg:hidden fixed right-6 bottom-10 z-50">
-          <Button
-            style="custom"
-            name="모임 만들기"
-            className="text-base h-9 w-[126px]"
-            handleButtonClick={() =>
-              isLogin ? setShowCreateModal(true) : setShowAlert(true)
-            }
-          />
+        <div className="overflow-hidden">
+          <ListChallenge />
         </div>
-      </div>
 
-      <div className="flex justify-end items-center my-5 lg:my-[35px] ">
-        {filters.mainType !== '전체' && (
-          <SubTag
-            tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
-            currentTag={filters.subType ?? ''}
-            onTagChange={(newTag) =>
-              setFilters((prev) => ({ ...prev, subType: newTag }))
+        {/* 메인 탭 */}
+        <div className="w-full mt-[30px] md:mt-[50px] lg:mt-20">
+          <Tab
+            items={LISTPAGE_MAINTYPE}
+            currentTab={filters.mainType ?? ''}
+            className="w-full relative"
+            onTabChange={(newTab) => {
+              setFilters((prev) => ({
+                ...prev,
+                mainType: newTab,
+                subType: '전체',
+              }));
+            }}
+            rightElement={
+              <div className="hidden lg:flex w-full justify-end">
+                <Button
+                  style="custom"
+                  name="모임 만들기"
+                  className="text-base my-2 -mt-2 h-9 w-[126px]"
+                  handleButtonClick={() =>
+                    isLogin ? setShowCreateModal(true) : setShowAlert(true)
+                  }
+                />
+              </div>
             }
-            className="flex w-full justify-start"
           />
-        )}
 
-        {isFilterChanged && (
-          <button
-            className="flex items-center gap-1 text-sm text-dark-700 transition-all whitespace-pre mr-6 "
-            onClick={resetFilters}
-          >
-            초기화
-            <Image
-              src={'/assets/image/arrow-clockwise.svg'}
-              aria-readonly
-              alt="초기화 이미지"
-              width={14}
-              height={14}
+          {/* 모바일/태블릿용 고정 버튼 */}
+          <div className="lg:hidden fixed right-6 bottom-10 z-50">
+            <Button
+              style="custom"
+              name="모임 만들기"
+              className="text-base h-9 w-[126px]"
+              handleButtonClick={() =>
+                isLogin ? setShowCreateModal(true) : setShowAlert(true)
+              }
             />
-          </button>
-        )}
-
-        {/* 필터 버튼 */}
-        <div
-          className="min-w-[18px] lg:min-w-16 flex gap-2.5 text-right text-sm md:text-base justify-end items-center"
-          onClick={() => setShowFilterModal(true)}
-        >
-          <span className="hidden lg:inline-block">필터</span>
-          <Image
-            src={'/assets/image/filter.svg'}
-            alt="필터 아이콘"
-            width={20}
-            height={20}
-          />
+          </div>
         </div>
-      </div>
 
-      {/* 필터 모달 */}
-      {showFilterModal && (
-        <FilterModal
-          setShowFilterModal={() => setShowFilterModal(false)}
-          filters={filters}
-          setFilters={handleApplyFilters}
-        />
-      )}
+        <div className="flex justify-end items-center my-5 lg:my-[35px] ">
+          {filters.mainType !== '전체' && (
+            <SubTag
+              tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
+              currentTag={filters.subType ?? ''}
+              onTagChange={(newTag) =>
+                setFilters((prev) => ({ ...prev, subType: newTag }))
+              }
+              className="flex w-full justify-start"
+            />
+          )}
 
-      {/* 모임 만들기 모달  */}
-      {showCreateModal && (
-        <CreateGathering setShowCreateModal={() => setShowCreateModal(false)} />
-      )}
+          {isFilterChanged && (
+            <button
+              className="flex items-center gap-1 text-sm text-dark-700 transition-all whitespace-pre mr-6 "
+              onClick={resetFilters}
+            >
+              초기화
+              <Image
+                src={'/assets/image/arrow-clockwise.svg'}
+                aria-readonly
+                alt="초기화 이미지"
+                width={14}
+                height={14}
+              />
+            </button>
+          )}
 
-      {/* 카드 리스트 */}
-      <div className="pb-20">
-        <HydrationBoundary state={dehydratedState}>
-          <CardList filters={filters} />
-        </HydrationBoundary>
-      </div>
+          {/* 필터 버튼 */}
+          <div
+            className="min-w-[18px] lg:min-w-16 flex gap-2.5 text-right text-sm md:text-base justify-end items-center"
+            onClick={() => setShowFilterModal(true)}
+          >
+            <span className="hidden lg:inline-block">필터</span>
+            <Image
+              src={'/assets/image/filter.svg'}
+              alt="필터 아이콘"
+              width={20}
+              height={20}
+            />
+          </div>
+        </div>
 
-      {/* 더 보기 버튼 */}
-      <div className="text-center mt-5">
-        {queryResults.hasNextPage && (
-          <Button
-            style="custom"
-            name="더 보기"
-            className="text-base h-9 w-[126px]"
-            handleButtonClick={() => queryResults.fetchNextPage()}
+        {/* 필터 모달 */}
+        {showFilterModal && (
+          <FilterModal
+            setShowFilterModal={() => setShowFilterModal(false)}
+            filters={filters}
+            setFilters={handleApplyFilters}
+          />
+        )}
+
+        {/* 모임 만들기 모달  */}
+        {showCreateModal && (
+          <CreateGathering
+            setShowCreateModal={() => setShowCreateModal(false)}
+          />
+        )}
+
+        {/* 카드 리스트 */}
+        <div className="pb-20">
+          <HydrationBoundary state={dehydratedState}>
+            <CardList filters={filters} />
+          </HydrationBoundary>
+        </div>
+
+        {/* 더 보기 버튼 */}
+        <div className="text-center mt-5">
+          {queryResults.hasNextPage && (
+            <Button
+              style="custom"
+              name="더 보기"
+              className="text-base h-9 w-[126px]"
+              handleButtonClick={() => queryResults.fetchNextPage()}
+            />
+          )}
+        </div>
+
+        {/* 알럿 컴포넌트 */}
+        {showAlert && (
+          <Alert
+            isOpen={showAlert}
+            type="confirm"
+            message="로그인이 필요합니다."
+            onConfirm={() => {
+              setShowAlert(false);
+              router.push('/login');
+            }}
+            onCancel={() => setShowAlert(false)}
           />
         )}
       </div>
-
-      {/* 알럿 컴포넌트 */}
-      {showAlert && (
-        <Alert
-          isOpen={showAlert}
-          type="confirm"
-          message="로그인이 필요합니다."
-          onConfirm={() => {
-            setShowAlert(false);
-            router.push('/login');
-          }}
-          onCancel={() => setShowAlert(false)}
-        />
-      )}
-    </div>
+    </>
   );
 }
