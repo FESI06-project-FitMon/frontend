@@ -31,23 +31,23 @@ export default function Guestbook() {
   const updateGuestbookMutation = useUpdateGuestbook();
   const [showWritten, setShowWritten] = useState(false);
 
-  const handleWriteClick = useCallback((gatheringId: number) => {
+  const handleWriteClick = (gatheringId: number) => {
     setModalState({
       isOpen: true,
       isEditMode: false,
       gatheringId,
     });
-  }, []);
+  };
 
-  const handleEditClick = useCallback((guestbook: GuestbookItem) => {
+  const handleEditClick = (guestbook: GuestbookItem) => {
     setModalState({
       isOpen: true,
       isEditMode: true,
       guestbook,
     });
-  }, []);
+  };
 
-  const handleModalSubmit = useCallback(async (data: { content: string; rating: number }) => {
+  const handleModalSubmit = async (data: { content: string; rating: number }) => {
     try {
       if (modalState.isEditMode && modalState.guestbook) {
         await updateGuestbookMutation.mutateAsync({
@@ -68,7 +68,7 @@ export default function Guestbook() {
       console.error('Submit error:', error);
       showToast('오류가 발생했습니다.', 'error');
     }
-  }, [modalState, updateGuestbookMutation, createGuestbookMutation, showToast]);
+  };
 
   const handleTabChange = (id: string) => {
     setShowWritten(id === 'written');
@@ -105,7 +105,7 @@ export default function Guestbook() {
             isLoading={isLoading}
             emptyMessage={showWritten
               ? "작성한 방명록이 없습니다."
-              : "작성 가능한 방명록이 없습니다."
+              : "작성 가능한 방명록이 없습니다. 참여한 챌린지를 인증하고 방명록을 작성해보세요!"
             }
           />
         ) : (

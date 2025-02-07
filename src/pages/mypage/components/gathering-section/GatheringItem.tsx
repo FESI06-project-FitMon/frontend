@@ -23,28 +23,28 @@ export const GatheringItem = memo(function GatheringItem({
 }: GatheringItemProps) {
 
   const [isOpen, setIsOpen] = useState(false);
-  // 이벤트 버블링 방지 핸들러
-  const handleContentClick = useCallback((e: React.MouseEvent) => {
+
+  // 이벤트 버블링 방지
+  const handleContentClick = (e: React.MouseEvent) => {
     if (e.target instanceof HTMLElement &&
       (e.target.tagName === 'BUTTON' || e.target.closest('button'))) {
       e.preventDefault();
       e.stopPropagation();
     }
-  }, []);
+  };
 
-
-  const handleToggleChallenge = useCallback((e: React.MouseEvent) => {
+  // 챌린지 섹션 열기/닫기
+  const handleToggleChallenge = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsOpen(prev => !prev);
-  }, []);
+    setIsOpen(!isOpen);
+  };
 
-  const cancelProps = useMemo(() => 
+  // 취소 액션 Props 설정
+  const cancelProps =
     cancelActionType === 'gathering'
       ? { onCancelGathering: onCancelAction }
-      : { onCancelParticipation: onCancelAction },
-    [cancelActionType, onCancelAction]
-  );
+      : { onCancelParticipation: onCancelAction };
 
   return (
     <div className="relative rounded-lg overflow-hidden mb-[50px]">

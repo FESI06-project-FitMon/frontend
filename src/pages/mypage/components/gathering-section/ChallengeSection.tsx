@@ -22,6 +22,7 @@ export default function ChallengeSection({
   isOpen,
   onToggle,
 }: ChallengeSectionProps) {
+  
   // 단순 이벤트 핸들러는 useCallback 불필요
   const handleChallengeClick = (e: React.MouseEvent) => {
     e.preventDefault();
