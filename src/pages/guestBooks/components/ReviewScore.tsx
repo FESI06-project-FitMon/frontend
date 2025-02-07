@@ -31,7 +31,7 @@ export default function ReviewScore({ mainType, subType }: ReviewScoreProps) {
           </p>
           <p className="text-2xl font-semibold text-dark-600">{'/5'}</p>
         </div>
-        <Heart rating={data?.averageRating || 0} />
+        <Heart rating={data?.averageRating || 0} type="guestbook" />
       </div>
       <div className="flex flex-col justify-center items-center mt-8 md:mt-0 gap-1">
         {Object.entries(data?.ratingCounts || {}).map(([rating, count]) => (

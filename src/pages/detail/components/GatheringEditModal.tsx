@@ -13,6 +13,8 @@ import { GatheringDetailType } from '@/types';
 import Null from '@/components/common/Null';
 import { useGatheringUpdate } from '../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
+import useToastStore from '@/stores/useToastStore';
+import { AxiosError } from 'axios';
 
 export default function GatheringEditModal({
   information,
@@ -23,21 +25,21 @@ export default function GatheringEditModal({
   gatheringId: number;
   setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
-  const [title, setTitle] = useState(information.title);
-  const [description, setDescription] = useState(information.description);
-  const [newTag, setNewTag] = useState('');
-  const [tags, setTags] = useState<Array<string>>(information.tags);
-  const [imageUrl, setImageUrl] = useState(information.imageUrl); // 기존 이미지 URL
-  const [selectedPlaceSi, setSelectedPlaceSi] = useState(
-    information.mainLocation,
-  );
-  const [selectedPlaceGu, setSelectedPlaceGu] = useState(
-    information.subLocation,
-  );
-  const [maxPeopleCount, setMaxPeopleCount] = useState(information.totalCount);
-  const [startDate, setStartDate] = useState<string>(information.startDate);
-  const [endDate, setEndDate] = useState<string>(information.endDate);
+  const showToast = useToastStore((state) => state.show);
 
+  const [newGathering, setNewGathering] = useState({
+    title: information.title,
+    description: information.description,
+    tags: information.tags,
+    imageUrl: information.imageUrl,
+    mainLocation: information.mainLocation,
+    subLocation: information.subLocation,
+    totalCount: information.totalCount,
+    startDate: information.startDate,
+    endDate: information.endDate,
+  });
+
+  const [newTag, setNewTag] = useState('');
   type CityData = typeof cityData;
   type CityKeys = keyof CityData;
 
@@ -47,22 +49,25 @@ export default function GatheringEditModal({
   }));
 
   const placeGuItems: SelectItem[] =
-    cityData[selectedPlaceSi as CityKeys]?.map((gu) => ({
+    cityData[newGathering.mainLocation as CityKeys]?.map((gu) => ({
       value: gu.value,
       label: gu.label,
     })) || [];
 
   const handleGatheringTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+    setNewGathering({ ...newGathering, title: e.target.value });
   };
   const handleGatheringDescriptionChange = (
     e: ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    setDescription(e.target.value);
+    setNewGathering({ ...newGathering, description: e.target.value });
   };
 
   const handleTagDeleteButtonClick = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
+    setNewGathering({
+      ...newGathering,
+      tags: newGathering.tags.filter((t) => t !== tag),
+    });
   };
 
   const handleNewTagOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -75,36 +80,37 @@ export default function GatheringEditModal({
 
   const handleEnterKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
-      console.log(tags.length, newTag);
-      if (tags.length === 3) {
+      if (newGathering.tags.length === 3) {
         alert('태그는 최대 3개까지 추가 가능합니다.');
         setNewTag('');
         return;
       }
-      setTags([...tags, newTag]);
+      setNewGathering({
+        ...newGathering,
+        tags: [...newGathering.tags, newTag],
+      });
+
       setNewTag('');
     }
   };
 
   // 수정버튼 클릭 핸들러
   const handleEditButtonClick = () => {
-    const editedInformation = {
-      title: title,
-      description: description,
-      imageUrl: imageUrl,
-      startDate: startDate,
-      endDate: endDate,
-      totalCount: maxPeopleCount,
-      mainLocation: placeSiItems.filter(
-        (item) => item.value === selectedPlaceSi,
-      )[0].label,
-      subLocation: placeGuItems.filter(
-        (item) => item.value === selectedPlaceGu,
-      )[0].label,
-      tags: tags,
-    };
+    const editedInformation = { ...newGathering };
 
-    mutate({ newGathering: editedInformation });
+    if (newGathering.startDate > newGathering.endDate) {
+      showToast('시작날짜는 종료날짜보다 이전이어야 합니다.', 'error');
+      return;
+    }
+    try {
+      mutate({ newGathering: editedInformation });
+      showToast('모임 정보 수정에 성공하였습니다.', 'check');
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      if (axiosError.response?.data?.message) {
+        showToast(axiosError.response.data.message, 'error');
+      }
+    }
     // 모달을 닫는다.
     setIsModalOpen(false);
   };
@@ -124,12 +130,18 @@ export default function GatheringEditModal({
     const file = e.target.files[0];
     if (file) {
       const imageFileUrl = (await uploadImage(file, 'GATHERING')).imageUrl;
-      setImageUrl(imageFileUrl);
+      setNewGathering({
+        ...newGathering,
+        imageUrl: imageFileUrl,
+      });
     }
   };
 
   const handleImageDeleteButtonClick = () => {
-    setImageUrl('');
+    setNewGathering({
+      ...newGathering,
+      imageUrl: '',
+    });
   };
   const queryClient = useQueryClient();
   const { mutate, isPending } = useGatheringUpdate(gatheringId, queryClient);
@@ -148,10 +160,9 @@ export default function GatheringEditModal({
             <Image
               className=" border-[1px] rounded-[10px] border-dark-500 "
               src={
-                imageUrl &&
-                ['https', 'http', 'blob'].indexOf(imageUrl.split(':')[0]) !== -1
-                  ? imageUrl
-                  : '/assets/image/fitmon.png'
+                newGathering.imageUrl
+                  ? newGathering.imageUrl
+                  : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
               }
               width={130}
               height={130}
@@ -160,7 +171,9 @@ export default function GatheringEditModal({
 
             <div
               style={{
-                background: imageUrl ? 'rgba(0, 0, 0, 0.8)' : '#2d2d2d',
+                background: newGathering.imageUrl
+                  ? 'rgba(0, 0, 0, 0.8)'
+                  : '#2d2d2d',
               }}
               className="absolute  w-full h-full z-10  border-[1px] rounded-[10px] border-dark-500 "
             />
@@ -181,7 +194,7 @@ export default function GatheringEditModal({
                 onClick={handleImageEditButtonClick}
               />
 
-              {imageUrl && (
+              {newGathering.imageUrl && (
                 <p
                   onClick={handleImageDeleteButtonClick}
                   className="text-sm text-dark-700 hover:cursor-pointer"
@@ -195,12 +208,12 @@ export default function GatheringEditModal({
             <Input
               type="text"
               handleInputChange={(e) => handleGatheringTitleChange(e)}
-              value={title}
+              value={newGathering.title}
               className="text-sm md:text-base h-[47px]  outline-dark-500 bg-dark-400 mb-[7px] "
             />
             <TextArea
               handleInputChange={(e) => handleGatheringDescriptionChange(e)}
-              value={description}
+              value={newGathering.description}
               className="text-sm md:text-base h-[76px] md:h-[76px] flex outline-dark-500 bg-dark-400 leading-[24px] overflow-x-auto resize-none whitespace-pre-wrap break-words "
             />
           </div>
@@ -214,7 +227,7 @@ export default function GatheringEditModal({
         </div>
         <div className="relative">
           <div className="  h-[47px] bg-dark-400 border-dark-500 rounded-[8px] flex items-center gap-[10px] px-5 ">
-            {tags.map((tag, index) => (
+            {newGathering.tags.map((tag, index) => (
               <div
                 className="h-[30px] w-[121px] flex items-center justify-center py-[7px] px-[10px] bg-dark-200 rounded-[10px] gap-2 z-10"
                 key={index}
@@ -234,7 +247,7 @@ export default function GatheringEditModal({
           <input
             className={`absolute w-full bg-transparent top-0 h-[47px] outline-none`}
             style={{
-              paddingLeft: `${tags.length * 121 + 30 + (tags.length - 1) * 10}px`,
+              paddingLeft: `${newGathering.tags.length * 121 + 30 + (newGathering.tags.length - 1) * 10}px`,
             }}
             value={newTag}
             onChange={(e) => handleNewTagOnChange(e)}
@@ -250,8 +263,13 @@ export default function GatheringEditModal({
           <div className="flex">
             <Select
               items={placeSiItems}
-              selectedItem={selectedPlaceSi}
-              setSelectedItem={setSelectedPlaceSi}
+              selectedItem={newGathering.mainLocation}
+              setSelectedItem={(mainLocation: string) =>
+                setNewGathering({
+                  ...newGathering,
+                  mainLocation: mainLocation,
+                })
+              }
               width="100%"
               height="47px"
               className="text-sm md:text-base mr-[10px] w-[100%]"
@@ -259,8 +277,13 @@ export default function GatheringEditModal({
             />
             <Select
               items={placeGuItems}
-              selectedItem={selectedPlaceGu}
-              setSelectedItem={setSelectedPlaceGu}
+              selectedItem={newGathering.subLocation}
+              setSelectedItem={(subLocation: string) =>
+                setNewGathering({
+                  ...newGathering,
+                  subLocation: subLocation,
+                })
+              }
               width="100%"
               height="47px"
               className="text-sm md:text-base w-[100%]"
@@ -277,8 +300,13 @@ export default function GatheringEditModal({
             min={2}
             width="100%"
             height="47px"
-            targetNumber={maxPeopleCount}
-            setTargetNumber={setMaxPeopleCount}
+            targetNumber={newGathering.totalCount}
+            setTargetNumber={(totalCount: number) =>
+              setNewGathering({
+                ...newGathering,
+                totalCount: totalCount,
+              })
+            }
             className="text-sm md:text-base"
           />
         </div>
@@ -290,8 +318,13 @@ export default function GatheringEditModal({
             시작 날짜
           </div>
           <DatePickerCalendar
-            selectedDate={new Date(startDate)}
-            setSelectedDate={(date: Date) => setStartDate(date.toISOString())}
+            selectedDate={new Date(newGathering.startDate)}
+            setSelectedDate={(date: Date) =>
+              setNewGathering({
+                ...newGathering,
+                startDate: date.toISOString(),
+              })
+            }
             className="text-sm md:text-base w-[100%] h-[47px]"
             width="100%"
             height="47px"
@@ -303,12 +336,17 @@ export default function GatheringEditModal({
             마감 날짜
           </div>
           <DatePickerCalendar
-            selectedDate={new Date(endDate)}
-            setSelectedDate={(date: Date) => setEndDate(date.toISOString())}
+            selectedDate={new Date(newGathering.endDate)}
+            setSelectedDate={(date: Date) =>
+              setNewGathering({
+                ...newGathering,
+                endDate: date.toISOString(),
+              })
+            }
             className="text-sm md:text-base w-[100%] h-[47px]"
             width="100%"
             height="47px"
-            minDate={new Date(startDate)}
+            minDate={new Date(newGathering.startDate)}
           />
         </div>
       </div>
