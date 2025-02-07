@@ -231,19 +231,19 @@ export default function FilterModal({
       </div>
 
       {/* 버튼 영역 */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-6 gap-2.5">
         <Button
           name="취소"
           handleButtonClick={setShowFilterModal}
           style="cancel"
-          className="w-[48%] h-[52px] text-primary"
+          className="min-w-[48%] h-[52px] text-primary"
         />
         {/* 적용 버튼 */}
         <Button
           name="적용"
           handleButtonClick={applyFilters}
           style="default"
-          className="w-[48%] h-[52px]"
+          className="min-w-[48%]  h-[52px]"
         />
       </div>
     </Modal>
