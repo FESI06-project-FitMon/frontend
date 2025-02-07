@@ -105,7 +105,7 @@ export default function Home({ dehydratedState }: HomeProps) {
         description="모임에 가입하고, 챌린지에 참여해 성공률을 높여보세요!"
       />
 
-      <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20">
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-[30px] md:pt-[50px] lg:pt-20 pb-20">
         <h2 className="text-xl md:text-[1.75rem] font-semibold pb-5 md:pb-[30px]">
           지금 핫한 챌린지 🔥
         </h2>
@@ -214,7 +214,7 @@ export default function Home({ dehydratedState }: HomeProps) {
         )}
 
         {/* 카드 리스트 */}
-        <div className="pb-20">
+        <div>
           <HydrationBoundary state={dehydratedState}>
             <CardList filters={filters} />
           </HydrationBoundary>
