@@ -12,6 +12,7 @@ export interface RatingCounts {
 export interface getRatingResponse {
   averageRating: number;
   ratingCounts: RatingCounts;
+  totalCounts: number;
 }
 
 export interface ReviewScoreProps {
