@@ -4,7 +4,6 @@ interface BarChartProps {
 }
 export default function BarChart({ total, value }: BarChartProps) {
   const valuePercentage = (value / total) * 100;
-  console.log(total, value, valuePercentage);
   const valueBarWidth = `${valuePercentage ? valuePercentage : 0}%`;
   return (
     <div className="relative w-full">
