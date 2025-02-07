@@ -79,3 +79,16 @@ export const deleteChallenge = async (challengeId: number) => {
     throw error;
   }
 };
+
+// 특정 모임의 챌린지 전체 조회하기 API
+export const fetchAllChallengesByGatheringId = async (gatheringId: number) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await apiRequest<any>({
+      param: `/api/v1/gatherings/${gatheringId}/challenges/all`,
+      method: 'get',
+    });
+  } catch (error) {
+    throw error;
+  }
+};
