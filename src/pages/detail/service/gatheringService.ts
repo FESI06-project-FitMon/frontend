@@ -19,8 +19,10 @@ import {
 import {
   createChallenge,
   deleteChallenge,
+  fetchAllChallengesByGatheringId,
   verificationChallenge,
 } from '../api/challengeApi';
+import { getEventColor } from '@/pages/mypage/service/myCalendar';
 
 export const queryKeys = {
   gathering: (gatheringId: number) => [`gathering`, gatheringId],
@@ -34,6 +36,10 @@ export const queryKeys = {
     'gatheringGuestbooks',
     gatheringId,
     page,
+  ],
+  gatheringCalendar: (gatheringId: number) => [
+    'gatheringCalendar',
+    gatheringId,
   ],
 };
 
@@ -305,3 +311,34 @@ export const useGatheringCancel = (
     },
   });
 };
+
+export function useCalendarChallenges(gatheringId: number) {
+  return useQuery({
+    queryKey: queryKeys.gatheringCalendar(gatheringId),
+    queryFn: async () => {
+      const data = await fetchAllChallengesByGatheringId(gatheringId);
+
+      const events =
+        data.content
+          ?.filter((gathering) => gathering.status !== '취소됨')
+          ?.map((gathering) => ({
+            id: gathering.gatheringId.toString(),
+            start: gathering.startDate,
+            end: gathering.endDate,
+            title: gathering.title,
+            backgroundColor: getEventColor(gathering.mainType),
+            borderColor: getEventColor(gathering.mainType),
+            textColor: gathering.mainType,
+            extendedProps: {
+              isHost: gathering.captainStatus,
+              type: gathering.mainType,
+            },
+          })) ?? [];
+
+      return {
+        ...data,
+        events,
+      };
+    },
+  });
+}

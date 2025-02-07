@@ -6,6 +6,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
 import { useGatheringChallenges } from '../service/gatheringService';
 import { GatheringChallengeResponse } from '../dto/responseDto';
+import CalendarTab from './calendar/ChallengeCalendar';
 
 export default function GatheringChallenge({
   captainStatus,
@@ -147,7 +148,7 @@ export default function GatheringChallenge({
               )
             )
           ) : (
-            <div>calendar</div>
+            <CalendarTab gatheringId={gatheringId} />
           )}
         </div>
       </div>
