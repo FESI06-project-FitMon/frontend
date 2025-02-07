@@ -1,7 +1,7 @@
 // myGuestbooks.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { guestbookService } from '@/pages/mypage/api/guestbookService';
-import { useGatheringChallenges, useParticipatingGatherings } from './myGathering';
+import {useParticipatingGatherings } from './myGathering';
 import { GatheringListItem, GuestbookRequest, PageResponse } from '@/types';
 
 export const GUESTBOOK_KEYS = {
@@ -69,16 +69,14 @@ export function useDeleteGuestbook() {
   });
 }
 
-
 export function useAvailableGuestbooks({ page = 0 } = {}) {
   const { data: participatingGatherings } = useParticipatingGatherings();
-  const { data: challengesMap } = useGatheringChallenges(participatingGatherings, false);
   const { data: guestbooksData } = useGuestbooks();
 
   return useQuery({
     queryKey: GUESTBOOK_KEYS.available(page),
     queryFn: async () => {
-      if (!participatingGatherings?.content || !challengesMap || !guestbooksData) {
+      if (!participatingGatherings?.content || !guestbooksData) {
         return {
           content: [],
           totalElements: 0,
@@ -88,16 +86,16 @@ export function useAvailableGuestbooks({ page = 0 } = {}) {
       }
 
       const filteredGatherings = participatingGatherings.content.filter((gathering) => {
-        const challenges = challengesMap[gathering.gatheringId];
         const hasWrittenGuestbook = guestbooksData.content?.some(
           guestbook => guestbook.gatheringId === gathering.gatheringId
         );
 
+        // 모임 상태가 '진행중' 또는 '종료됨'인 경우만 허용
+        const isValidStatus = gathering.status === '진행중' || gathering.status === '종료됨';
+
         return (
           gathering.participantStatus &&
-          challenges?.inProgressChallenges?.some(
-            (c) => c.participantStatus && c.verificationStatus === true
-          ) &&
+          isValidStatus &&
           !hasWrittenGuestbook
         );
       });
@@ -115,7 +113,7 @@ export function useAvailableGuestbooks({ page = 0 } = {}) {
         currentPage: page
       } as PageResponse<GatheringListItem>;
     },
-    enabled: !!participatingGatherings?.content && !!challengesMap && !!guestbooksData,
+    enabled: !!participatingGatherings?.content && !!guestbooksData,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     refetchInterval: 1000

@@ -1,10 +1,16 @@
 import apiRequest from '@/utils/apiRequest';
-import { MainType } from '@/constants/MainList';
 import { QueryFunctionContext } from '@tanstack/react-query';
 
 export interface GuestbooksListProps {
-  mainType: MainType;
-  subType: string;
+  pageParam?: number;
+  pageSize?: number;
+  mainType?: string;
+  subType?: string;
+  mainLocation?: string;
+  subLocation?: string;
+  searchDate?: string;
+  sortBy?: 'deadline' | 'participants';
+  sortDirection?: 'ASC' | 'DESC';
 }
 
 export interface GuestBooksList {
@@ -34,16 +40,23 @@ export interface GuestBooksListItem {
 const ROWS_PER_PAGE = 20;
 
 export default async function getGuestBooks(
-  { mainType, subType }: GuestbooksListProps,
+  filters: GuestbooksListProps,
   { pageParam = 0 }: QueryFunctionContext,
 ) {
   const queryParams = {
-    sortBy: 'deadline',
-    sortDirection: 'ASC',
+    sortBy: filters.sortBy || 'deadline',
+    sortDirection: filters.sortDirection || 'ASC',
     page: String(pageParam),
     pageSize: String(ROWS_PER_PAGE),
-    ...(mainType !== '전체' && { mainType }),
-    ...(subType !== '전체' && { subType }),
+    ...(filters.mainType && filters.mainType !== '전체'
+      ? { mainType: filters.mainType }
+      : {}),
+    ...(filters.subType && filters.subType !== '전체'
+      ? { subType: filters.subType }
+      : {}),
+    ...(filters.mainLocation && { mainLocation: filters.mainLocation }),
+    ...(filters.subLocation && { subLocation: filters.subLocation }),
+    ...(filters.searchDate && { searchDate: filters.searchDate }),
   };
 
   const param = `/api/v1/guestbooks?${new URLSearchParams(queryParams).toString()}`;

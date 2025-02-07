@@ -22,15 +22,15 @@ export default function AvailableGuestbooks({
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-6 md:space-y-8">
       {gatherings.map((gathering) => (
         <Link
           key={gathering.gatheringId}
           href={`/detail/${gathering.gatheringId}`}
+          className="block" 
         >
-          <div
-            className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-2.5 md:gap-6 lg:gap-[30px]"
-          >
+
+          <div className="flex flex-col justify-center md:justify-start md:flex-row md:w-[696px] lg:w-[906px] md:h-[200px] gap-6 md:gap-8 lg:gap-10">
             <div className="relative w-full md:w-[228px] lg:w-[300px] h-[150px] sm:h-[200px] overflow-hidden rounded-[20px]">
               <Image
                 src={gathering.imageUrl || DEFAULT_IMAGE}

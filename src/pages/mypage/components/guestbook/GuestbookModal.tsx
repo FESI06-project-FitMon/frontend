@@ -5,7 +5,6 @@ import Heart from '@/components/common/Heart';
 import ModalInput from '@/components/common/ModalInput';
 import { GuestbookItem } from '@/types';
 
-
 interface GuestbookModalProps {
   isEditMode: boolean;
   initialData?: GuestbookItem | null;
@@ -42,7 +41,7 @@ export default function GuestbookModal({
     try {
       const requestData = {
         content: content.trim(),
-        rating: Number(rating)
+        rating: Number(rating),
       };
       await onSubmit(requestData);
     } catch (error) {
@@ -54,26 +53,30 @@ export default function GuestbookModal({
   return (
     <Modal title={isEditMode ? '방명록 수정' : '방명록 작성'} onClose={onClose}>
       <div className="h-full md:h-[340px] flex flex-col justify-center md:justify-start">
-        <form onSubmit={handleSubmit} className="w-full flex flex-col items-center md:items-start">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full flex flex-col items-center md:items-start"
+        >
           <div className="mb-3 md:my-4 flex items-center justify-between w-full">
-            <Heart rating={rating} onChange={(value) => setRating(value)} />
-            <span className="text-xs text-primary">
-              {content.length}/200
-            </span>
+            <Heart
+              type="guestbook"
+              rating={rating}
+              onChange={(value) => setRating(value)}
+            />
+            <span className="text-xs text-primary">{content.length}/200</span>
           </div>
 
-
           <div className="w-full">
-          <ModalInput
+            <ModalInput
               type="description"
               value={content}
               onChange={(value) => {
-                if (value.length <= 200) { 
+                if (value.length <= 200) {
                   setContent(value);
                 }
               }}
               placeholder="방명록을 작성해주세요."
-              maxLength={200}  
+              maxLength={200}
               height="220px"
               onValidationFail={onValidationFail}
             />
@@ -82,7 +85,7 @@ export default function GuestbookModal({
           <div className="w-full mt-4">
             <Button
               type="submit"
-              name={isEditMode ? "수정하기" : "작성하기"}
+              name={isEditMode ? '수정하기' : '작성하기'}
               style="default"
               className="w-full h-[52px]"
             />
@@ -92,4 +95,3 @@ export default function GuestbookModal({
     </Modal>
   );
 }
-

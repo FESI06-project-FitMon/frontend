@@ -5,13 +5,27 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { GatheringQueries } from './gatheringQueries';
-import { GatheringDetailType, GatheringStateType } from '@/types';
+import {
+  ChallengeType,
+  GatheringDetailType,
+  GatheringStateType,
+} from '@/types';
 import {
   ChallengeCreateRequest,
   GatheringUpdateRequest,
 } from '../dto/requestDto';
-import { deleteGathering, updateGathering } from '../api/gatheringApi';
-import { createChallenge } from '../api/challengeApi';
+import {
+  cancelGathering,
+  deleteGathering,
+  participantGathering,
+  updateGathering,
+} from '../api/gatheringApi';
+import {
+  createChallenge,
+  deleteChallenge,
+  fetchAllChallengesByGatheringId,
+  verificationChallenge,
+} from '../api/challengeApi';
 
 export const queryKeys = {
   gathering: (gatheringId: number) => [`gathering`, gatheringId],
@@ -25,6 +39,10 @@ export const queryKeys = {
     'gatheringGuestbooks',
     gatheringId,
     page,
+  ],
+  gatheringCalendar: (gatheringId: number) => [
+    'gatheringCalendar',
+    gatheringId,
   ],
 };
 
@@ -105,12 +123,10 @@ export const useGatheringUpdate = (
       return { previousGathering, previousGatheringStatus };
     },
 
-    onSuccess: (newGathering: GatheringUpdateRequest) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.gathering(gatheringId),
       });
-
-      console.log('newGathering', newGathering);
     },
 
     onError: (error: Error) => {
@@ -147,10 +163,6 @@ export const useChallengeCreate = (
         ...newChallenge,
       };
 
-      console.log(
-        previousGatheringChallenges,
-        typeof previousGatheringChallenges,
-      );
       const newChallenges = {
         ...previousGatheringChallenges,
         pages: [
@@ -165,6 +177,7 @@ export const useChallengeCreate = (
       };
 
       if (previousGatheringChallenges) {
+        console.log(newChallenges);
         queryClient.setQueryData(
           queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
           previousGatheringChallenges.pages?.length > 0
@@ -173,7 +186,7 @@ export const useChallengeCreate = (
         );
       }
 
-      return { challenge };
+      return { newChallenges };
     },
 
     onSuccess: () => {
@@ -184,6 +197,12 @@ export const useChallengeCreate = (
 
     onError: (error: Error) => {
       console.log(error);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
+      });
     },
   });
 };
@@ -207,3 +226,113 @@ export const useGatheringDelete = (
     },
   });
 };
+
+export const useChallengeDelete = (
+  gatheringId: number,
+  challengeId: number,
+  queryClient: QueryClient,
+  inProgress: boolean,
+) => {
+  return useMutation({
+    mutationFn: () => deleteChallenge(challengeId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.gatheringChallenges(
+          gatheringId,
+          inProgress ? 'IN_PROGRESS' : 'CLOSED',
+        ),
+      });
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringChallenges(
+          gatheringId,
+          inProgress ? 'IN_PROGRESS' : 'CLOSED',
+        ),
+      });
+    },
+  });
+};
+
+export const useChallengeVerify = (
+  gatheringId: number,
+  challengeId: number,
+  queryClient: QueryClient,
+  imageUrl: string,
+) => {
+  return useMutation({
+    mutationFn: () => verificationChallenge(challengeId, imageUrl),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
+      });
+    },
+  });
+};
+
+export const useGatheringParticipate = (
+  gatheringId: number,
+  queryClient: QueryClient,
+) => {
+  return useMutation({
+    mutationFn: () => participantGathering(gatheringId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.gatheringStatus(gatheringId),
+      });
+    },
+    onSettled: () => {
+      console.log('hi');
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringStatus(gatheringId),
+      });
+    },
+  });
+};
+
+export const useGatheringCancel = (
+  gatheringId: number,
+  queryClient: QueryClient,
+) => {
+  return useMutation({
+    mutationFn: () => cancelGathering(gatheringId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.gatheringStatus(gatheringId),
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.gatheringStatus(gatheringId),
+      });
+    },
+  });
+};
+
+export function useCalendarChallenges(gatheringId: number) {
+  return useQuery({
+    queryKey: queryKeys.gatheringCalendar(gatheringId),
+    queryFn: async () => {
+      const data = await fetchAllChallengesByGatheringId(gatheringId);
+
+      const events =
+        data.content?.map((challenge: ChallengeType) => ({
+          id: challenge.gatheringId.toString(),
+          start: challenge.startDate,
+          end: challenge.endDate,
+          title: challenge.title,
+        })) ?? [];
+
+      return {
+        ...data,
+        events,
+      };
+    },
+  });
+}
