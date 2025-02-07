@@ -8,10 +8,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
 import normalizeGuestbook from '../utils/normalizeGuestbook';
 
-export default function GuestbooksList({
-  mainType,
-  subType,
-}: GuestbooksListProps) {
+export default function GuestbooksList(filters: GuestbooksListProps) {
   // React Query를 사용한 무한 스크롤 데이터 처리
   const {
     data,
@@ -21,8 +18,8 @@ export default function GuestbooksList({
     isLoading,
     error,
   } = useInfiniteQuery<GuestBooksList, Error>({
-    queryKey: ['guestBooks', mainType, subType],
-    queryFn: (context) => getGuestBooks({ mainType, subType }, context),
+    queryKey: ['guestBooks', filters],
+    queryFn: (context) => getGuestBooks(filters, context),
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.content.length > 0 ? allPages.length : undefined;
     },
@@ -48,7 +45,7 @@ export default function GuestbooksList({
 
   // 전체 데이터가 비어 있는 경우 처리
   if (data?.pages.every((page) => page.content.length === 0)) {
-    return <Null message="모임 정보가 없습니다." />;
+    return <Null message="방명록 정보가 없습니다." />;
   }
 
   return (
@@ -57,12 +54,12 @@ export default function GuestbooksList({
         const isLastPage = pageIndex === data.pages.length - 1; // 현재 페이지가 마지막 페이지인지 확인
 
         return (
-          <div key={`page-${pageIndex}`} className="col-span-1 md:col-span-2">
+          <div key={`page-${pageIndex}`}>
             {/* 데이터가 없고 마지막 페이지가 아닌 경우에만 Null 표시 */}
             {page.content.length === 0 && !isLastPage ? (
-              <Null message="이 페이지에는 모임 정보가 없습니다." />
+              <Null message="이 페이지에는 방명록 정보가 없습니다." />
             ) : (
-              <div className="space-y-6">
+              <div className="grid gap-6">
                 {page.content.map((guestbook) => {
                   const { guestbookData, gatheringData } =
                     normalizeGuestbook(guestbook);

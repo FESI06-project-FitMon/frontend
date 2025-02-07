@@ -55,7 +55,7 @@ export default function Card({ data }: CardProps) {
     <Link href={`/detail/${gatheringId}`} className="flex gap-5 items-center">
       <div className="relative min-w-[130px] object-cover h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
         {timeLeftText && (
-          <div className="absolute flex gap-1 top-1 right-0.5 bg-primary py-1 px-2 rounded-full text-sm z-10">
+          <div className="absolute flex gap-1 top-1.5 right-1 bg-primary py-1 px-2 rounded-full text-xs md:text-sm z-10">
             <Image
               src={'/assets/image/alarm.svg'}
               width={14}
@@ -76,7 +76,7 @@ export default function Card({ data }: CardProps) {
       <div className="flex flex-col gap-2 md:gap-2.5 w-full relative">
         <OpenStatus
           gatheringJoinedPeopleCount={participantCount}
-          className="absolute right-0 top-0"
+          className="absolute right-0 top-0 text-sm md:text-base"
         />
         <span className="text-primary font-normal text-xs md:text-base">
           {subType} | {mainLocation} {subLocation}
