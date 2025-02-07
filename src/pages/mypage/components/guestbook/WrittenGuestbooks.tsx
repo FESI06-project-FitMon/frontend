@@ -31,7 +31,7 @@ export default function WrittenGuestbooks({
     console.log('Delete clicked:', guestbook);
     updateState({ selectedGuestbook: guestbook, showDeleteAlert: true });
   };
-  
+
   const handleDeleteConfirm = async () => {
     if (state.selectedGuestbook) {
       console.log('Attempting to delete:', {
@@ -51,15 +51,15 @@ export default function WrittenGuestbooks({
       }
     }
   };
-  
-  
+
+
   const handleDeleteCancel = () => {
     setState((prev) => ({ ...prev, showDeleteAlert: false, selectedGuestbook: null }));
     showToast('삭제가 취소되었습니다.', 'caution');
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6 md:gap-8">
       {guestbooks.map((guestbook) => (
         <GuestbookCard
           key={guestbook.guestbookId}
