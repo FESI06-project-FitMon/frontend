@@ -7,6 +7,8 @@ import GatheringList from '@/pages/mypage/components/gathering-section/Gathering
 import { StateData } from '@/components/common/StateData';
 import { useState } from 'react';
 import { Metadata } from '@/components/common/Metadata';
+import FilterModal from '@/pages/main/components/FilterModal'; // 🚨 여기가 문제일 수 있음!
+
 
 export default function MyGathering() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -34,6 +36,7 @@ export default function MyGathering() {
           cancelActionType="gathering"
           currentPage={currentPage}
           onPageChange={setCurrentPage}
+          FilterModal={FilterModal}
         />
       )}
     </>

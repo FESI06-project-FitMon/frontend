@@ -7,6 +7,7 @@ import GatheringList from '@/pages/mypage/components/gathering-section/Gathering
 import { StateData } from '@/components/common/StateData';
 import { useState } from 'react';
 import { Metadata } from '@/components/common/Metadata';
+import FilterModal from '@/pages/main/components/FilterModal';
 
 export default function JoinGathering() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -37,6 +38,7 @@ export default function JoinGathering() {
           cancelActionType="participation"
           currentPage={currentPage}
           onPageChange={setCurrentPage}
+          FilterModal={FilterModal} 
         />
       )}
     </>
