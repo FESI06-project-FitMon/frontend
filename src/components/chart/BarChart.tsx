@@ -1,17 +1,22 @@
+import clsx from 'clsx';
+
 interface BarChartProps {
   total: number;
   value: number;
+  height?: string;
 }
-export default function BarChart({ total, value }: BarChartProps) {
+export default function BarChart({ total, value, height }: BarChartProps) {
   const valuePercentage = (value / total) * 100;
   const valueBarWidth = `${valuePercentage}%`;
   return (
     <div className="relative w-full">
       <div
         style={{ width: valueBarWidth }}
-        className="absolute bg-primary w-full z-20 h-[2px]"
+        className={clsx('absolute bg-primary w-full z-20', height || 'h-0.5')}
       />
-      <div className="absolute bg-dark-400 w-full z-10 h-[2px]" />
+      <div
+        className={clsx('absolute bg-dark-400 w-full z-10', height || 'h-0.5')}
+      />
     </div>
   );
 }
