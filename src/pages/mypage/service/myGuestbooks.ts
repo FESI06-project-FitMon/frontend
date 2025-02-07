@@ -1,7 +1,7 @@
 // myGuestbooks.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { guestbookService } from '@/pages/mypage/api/guestbookService';
-import { useGatheringChallenges, useParticipatingGatherings } from './myGathering';
+import {useParticipatingGatherings } from './myGathering';
 import { GatheringListItem, GuestbookRequest, PageResponse } from '@/types';
 
 export const GUESTBOOK_KEYS = {

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import Link from 'next/link';
 import ChallengeSection from './ChallengeSection';
 import MainCard from './MainCard';
