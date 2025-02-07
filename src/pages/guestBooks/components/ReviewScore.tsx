@@ -35,7 +35,12 @@ export default function ReviewScore({ mainType, subType }: ReviewScoreProps) {
       </div>
       <div className="flex flex-col justify-center items-center mt-8 md:mt-0 gap-1">
         {Object.entries(data?.ratingCounts || {}).map(([rating, count]) => (
-          <Score key={rating} rating={rating} rating_count={count} />
+          <Score
+            key={rating}
+            rating={rating}
+            rating_count={count}
+            totalCounts={data?.totalCounts || 0}
+          />
         ))}
       </div>
     </div>
