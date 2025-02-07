@@ -8,9 +8,8 @@ const nextConfig: NextConfig = {
   },
   pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js'],
 
-  swcMinify: true, // SWC 최적화 활성화
-  experimental: {
-    swcPlugins: [['next-remove-console', {}]], // 콘솔 제거 플러그인
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production', // ✅ Vercel 배포 시 console.log 자동 제거
   },
 };
 
