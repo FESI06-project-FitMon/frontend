@@ -177,7 +177,6 @@ export const useChallengeCreate = (
       };
 
       if (previousGatheringChallenges) {
-        console.log(newChallenges);
         queryClient.setQueryData(
           queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
           previousGatheringChallenges.pages?.length > 0
@@ -193,10 +192,6 @@ export const useChallengeCreate = (
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
       });
-    },
-
-    onError: (error: Error) => {
-      console.log(error);
     },
 
     onSettled: () => {
@@ -288,7 +283,6 @@ export const useGatheringParticipate = (
       });
     },
     onSettled: () => {
-      console.log('hi');
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringStatus(gatheringId),
       });

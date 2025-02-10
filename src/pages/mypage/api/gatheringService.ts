@@ -3,7 +3,9 @@ import { PageResponse, GatheringListItem, ChallengeType } from '@/types';
 
 export const gatheringService = {
   // 내가 참여한 모임 조회
-  getMyParticipatingGatherings: async (page = 0): Promise<PageResponse<GatheringListItem>> => {
+  getMyParticipatingGatherings: async (
+    page = 0,
+  ): Promise<PageResponse<GatheringListItem>> => {
     try {
       const response = await apiRequest<PageResponse<GatheringListItem>>({
         param: `api/v1/my-page/gatherings/participants?page=${page}&pageSize=10`,
@@ -18,8 +20,9 @@ export const gatheringService = {
       throw error;
     }
   },
-  getMyHostedGatherings: async (page = 0): Promise<PageResponse<GatheringListItem>> => {
-    console.log('Calling getMyHostedGatherings');
+  getMyHostedGatherings: async (
+    page = 0,
+  ): Promise<PageResponse<GatheringListItem>> => {
     const response = await apiRequest<PageResponse<GatheringListItem>>({
       param: `api/v1/my-page/gatherings/captain?page=${page}&pageSize=10`,
       method: 'get',
@@ -55,7 +58,11 @@ export const gatheringService = {
       throw error;
     }
   },
-  getChallenges: async (gatheringId: number, status = 'IN_PROGRESS', page = 0): Promise<PageResponse<ChallengeType>> => {
+  getChallenges: async (
+    gatheringId: number,
+    status = 'IN_PROGRESS',
+    page = 0,
+  ): Promise<PageResponse<ChallengeType>> => {
     try {
       const response = await apiRequest<PageResponse<ChallengeType>>({
         param: `api/v1/gatherings/${gatheringId}/challenges?status=${status}&page=${page}&pageSize=5`,

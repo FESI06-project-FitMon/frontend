@@ -11,11 +11,14 @@ import { AxiosError } from 'axios';
 import { GatheringDetailType } from '@/types';
 import { useGatheringDelete } from '../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
+import { StateData } from '@/components/common/StateData';
 
 export default function GatheringInformation({
   gathering,
+  isLoading,
 }: {
   gathering: GatheringDetailType;
+  isLoading: boolean;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
@@ -57,9 +60,7 @@ export default function GatheringInformation({
 
   if (!gathering) {
     return (
-      <div className="h-[480px]">
-        <p>Loading..</p>
-      </div>
+      <StateData emptyMessage="모임 정보가 없습니다." isLoading={isLoading} />
     );
   }
 
