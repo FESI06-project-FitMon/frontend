@@ -6,6 +6,8 @@ import { GatheringGuestbookResponse } from '../../dto/responseDto';
 import Guestbook from '../guestbook/GatheringGuestbookCard';
 import Null from '@/components/common/Null';
 import { useDetailStore } from '@/stores/useDetailStore';
+import useTabState from '@/hooks/useTabState';
+import { useRouter } from 'next/router';
 
 export default function GatheringGuestbook({
   gatheringId,
@@ -19,6 +21,12 @@ export default function GatheringGuestbook({
   if (isLoading) {
     <Null message="로딩중입니다." />;
   }
+
+  const router = useRouter();
+  const handleMoveGuestbookButton = () => {
+    sessionStorage.setItem('mypage_current_tab', 'guestbook');
+    router.push('/mypage');
+  };
 
   return (
     <div className="w-full mt-5 lg:mt-[43px] mb-10 md:mb-[87px] lg:mb-[130px] ">
@@ -36,7 +44,9 @@ export default function GatheringGuestbook({
         ) : (
           <div className="h-[250px] bg-dark-200 rounded-[10px] flex flex-col items-center justify-center">
             <h1>방명록이 존재하지 않습니다</h1>
-            <Link href={`/mypage`}>방명록 작성하러 가기 ✏️</Link>
+            <div onClick={handleMoveGuestbookButton}>
+              방명록 작성하러 가기 ✏️
+            </div>
           </div>
         )}
       </div>

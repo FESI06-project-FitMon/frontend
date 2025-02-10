@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import TagList from '../challenge/GatheringTag';
 import Popover from '@/components/common/Popover';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
@@ -33,6 +33,10 @@ export default function GatheringInformation({
   } = useQuery(GatheringQueries.getGatheringQuery(gatheringId));
   const { setCaptainStatus, setGatheringGuestbookCount } = useDetailStore();
 
+  useEffect(() => {
+    setCaptainStatus(gathering ? gathering.captainStatus : false);
+    setGatheringGuestbookCount(gathering ? gathering.guestBookCount : 0);
+  }, []);
   const { mutate } = useGatheringDelete(gatheringId, queryClient);
 
   const popoverItems = [
@@ -74,8 +78,6 @@ export default function GatheringInformation({
     );
   }
 
-  setCaptainStatus(gathering.captainStatus);
-  setGatheringGuestbookCount(gathering.guestBookCount);
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">

@@ -314,15 +314,14 @@ export function useCalendarChallenges(gatheringId: number) {
     queryKey: queryKeys.gatheringCalendar(gatheringId),
     queryFn: async () => {
       const data = await fetchAllChallengesByGatheringId(gatheringId);
-
       const events =
-        data.content?.map((challenge: ChallengeType) => ({
+        data?.map((challenge: ChallengeType) => ({
           id: challenge.gatheringId.toString(),
           start: challenge.startDate,
           end: challenge.endDate,
           title: challenge.title,
+          backgroundColor: '#FF2140',
         })) ?? [];
-
       return {
         ...data,
         events,

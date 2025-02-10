@@ -8,7 +8,7 @@ interface DetailStates {
   setGatheringGuestbookCount: (count: number) => void;
 }
 export const useDetailStore = create<DetailStates>((set) => ({
-  currentTab: 'string',
+  currentTab: 'challenge',
   setCurrentTab: (currentTab: string) => set({ currentTab: currentTab }),
   captainStatus: false,
   setCaptainStatus: (captainStatus: boolean) =>
