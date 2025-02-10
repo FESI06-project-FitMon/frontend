@@ -36,10 +36,13 @@ export function useGatheringList(type: 'hosted' | 'participating') {
     searchDate: ''
   });
 
-  // type에 따라 다른 query hook 사용
-  const { data: rawGatheringsData, isLoading } = type === 'hosted'
-    ? useMyHostedGatherings(currentPage)
-    : useParticipatingGatherings(currentPage);
+  // 두 훅을 모두 호출하고 type에 따라 데이터 선택
+  const hostedResult = useMyHostedGatherings(currentPage);
+  const participatingResult = useParticipatingGatherings(currentPage);
+
+  // type에 따라 적절한 데이터와 로딩 상태 선택
+  const rawGatheringsData = type === 'hosted' ? hostedResult.data : participatingResult.data;
+  const isLoading = type === 'hosted' ? hostedResult.isLoading : participatingResult.isLoading;
 
   const gatheringsData = rawGatheringsData ? sortGatherings(rawGatheringsData, activeFilters) : undefined;
   const { data: gatheringChallenges = {} } = useGatheringChallenges(gatheringsData, type === 'hosted');
