@@ -153,7 +153,7 @@ export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
 
           {/* 필터 버튼 */}
           <div
-            className="min-w-[18px] lg:min-w-16 flex gap-2.5 text-right text-sm md:text-base justify-end items-center"
+            className="min-w-[18px] lg:min-w-16 flex gap-2.5 text-right text-sm md:text-base justify-end items-center cursor-pointer"
             onClick={() => setShowFilterModal(true)}
           >
             <span className="hidden lg:inline-block">필터</span>
@@ -177,10 +177,7 @@ export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
 
         {/* 방명록 점수 */}
         <div className="mt-5 lg:mt-[30px]">
-          <ReviewScore
-            mainType={filters.mainType as MainType}
-            subType={filters.subType ?? ''}
-          />
+          <ReviewScore {...filters} />
         </div>
         {/* 방명록 리스트 */}
         <div className="mt-5 lg:mt-10 pb-20">

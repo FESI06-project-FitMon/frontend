@@ -17,7 +17,6 @@ interface GuestbookProps {
 }
 
 export default function Guestbook({ guestbook }: GuestbookProps) {
-  console.log('guestbook', guestbook);
   return (
     <div className="flex flex-col w-full  bg-dark-200 rounded-[10px] gap-5 px-5 lg:px-[30px] py-[34px] md:py-[30px] ">
       <div className="flex justify-between">

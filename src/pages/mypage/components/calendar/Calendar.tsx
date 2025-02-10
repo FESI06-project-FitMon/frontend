@@ -1,10 +1,20 @@
 // CalendarTab.tsx
-import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useRouter } from 'next/router';
 import FullCalendar from '@fullcalendar/react';
 import { EventContentArg, DayCellContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useCalendarGatherings, EVENT_TYPES, getEventColor } from '../../service/myCalendar';
+import {
+  useCalendarGatherings,
+  EVENT_TYPES,
+  getEventColor,
+} from '../../service/myCalendar';
 import { StateData } from '@/components/common/StateData';
 import { ColorLegend } from './ColorLegend';
 import { EventContent } from './EventContent';
@@ -41,12 +51,15 @@ export default function CalendarTab() {
     }
   }, []);
 
-  const handleEventClick = useCallback((arg: { event: { id: string } }) => {
-    const gatheringId = arg.event.id;
-    if (gatheringId) {
-      router.push(`/detail/${gatheringId}`);
-    }
-  }, [router]);
+  const handleEventClick = useCallback(
+    (arg: { event: { id: string } }) => {
+      const gatheringId = arg.event.id;
+      if (gatheringId) {
+        router.push(`/detail/${gatheringId}`);
+      }
+    },
+    [router],
+  );
 
   const renderEventContent = useCallback((arg: EventContentArg) => {
     return <EventContent event={arg.event} />;
@@ -73,6 +86,7 @@ export default function CalendarTab() {
     return <StateData isLoading={isLoading} emptyMessage="일정이 없습니다." />;
   }
 
+  console.log(calendarData);
   return (
     <>
       <Metadata
@@ -90,7 +104,11 @@ export default function CalendarTab() {
               type="button"
               aria-label="Previous month"
             >
-              <img src="/assets/image/toggle.svg" alt="prev" className="w-6 h-6 rotate-180" />
+              <img
+                src="/assets/image/toggle.svg"
+                alt="prev"
+                className="w-6 h-6 rotate-180"
+              />
             </button>
             <h2 className="text-white text-lg font-bold">{currentTitle}</h2>
             <button
@@ -99,7 +117,11 @@ export default function CalendarTab() {
               type="button"
               aria-label="Next month"
             >
-              <img src="/assets/image/toggle.svg" alt="next" className="w-6 h-6" />
+              <img
+                src="/assets/image/toggle.svg"
+                alt="next"
+                className="w-6 h-6"
+              />
             </button>
           </div>
 
@@ -110,7 +132,7 @@ export default function CalendarTab() {
               initialView="dayGridMonth"
               events={events}
               locale="en"
-              dayMaxEvents={false}  // "more" 링크 대신 모든 이벤트 표시
+              dayMaxEvents={false} // "more" 링크 대신 모든 이벤트 표시
               height="auto"
               eventDisplay="block"
               editable={false}
@@ -128,7 +150,9 @@ export default function CalendarTab() {
             />
           </div>
 
-          <style jsx global>{calendarStyles}</style>
+          <style jsx global>
+            {calendarStyles}
+          </style>
         </div>
       </div>
     </>

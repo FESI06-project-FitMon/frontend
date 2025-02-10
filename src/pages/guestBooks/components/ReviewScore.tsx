@@ -1,18 +1,10 @@
-import { MainType } from '@/constants/MainList';
-import Score from './Score';
 import useGuestbookRating from '../api/getRating';
 import Heart from '@/components/common/Heart';
+import { GuestbooksListProps } from '../api/getGuestBooks';
+import Score from './Score';
 
-interface ReviewScoreProps {
-  mainType: MainType;
-  subType: string;
-}
-
-export default function ReviewScore({ mainType, subType }: ReviewScoreProps) {
-  const { isLoading, isError, data } = useGuestbookRating({
-    mainType,
-    subType,
-  });
+export default function ReviewScore(filters: GuestbooksListProps) {
+  const { isLoading, isError, data } = useGuestbookRating(filters);
 
   if (isLoading) {
     return <div>Loading...</div>;

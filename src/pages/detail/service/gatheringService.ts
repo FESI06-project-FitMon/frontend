@@ -14,12 +14,7 @@ import {
   ChallengeCreateRequest,
   GatheringUpdateRequest,
 } from '../dto/requestDto';
-import {
-  cancelGathering,
-  deleteGathering,
-  participantGathering,
-  updateGathering,
-} from '../api/gatheringApi';
+import { deleteGathering, updateGathering } from '../api/gatheringApi';
 import {
   createChallenge,
   deleteChallenge,
@@ -177,7 +172,6 @@ export const useChallengeCreate = (
       };
 
       if (previousGatheringChallenges) {
-        console.log(newChallenges);
         queryClient.setQueryData(
           queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
           previousGatheringChallenges.pages?.length > 0
@@ -193,10 +187,6 @@ export const useChallengeCreate = (
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
       });
-    },
-
-    onError: (error: Error) => {
-      console.log(error);
     },
 
     onSettled: () => {
@@ -276,59 +266,19 @@ export const useChallengeVerify = (
   });
 };
 
-export const useGatheringParticipate = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => participantGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      console.log('hi');
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-  });
-};
-
-export const useGatheringCancel = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => cancelGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-  });
-};
-
 export function useCalendarChallenges(gatheringId: number) {
   return useQuery({
     queryKey: queryKeys.gatheringCalendar(gatheringId),
     queryFn: async () => {
       const data = await fetchAllChallengesByGatheringId(gatheringId);
-
       const events =
-        data.content?.map((challenge: ChallengeType) => ({
+        data?.map((challenge: ChallengeType) => ({
           id: challenge.gatheringId.toString(),
           start: challenge.startDate,
           end: challenge.endDate,
           title: challenge.title,
+          backgroundColor: '#FF2140',
         })) ?? [];
-
       return {
         ...data,
         events,

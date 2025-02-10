@@ -6,10 +6,10 @@ import useLayoutStore from '@/stores/useLayoutStore';
 import UserProfile from './UserProfile';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import getMe from '@/pages/login/service/getMe';
+import getMe from '@/pages/login/api/getMe';
 import Alert from '../dialog/Alert';
 import Loading from '../dialog/Loading';
-import { useLogoutMutation } from '@/pages/login/service/postLogout';
+import { useLogoutMutation } from '@/pages/login/api/postLogout';
 
 export default function Navigation() {
   const router = useRouter();
@@ -54,8 +54,6 @@ export default function Navigation() {
   // 에러 발생 시 로그아웃 처리
   useEffect(() => {
     if (isError) {
-      localStorage.setItem('isLogin', 'false');
-      setIsLogin(false); // 에러가 발생하면 로그인 상태 초기화
       setShowConfirmAlert(true);
     }
   }, [isError]);
@@ -66,7 +64,7 @@ export default function Navigation() {
       <Alert
         isOpen={showConfirmAlert}
         type="confirm"
-        message="오류가 발생했습니다. 다시 로그인해주세요."
+        message="세션이 만료되었습니다. 다시 로그인해주세요."
         onConfirm={() => {
           setShowConfirmAlert(false);
           logoutMutation();
