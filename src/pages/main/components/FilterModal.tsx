@@ -12,12 +12,14 @@ interface FilterModalProps {
   setShowFilterModal: () => void;
   filters: GatheringListParams;
   setFilters: (filters: GatheringListParams) => void;
+  isMyPage?: boolean;
 }
 
 export default function FilterModal({
   setShowFilterModal,
   filters,
   setFilters,
+  isMyPage,
 }: FilterModalProps) {
   const buttonActive = 'bg-dark-600';
 
@@ -30,9 +32,9 @@ export default function FilterModal({
 
   const placeGuItems: SelectItem[] = localFilters.mainLocation
     ? cityData[localFilters.mainLocation]?.map((gu) => ({
-        value: gu.value,
-        label: gu.label,
-      })) || []
+      value: gu.value,
+      label: gu.label,
+    })) || []
     : [];
 
   const resetSort = () =>
@@ -61,12 +63,11 @@ export default function FilterModal({
         <h2 className="mb-[10px] text-lg font-semibold">모임 정렬</h2>
         <div className="grid grid-cols-2 gap-2.5 items-end text-[15px]">
           <button
-            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'deadline' &&
-              localFilters.sortDirection === 'ASC'
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${localFilters.sortBy === 'deadline' &&
+                localFilters.sortDirection === 'ASC'
                 ? buttonActive
                 : ''
-            }`}
+              }`}
             onClick={() =>
               setLocalFilters({
                 ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
@@ -79,12 +80,11 @@ export default function FilterModal({
           </button>
 
           <button
-            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'deadline' &&
-              localFilters.sortDirection === 'DESC'
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${localFilters.sortBy === 'deadline' &&
+                localFilters.sortDirection === 'DESC'
                 ? buttonActive
                 : ''
-            }`}
+              }`}
             onClick={() =>
               setLocalFilters({
                 ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
@@ -97,12 +97,11 @@ export default function FilterModal({
           </button>
 
           <button
-            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'participants' &&
-              localFilters.sortDirection === 'ASC'
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${localFilters.sortBy === 'participants' &&
+                localFilters.sortDirection === 'ASC'
                 ? buttonActive
                 : ''
-            }`}
+              }`}
             onClick={() =>
               setLocalFilters({
                 ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
@@ -115,12 +114,11 @@ export default function FilterModal({
           </button>
 
           <button
-            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${
-              localFilters.sortBy === 'participants' &&
-              localFilters.sortDirection === 'DESC'
+            className={`py-2 px-4 rounded-[10px] transition-colors bg-dark-400 ${localFilters.sortBy === 'participants' &&
+                localFilters.sortDirection === 'DESC'
                 ? buttonActive
                 : ''
-            }`}
+              }`}
             onClick={() =>
               setLocalFilters({
                 ...localFilters, // ✅ filters가 아니라 localFilters를 업데이트
@@ -150,85 +148,90 @@ export default function FilterModal({
         </div>
       </div>
 
-      {/* 장소 선택 */}
-      <div className="relative mt-[20px]">
-        <h2 className="mb-[10px]">장소</h2>
-        <div className="flex justify-start items-end ">
-          <Select
-            items={placeSiItems}
-            selectedItem={localFilters.mainLocation || ''}
-            setSelectedItem={handleSiChange}
-            className="mr-[10px] w-[175px]"
-            currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
-            width="200px"
-            height="47px"
-          />
-          <Select
-            items={placeGuItems}
-            selectedItem={localFilters.subLocation || ''}
-            setSelectedItem={(value) =>
-              setLocalFilters({ ...localFilters, subLocation: value })
-            }
-            currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
-            className="mr-[10px] w-[175px]"
-            width="200px"
-            height="47px"
-          />
-          {/* 초기화 버튼 */}
-          <div className="flex md:justify-end mt-2 ml-2">
-            <button
-              className="flex items-center gap-1 text-sm text-dark-700 transition-all"
-              onClick={resetLocation}
-            >
-              초기화
-              <Image
-                src={'/assets/image/arrow-clockwise.svg'}
-                aria-readonly
-                alt="초기화 이미지"
-                width={14}
-                height={14}
+      {/* 장소와 날짜는 마이페이지가 아닐 때만 표시 */}
+      {!isMyPage && (
+        <>
+          {/* 장소 선택 */}
+          <div className="relative mt-[20px]">
+            <h2 className="mb-[10px]">장소</h2>
+            <div className="flex justify-start items-end ">
+              <Select
+                items={placeSiItems}
+                selectedItem={localFilters.mainLocation || ''}
+                setSelectedItem={handleSiChange}
+                className="mr-[10px] w-[175px]"
+                currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_SI}
+                width="200px"
+                height="47px"
               />
-            </button>
+              <Select
+                items={placeGuItems}
+                selectedItem={localFilters.subLocation || ''}
+                setSelectedItem={(value) =>
+                  setLocalFilters({ ...localFilters, subLocation: value })
+                }
+                currentSelectType={SelectType.DETAIL_EDIT_MODAL_PLACE_GU}
+                className="mr-[10px] w-[175px]"
+                width="200px"
+                height="47px"
+              />
+              {/* 초기화 버튼 */}
+              <div className="flex md:justify-end mt-2 ml-2">
+                <button
+                  className="flex items-center gap-1 text-sm text-dark-700 transition-all"
+                  onClick={resetLocation}
+                >
+                  초기화
+                  <Image
+                    src={'/assets/image/arrow-clockwise.svg'}
+                    aria-readonly
+                    alt="초기화 이미지"
+                    width={14}
+                    height={14}
+                  />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* 날짜 선택 */}
-      <div className="relative mt-[20px]">
-        <h2 className="mb-[10px]">날짜 선택</h2>
-        <div className="flex items-end">
-          <DatePickerCalendar
-            className="w-[245px]"
-            height="47px"
-            selectedDate={
-              localFilters.searchDate ? new Date(localFilters.searchDate) : null
-            }
-            setSelectedDate={(date) =>
-              setLocalFilters({
-                ...localFilters,
-                searchDate: date ? date.toISOString().split('T')[0] : '',
-              })
-            }
-            minDate={null}
-          />
-          {/* 초기화 버튼 */}
-          <div className="flex justify-end ml-4">
-            <button
-              className="flex items-center gap-1 text-sm text-dark-700 transition-all"
-              onClick={resetDate}
-            >
-              초기화
-              <Image
-                src={'/assets/image/arrow-clockwise.svg'}
-                aria-readonly
-                alt="초기화 이미지"
-                width={14}
-                height={14}
+          {/* 날짜 선택 */}
+          <div className="relative mt-[20px]">
+            <h2 className="mb-[10px]">날짜 선택</h2>
+            <div className="flex items-end">
+              <DatePickerCalendar
+                className="w-[245px]"
+                height="47px"
+                selectedDate={
+                  localFilters.searchDate ? new Date(localFilters.searchDate) : null
+                }
+                setSelectedDate={(date) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    searchDate: date ? date.toISOString().split('T')[0] : '',
+                  })
+                }
+                minDate={null}
               />
-            </button>
+              {/* 초기화 버튼 */}
+              <div className="flex justify-end ml-4">
+                <button
+                  className="flex items-center gap-1 text-sm text-dark-700 transition-all"
+                  onClick={resetDate}
+                >
+                  초기화
+                  <Image
+                    src={'/assets/image/arrow-clockwise.svg'}
+                    aria-readonly
+                    alt="초기화 이미지"
+                    width={14}
+                    height={14}
+                  />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* 버튼 영역 */}
       <div className="flex justify-between mt-6 gap-2.5">
