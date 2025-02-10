@@ -1,5 +1,6 @@
 import apiRequest from '@/utils/apiRequest';
 import { useQuery } from '@tanstack/react-query';
+import { GuestbooksListProps } from './getGuestBooks';
 
 export interface RatingCounts {
   '5점': number;
@@ -15,18 +16,19 @@ export interface getRatingResponse {
   totalCounts: number;
 }
 
-export interface ReviewScoreProps {
-  mainType: string;
-  subType: string;
-}
-
-async function getRating({
-  mainType,
-  subType,
-}: ReviewScoreProps): Promise<getRatingResponse> {
+async function getRating(
+  filters: GuestbooksListProps,
+): Promise<getRatingResponse> {
   const queryParams = {
-    ...(mainType !== '전체' && { mainType }),
-    ...(subType !== '전체' && { subType }),
+    ...(filters.mainType && filters.mainType !== '전체'
+      ? { mainType: filters.mainType }
+      : {}),
+    ...(filters.subType && filters.subType !== '전체'
+      ? { subType: filters.subType }
+      : {}),
+    ...(filters.mainLocation && { mainLocation: filters.mainLocation }),
+    ...(filters.subLocation && { subLocation: filters.subLocation }),
+    ...(filters.searchDate && { searchDate: filters.searchDate }),
   };
 
   const param = `/api/v1/guestbooks/scores?${new URLSearchParams(queryParams).toString()}`;
@@ -35,12 +37,9 @@ async function getRating({
   });
 }
 
-export default function useGuestbookRating({
-  mainType,
-  subType,
-}: ReviewScoreProps) {
+export default function useGuestbookRating(filters: GuestbooksListProps) {
   return useQuery<getRatingResponse>({
-    queryKey: ['guestbookScores', mainType, subType],
-    queryFn: () => getRating({ mainType, subType }),
+    queryKey: ['guestbookScores', filters],
+    queryFn: () => getRating(filters),
   });
 }
