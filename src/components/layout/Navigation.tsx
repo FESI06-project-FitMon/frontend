@@ -54,8 +54,6 @@ export default function Navigation() {
   // 에러 발생 시 로그아웃 처리
   useEffect(() => {
     if (isError) {
-      localStorage.setItem('isLogin', 'false');
-      setIsLogin(false); // 에러가 발생하면 로그인 상태 초기화
       setShowConfirmAlert(true);
     }
   }, [isError]);
