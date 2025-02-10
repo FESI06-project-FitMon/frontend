@@ -14,12 +14,7 @@ import {
   ChallengeCreateRequest,
   GatheringUpdateRequest,
 } from '../dto/requestDto';
-import {
-  cancelGathering,
-  deleteGathering,
-  participantGathering,
-  updateGathering,
-} from '../api/gatheringApi';
+import { deleteGathering, updateGathering } from '../api/gatheringApi';
 import {
   createChallenge,
   deleteChallenge,
@@ -266,44 +261,6 @@ export const useChallengeVerify = (
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
-      });
-    },
-  });
-};
-
-export const useGatheringParticipate = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => participantGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-  });
-};
-
-export const useGatheringCancel = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => cancelGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
       });
     },
   });

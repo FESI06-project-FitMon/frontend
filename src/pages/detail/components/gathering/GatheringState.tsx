@@ -11,15 +11,11 @@ import {
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import {
-  useGatheringCancel,
-  useGatheringParticipate,
-  useGatheringStatus,
-} from '../../service/gatheringService';
+import { useGatheringStatus } from '../../service/gatheringService';
 import Null from '@/components/common/Null';
 import useMemberStore from '@/stores/useMemberStore';
 import { useRouter } from 'next/router';
-import { useQueryClient } from '@tanstack/react-query';
+import { cancelGathering, participantGathering } from '../../api/gatheringApi';
 
 export default function GatheringState({
   gatheringId,
@@ -44,16 +40,7 @@ export default function GatheringState({
 
   const { isLogin } = useMemberStore();
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { mutate: participantGathering } = useGatheringParticipate(
-    gatheringId,
-    queryClient,
-  );
 
-  const { mutate: cancelGathering } = useGatheringCancel(
-    gatheringId,
-    queryClient,
-  );
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = async () => {
     if (!isLogin) {
@@ -64,11 +51,11 @@ export default function GatheringState({
 
     try {
       if (isParticipant) {
-        cancelGathering();
+        await cancelGathering(gatheringId);
         showToast('참여취소 완료되었습니다.', 'check');
         setIsParticipant(false);
       } else {
-        participantGathering();
+        await participantGathering(gatheringId);
         showToast('참여하기 완료되었습니다.', 'check');
         setIsParticipant(true);
       }
