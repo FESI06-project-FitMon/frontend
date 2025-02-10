@@ -1,4 +1,4 @@
-import { useLogoutMutation } from '@/pages/login/service/postLogout';
+import { useLogoutMutation } from '@/pages/login/api/postLogout';
 import useLayoutStore from '@/stores/useLayoutStore';
 import useMemberStore from '@/stores/useMemberStore';
 import Image from 'next/image';
