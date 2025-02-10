@@ -6,7 +6,7 @@ import TextArea from '@/components/common/TextArea';
 import uploadImage from '@/utils/uploadImage';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
-import { useChallengeCreate } from '../service/gatheringService';
+import { useChallengeCreate } from '../../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
 import { GatheringDetailType } from '@/types';
 

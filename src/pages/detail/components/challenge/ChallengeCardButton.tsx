@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { AxiosError } from 'axios';
 import useMemberStore from '@/stores/useMemberStore';
 import { useRouter } from 'next/router';
-import { participantChallenge } from '../api/challengeApi';
+import { participantChallenge } from '../../api/challengeApi';
 
 export default function ChallengeCardButton({
   inProgress,

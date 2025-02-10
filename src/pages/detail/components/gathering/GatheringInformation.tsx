@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import TagList from './tag';
+import TagList from '../challenge/GatheringTag';
 import Popover from '@/components/common/Popover';
 import { useState } from 'react';
 import Alert from '@/components/dialog/Alert';
@@ -8,23 +8,33 @@ import GatheringEditModal from './GatheringEditModal';
 import getDatePart from '@/utils/getDatePart';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';
-import { GatheringDetailType } from '@/types';
-import { useGatheringDelete } from '../service/gatheringService';
-import { useQueryClient } from '@tanstack/react-query';
+import { useGatheringDelete } from '../../service/gatheringService';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { StateData } from '@/components/common/StateData';
+import GatheringState from './GatheringState';
+import GatheringDetailTab from './GatheringDetailTab';
+import { GatheringQueries } from '../../service/gatheringQueries';
+import { useDetailStore } from '@/stores/useDetailStore';
 
 export default function GatheringInformation({
-  gathering,
-  isLoading,
+  gatheringId,
 }: {
-  gathering: GatheringDetailType;
-  isLoading: boolean;
+  gatheringId: number;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const { mutate } = useGatheringDelete(gathering.gatheringId, queryClient);
+
+  const {
+    data: gathering,
+    error,
+    isLoading,
+  } = useQuery(GatheringQueries.getGatheringQuery(gatheringId));
+  const { setCaptainStatus, setGatheringGuestbookCount } = useDetailStore();
+
+  const { mutate } = useGatheringDelete(gatheringId, queryClient);
+
   const popoverItems = [
     {
       id: 'edit',
@@ -58,12 +68,14 @@ export default function GatheringInformation({
     setShowSelectAlert(false);
   };
 
-  if (!gathering) {
+  if (!gathering || error) {
     return (
       <StateData emptyMessage="모임 정보가 없습니다." isLoading={isLoading} />
     );
   }
 
+  setCaptainStatus(gathering.captainStatus);
+  setGatheringGuestbookCount(gathering.guestBookCount);
   return (
     <div id="gathering-information" className="w-full">
       <div id="type-information">
@@ -166,6 +178,15 @@ export default function GatheringInformation({
           </div>
         </div>
       </div>
+
+      <GatheringState
+        participantStatus={gathering.participantStatus}
+        gatheringId={gathering.gatheringId}
+      />
+      <GatheringDetailTab
+        gathering={gathering}
+        captainStatus={gathering.captainStatus}
+      />
     </div>
   );
 }

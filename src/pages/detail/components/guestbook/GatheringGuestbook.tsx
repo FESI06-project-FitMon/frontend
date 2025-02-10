@@ -1,21 +1,21 @@
 import Pagination from '@/components/common/Pagination';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useGatheringGuestbooks } from '../service/gatheringService';
-import { GatheringGuestbookResponse } from '../dto/responseDto';
-import Guestbook from './GatheringGuestbookCard';
+import { useGatheringGuestbooks } from '../../service/gatheringService';
+import { GatheringGuestbookResponse } from '../../dto/responseDto';
+import Guestbook from '../guestbook/GatheringGuestbookCard';
 import Null from '@/components/common/Null';
+import { useDetailStore } from '@/stores/useDetailStore';
 
 export default function GatheringGuestbook({
-  gatheringGuestbookCount,
   gatheringId,
 }: {
-  gatheringGuestbookCount: number;
   gatheringId: number;
 }) {
   const [page, setPage] = useState(0);
 
   const { data, isLoading } = useGatheringGuestbooks(gatheringId, page);
+  const { gatheringGuestbookCount } = useDetailStore();
   if (isLoading) {
     <Null message="로딩중입니다." />;
   }
