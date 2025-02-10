@@ -271,44 +271,6 @@ export const useChallengeVerify = (
   });
 };
 
-export const useGatheringParticipate = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => participantGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-  });
-};
-
-export const useGatheringCancel = (
-  gatheringId: number,
-  queryClient: QueryClient,
-) => {
-  return useMutation({
-    mutationFn: () => cancelGathering(gatheringId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.gatheringStatus(gatheringId),
-      });
-    },
-  });
-};
-
 export function useCalendarChallenges(gatheringId: number) {
   return useQuery({
     queryKey: queryKeys.gatheringCalendar(gatheringId),
