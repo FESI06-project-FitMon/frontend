@@ -20,8 +20,10 @@ interface GatheringListProps {
     setShowFilterModal: () => void;
     filters: GatheringListParams;
     setFilters: (filters: GatheringListParams) => void;
+    isMyPage?: boolean;  // 여기에 추가
   }>;
   onFilterChange: (filters: GatheringListParams) => void;
+  isMyPage?: boolean;
 }
 
 export default function GatheringList({
@@ -33,6 +35,7 @@ export default function GatheringList({
   onPageChange,
   FilterModal,
   onFilterChange,
+  isMyPage,
 }: GatheringListProps) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [localFilters, setLocalFilters] = useState<GatheringListParams>({
@@ -97,6 +100,7 @@ export default function GatheringList({
           setShowFilterModal={() => setShowFilterModal(false)}
           filters={localFilters}
           setFilters={handleFilterChange}
+          isMyPage={isMyPage}
         />
       )}
     </>

@@ -9,8 +9,8 @@ const sortGatherings = (data: PageResponse<GatheringListItem>, activeFilters: Ga
   const sortedContent = [...data.content].sort((a, b) => {
     if (activeFilters.sortBy === 'deadline') {
       return activeFilters.sortDirection === 'ASC'
-        ? new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
-        : new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
+        ? new Date(b.endDate).getTime() - new Date(a.endDate).getTime()  // 순서 변경
+        : new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
     }
     if (activeFilters.sortBy === 'participants') {
       return activeFilters.sortDirection === 'ASC'

@@ -41,6 +41,7 @@ export default function JoinGathering() {
           onPageChange={setCurrentPage}
           FilterModal={FilterModal}
           onFilterChange={handleFilterChange}
+          isMyPage={true} 
         />
       )}
     </>

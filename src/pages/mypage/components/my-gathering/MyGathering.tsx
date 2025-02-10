@@ -41,6 +41,7 @@ export default function MyGathering() {
           onPageChange={setCurrentPage}
           FilterModal={FilterModal}
           onFilterChange={handleFilterChange}
+          isMyPage={true} 
         />
       )}
     </>
