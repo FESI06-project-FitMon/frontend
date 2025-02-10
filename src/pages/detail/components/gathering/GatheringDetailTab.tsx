@@ -1,20 +1,17 @@
 import Tab from '@/components/common/Tab';
 import Modal from '@/components/dialog/Modal';
-import ChallengeAddModal from './ChallengeAddModal';
+import ChallengeAddModal from '../challenge/ChallengeAddModal';
 import { useState } from 'react';
 import { GatheringDetailType } from '@/types';
+import { useDetailStore } from '@/stores/useDetailStore';
 
 interface GatheringDetailTabProps {
   gathering: GatheringDetailType;
   captainStatus: boolean;
-  currentTab: string;
-  setCurrentTab: (tab: string) => void;
 }
 export default function GatheringDetailTab({
   gathering,
   captainStatus,
-  currentTab,
-  setCurrentTab,
 }: GatheringDetailTabProps) {
   const [showModal, setShowModal] = useState(false);
   const gatheringTabItems = [
@@ -28,6 +25,7 @@ export default function GatheringDetailTab({
     },
   ];
 
+  const { currentTab, setCurrentTab } = useDetailStore();
   // 챌린지 추가 버튼
   const handleChallengeAddButtonClick = () => {
     setShowModal(true);

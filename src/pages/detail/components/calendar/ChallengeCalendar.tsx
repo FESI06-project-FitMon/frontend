@@ -9,14 +9,13 @@ import React, {
 import FullCalendar from '@fullcalendar/react';
 import { EventContentArg, DayCellContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { EVENT_TYPES, getEventColor } from '../../../mypage/service/myCalendar';
 import { StateData } from '@/components/common/StateData';
-import { ColorLegend } from './ColorLegend';
 import { EventContent } from './EventContent';
 import { DayCell, DayHeader } from './CalendarCell';
 import { calendarStyles } from './calendarStyles';
 import { Metadata } from '@/components/common/Metadata';
 import { useCalendarChallenges } from '../../service/gatheringService';
+import Image from 'next/image';
 
 export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
   const { data: calendarData, isLoading } = useCalendarChallenges(gatheringId);
@@ -58,6 +57,9 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
     return <DayHeader date={arg.date} />;
   }, []);
 
+  const renderMoreLinkContent = useCallback((arg: DayCellContentArg) => {
+    return <div>{arg.dayNumberText}</div>;
+  }, []);
   // 이벤트 데이터 메모이제이션
   const events = useMemo(() => {
     return calendarData ?? [];
@@ -74,13 +76,11 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
   return (
     <>
       <Metadata
-        title="모임 캘린더"
-        description="fitmon에서 참여 중인 모든 모임 일정을 캘린더로 한눈에 확인하세요."
+        title="챌린지 캘린더"
+        description="해당 모임의 챌린지들을 캘린더로 한눈에 확인하세요."
       />
       <div className="space-y-6 pb-[50px]">
         <div className="bg-dark-300 rounded-lg p-4">
-          <ColorLegend eventTypes={EVENT_TYPES} getColor={getEventColor} />
-
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={handlePrev}
@@ -88,10 +88,12 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
               type="button"
               aria-label="Previous month"
             >
-              <img
+              <Image
                 src="/assets/image/toggle.svg"
                 alt="prev"
                 className="w-6 h-6 rotate-180"
+                width={24}
+                height={24}
               />
             </button>
             <h2 className="text-white text-lg font-bold">{currentTitle}</h2>
@@ -101,10 +103,12 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
               type="button"
               aria-label="Next month"
             >
-              <img
+              <Image
                 src="/assets/image/toggle.svg"
                 alt="next"
                 className="w-6 h-6"
+                width={24}
+                height={24}
               />
             </button>
           </div>
@@ -116,7 +120,7 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
               initialView="dayGridMonth"
               events={events}
               locale="en"
-              dayMaxEvents={false} // "more" 링크 대신 모든 이벤트 표시
+              dayMaxEvents={5} // "more" 링크 대신 모든 이벤트 표시
               height="auto"
               eventDisplay="block"
               editable={false}
@@ -130,6 +134,7 @@ export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
                 `calendar-cell ${isToday ? 'today' : ''}`
               }
               datesSet={updateTitle}
+              moreLinkContent={renderMoreLinkContent}
             />
           </div>
 
