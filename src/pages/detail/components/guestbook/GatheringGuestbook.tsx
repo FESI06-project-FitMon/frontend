@@ -1,12 +1,10 @@
 import Pagination from '@/components/common/Pagination';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useGatheringGuestbooks } from '../../service/gatheringService';
 import { GatheringGuestbookResponse } from '../../dto/responseDto';
 import Guestbook from '../guestbook/GatheringGuestbookCard';
 import Null from '@/components/common/Null';
 import { useDetailStore } from '@/stores/useDetailStore';
-import useTabState from '@/hooks/useTabState';
 import { useRouter } from 'next/router';
 
 export default function GatheringGuestbook({
