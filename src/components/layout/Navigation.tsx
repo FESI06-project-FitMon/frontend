@@ -66,7 +66,7 @@ export default function Navigation() {
       <Alert
         isOpen={showConfirmAlert}
         type="confirm"
-        message="오류가 발생했습니다. 다시 로그인해주세요."
+        message="세션이 만료되었습니다. 다시 로그인해주세요."
         onConfirm={() => {
           setShowConfirmAlert(false);
           logoutMutation();
