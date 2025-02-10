@@ -5,7 +5,7 @@ import { ChallengeProps } from '@/types';
 import ChallengeCardButton from './ChallengeCardButton';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';
-import { useChallengeDelete } from '../service/gatheringService';
+import { useChallengeDelete } from '../../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function GatheringChallengeCard({

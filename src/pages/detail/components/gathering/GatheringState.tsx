@@ -15,7 +15,7 @@ import {
   useGatheringCancel,
   useGatheringParticipate,
   useGatheringStatus,
-} from '../service/gatheringService';
+} from '../../service/gatheringService';
 import Null from '@/components/common/Null';
 import useMemberStore from '@/stores/useMemberStore';
 import { useRouter } from 'next/router';

@@ -177,7 +177,6 @@ export const useChallengeCreate = (
       };
 
       if (previousGatheringChallenges) {
-        console.log(newChallenges);
         queryClient.setQueryData(
           queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
           previousGatheringChallenges.pages?.length > 0
@@ -193,10 +192,6 @@ export const useChallengeCreate = (
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringChallenges(gatheringId, 'IN_PROGRESS'),
       });
-    },
-
-    onError: (error: Error) => {
-      console.log(error);
     },
 
     onSettled: () => {
@@ -288,7 +283,6 @@ export const useGatheringParticipate = (
       });
     },
     onSettled: () => {
-      console.log('hi');
       queryClient.invalidateQueries({
         queryKey: queryKeys.gatheringStatus(gatheringId),
       });
@@ -320,15 +314,14 @@ export function useCalendarChallenges(gatheringId: number) {
     queryKey: queryKeys.gatheringCalendar(gatheringId),
     queryFn: async () => {
       const data = await fetchAllChallengesByGatheringId(gatheringId);
-
       const events =
-        data.content?.map((challenge: ChallengeType) => ({
+        data?.map((challenge: ChallengeType) => ({
           id: challenge.gatheringId.toString(),
           start: challenge.startDate,
           end: challenge.endDate,
           title: challenge.title,
+          backgroundColor: '#FF2140',
         })) ?? [];
-
       return {
         ...data,
         events,
