@@ -1,21 +1,23 @@
 import {
-  useParticipatingGatherings,
   useCancelParticipation,
-  useGatheringChallenges,
 } from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
 import { StateData } from '@/components/common/StateData';
-import { useState } from 'react';
 import { Metadata } from '@/components/common/Metadata';
+import FilterModal from '@/pages/main/components/FilterModal';
+import { useGatheringList } from '../../hooks/useGatheringList';
 
 export default function JoinGathering() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const { data: gatheringsData, isLoading } = useParticipatingGatherings(currentPage);
-  const { mutateAsync: cancelParticipation } = useCancelParticipation();
-  const { data: gatheringChallenges = {} } = useGatheringChallenges(
+  const {
+    currentPage,
+    setCurrentPage,
     gatheringsData,
-    false,
-  );
+    isLoading,
+    gatheringChallenges,
+    handleFilterChange
+  } = useGatheringList('participating');
+
+  const { mutateAsync: cancelParticipation } = useCancelParticipation();
 
   return (
     <>
@@ -37,6 +39,8 @@ export default function JoinGathering() {
           cancelActionType="participation"
           currentPage={currentPage}
           onPageChange={setCurrentPage}
+          FilterModal={FilterModal}
+          onFilterChange={handleFilterChange}
         />
       )}
     </>
