@@ -99,7 +99,6 @@ export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
       filters.sortDirection !== 'ASC'
     );
   }, [filters]);
-  console.log('filters', filters);
 
   return (
     <>

@@ -11,9 +11,15 @@ import {
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { useGatheringStatus } from '../service/gatheringService';
+import {
+  useGatheringCancel,
+  useGatheringParticipate,
+  useGatheringStatus,
+} from '../service/gatheringService';
 import Null from '@/components/common/Null';
-import { cancelGathering, participantGathering } from '../api/gatheringApi';
+import useMemberStore from '@/stores/useMemberStore';
+import { useRouter } from 'next/router';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function GatheringState({
   gatheringId,
@@ -36,15 +42,33 @@ export default function GatheringState({
     setHeart(gatheringIdInLikes(gatheringId));
   }, [gatheringId]);
 
+  const { isLogin } = useMemberStore();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { mutate: participantGathering } = useGatheringParticipate(
+    gatheringId,
+    queryClient,
+  );
+
+  const { mutate: cancelGathering } = useGatheringCancel(
+    gatheringId,
+    queryClient,
+  );
   // 참여하기 버튼 클릭 핸들러
   const handleGatheringButtonClick = async () => {
+    if (!isLogin) {
+      showToast('모임에 참여하려면 로그인 해주세요.', 'caution');
+      router.push('/login');
+      return;
+    }
+
     try {
       if (isParticipant) {
-        await cancelGathering(gatheringId);
+        cancelGathering();
         showToast('참여취소 완료되었습니다.', 'check');
         setIsParticipant(false);
       } else {
-        await participantGathering(gatheringId);
+        participantGathering();
         showToast('참여하기 완료되었습니다.', 'check');
         setIsParticipant(true);
       }
@@ -102,7 +126,7 @@ export default function GatheringState({
             {'모임 만족도'}
           </h3>
           <div className="flex">
-            <Heart rating={gatheringStatus.averageRating} />
+            <Heart rating={gatheringStatus.averageRating} type="gathering" />
             <span className="ml-[10px]">{`${gatheringStatus.averageRating.toFixed(1)} / 5.0`}</span>
           </div>
           <div className="text-sm mr-[15px] md:mr-0 md:mt-[18px]">{`총 ${gatheringStatus.guestBookCount}개의 방명록`}</div>
@@ -174,11 +198,11 @@ export default function GatheringState({
         id="buttons"
       >
         <Button
-          className="lg:ml-[25px] w-[219px] md:w-[566px] lg:w-[242px]"
-          style="custom"
+          style={isParticipant ? 'cancel' : 'custom'}
           height="100%"
           name={isParticipant ? '참여 취소' : '참여하기'}
           handleButtonClick={() => handleGatheringButtonClick()}
+          className="lg:ml-[25px] w-[219px] h-[50px] md:h-[56px] md:w-[566px] lg:w-[242px] font-semibold text-base md:text-lg"
         />
         <div className="flex">
           <div className="flex flex-col items-center justify-center ml-[20px]">
