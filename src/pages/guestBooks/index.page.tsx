@@ -177,10 +177,7 @@ export default function GuestBooks({ dehydratedState }: GuestBooksProps) {
 
         {/* 방명록 점수 */}
         <div className="mt-5 lg:mt-[30px]">
-          <ReviewScore
-            mainType={filters.mainType as MainType}
-            subType={filters.subType ?? ''}
-          />
+          <ReviewScore {...filters} />
         </div>
         {/* 방명록 리스트 */}
         <div className="mt-5 lg:mt-10 pb-20">
