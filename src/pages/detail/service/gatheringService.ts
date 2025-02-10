@@ -14,12 +14,7 @@ import {
   ChallengeCreateRequest,
   GatheringUpdateRequest,
 } from '../dto/requestDto';
-import {
-  cancelGathering,
-  deleteGathering,
-  participantGathering,
-  updateGathering,
-} from '../api/gatheringApi';
+import { deleteGathering, updateGathering } from '../api/gatheringApi';
 import {
   createChallenge,
   deleteChallenge,
