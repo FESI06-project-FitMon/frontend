@@ -11,7 +11,7 @@ import cityData from '@/constants/city';
 import uploadImage from '@/utils/uploadImage';
 import { GatheringDetailType } from '@/types';
 import Null from '@/components/common/Null';
-import { useGatheringUpdate } from '../service/gatheringService';
+import { useGatheringUpdate } from '../../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';

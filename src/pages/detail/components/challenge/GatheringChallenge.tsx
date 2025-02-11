@@ -4,15 +4,14 @@ import { useEffect, useState } from 'react';
 import GatheringChallengeCard from './GatheringChallengeCard';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import Null from '@/components/common/Null';
-import { useGatheringChallenges } from '../service/gatheringService';
-import { GatheringChallengeResponse } from '../dto/responseDto';
-import CalendarTab from './calendar/ChallengeCalendar';
+import { useGatheringChallenges } from '../../service/gatheringService';
+import { GatheringChallengeResponse } from '../../dto/responseDto';
+import CalendarTab from '../calendar/ChallengeCalendar';
+import { useDetailStore } from '@/stores/useDetailStore';
 
 export default function GatheringChallenge({
-  captainStatus,
   gatheringId,
 }: {
-  captainStatus: boolean;
   gatheringId: number;
 }) {
   const challengeSubTagItems = [
@@ -21,7 +20,7 @@ export default function GatheringChallenge({
   ];
   const [currentTag, setCurrentTag] = useState('inProgress');
   const [currentInquiryState, setCurrentInquiryState] = useState('list');
-
+  const { captainStatus } = useDetailStore();
   const { data, isLoading, hasNextPage, fetchPreviousPage, fetchNextPage } =
     useGatheringChallenges(
       gatheringId,

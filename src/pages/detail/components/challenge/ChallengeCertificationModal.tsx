@@ -4,8 +4,8 @@ import uploadImage from '@/utils/uploadImage';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
-import { useChallengeVerify } from '../service/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
+import { useChallengeVerify } from '../../service/gatheringService';
 
 export default function ChallengeCertificationModal({
   gatheringId,
