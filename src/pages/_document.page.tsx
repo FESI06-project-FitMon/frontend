@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="ko">
       <Head>
-        {/* Pretendard 웹폰트 미리 로드 */}
+        <link rel="icon" href="/assets/image/favicon.png" />
         <link
           rel="preload"
           href="/assets/font/Pretendard-Regular.woff2"

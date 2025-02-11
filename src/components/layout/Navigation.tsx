@@ -99,7 +99,12 @@ export default function Navigation() {
               href="/"
               className="text-primary font-bold text-2xl pl-6 md:pl-0"
             >
-              FitMon
+              <Image
+                src={'/assets/image/logo.png'}
+                width={93}
+                height={38}
+                alt="로고"
+              />
             </Link>
           </h1>
 
