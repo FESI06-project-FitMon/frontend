@@ -8,6 +8,7 @@ import { useGatheringChallenges } from '../../service/gatheringService';
 import { GatheringChallengeResponse } from '../../dto/responseDto';
 import CalendarTab from '../calendar/ChallengeCalendar';
 import { useDetailStore } from '@/stores/useDetailStore';
+import { Metadata } from '@/components/common/Metadata';
 
 export default function GatheringChallenge({
   gatheringId,
@@ -43,6 +44,10 @@ export default function GatheringChallenge({
 
   return (
     <div>
+      <Metadata
+        title="모임 상세 페이지 챌린지 정보"
+        description="모임의 챌린지들을 확인할 수 있습니다. "
+      />
       <div className="mt-5 lg:mt-[43px] ">
         <div className="flex items-center justify-between">
           <SubTag

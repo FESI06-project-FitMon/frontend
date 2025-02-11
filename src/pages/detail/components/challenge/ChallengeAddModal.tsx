@@ -162,10 +162,7 @@ export default function ChallengeAddModal({
               min={2}
               targetNumber={newChallenge.totalCount}
               setTargetNumber={(targetNumber: number) => {
-                if (
-                  targetNumber >= gathering.minCount &&
-                  targetNumber <= gathering.totalCount
-                ) {
+                if (targetNumber <= gathering.totalCount) {
                   setNewChallenge({
                     ...newChallenge,
                     totalCount: targetNumber,
