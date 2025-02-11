@@ -71,7 +71,16 @@ export default function Card({ data }: CardProps) {
         <div className="absolute bottom-2.5 right-1.5 md:right-2.5 z-10">
           <ZzimHeart gatheringId={gatheringId} />
         </div>
-        <Image src={imageUrl} fill alt="모임 사진" className="rounded-[20px]" />
+        <div className="relative min-w-[130px] h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
+          {/* 나머지 코드는 동일 */}
+          <Image
+            src={imageUrl}
+            fill
+            sizes="(max-width: 768px) 130px, (max-width: 1024px) 266px, 220px"
+            alt="모임 사진"
+            className="rounded-[20px] object-cover"
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-2 md:gap-2.5 w-full relative">
         <OpenStatus
