@@ -1,18 +1,23 @@
 import {
-  useMyHostedGatherings,
   useCancelGathering,
-  useGatheringChallenges,
 } from '@/pages/mypage/service/myGathering';
 import GatheringList from '@/pages/mypage/components/gathering-section/GatheringList';
 import { StateData } from '@/components/common/StateData';
-import { useState } from 'react';
 import { Metadata } from '@/components/common/Metadata';
+import FilterModal from '@/pages/main/components/FilterModal';
+import { useGatheringList } from '../../hooks/useGatheringList';
 
 export default function MyGathering() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const { data: gatheringsData, isLoading } = useMyHostedGatherings(currentPage);
+  const {
+    currentPage,
+    setCurrentPage,
+    gatheringsData,
+    isLoading,
+    gatheringChallenges,
+    handleFilterChange
+  } = useGatheringList('hosted');
+
   const { mutateAsync: cancelGathering } = useCancelGathering();
-  const { data: gatheringChallenges = {} } = useGatheringChallenges(gatheringsData, true);
 
   return (
     <>
@@ -34,8 +39,11 @@ export default function MyGathering() {
           cancelActionType="gathering"
           currentPage={currentPage}
           onPageChange={setCurrentPage}
+          FilterModal={FilterModal}
+          onFilterChange={handleFilterChange}
+          isMyPage={true} 
         />
       )}
     </>
   );
-}
+}    

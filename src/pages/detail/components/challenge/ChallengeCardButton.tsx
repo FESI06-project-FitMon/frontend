@@ -3,17 +3,21 @@ import Modal from '@/components/dialog/Modal';
 import ChallengeCertificationModal from './ChallengeCertificationModal';
 import useToastStore from '@/stores/useToastStore';
 import { useState } from 'react';
-import { participantChallenge } from '../api/challengeApi';
 import { AxiosError } from 'axios';
+import useMemberStore from '@/stores/useMemberStore';
+import { useRouter } from 'next/router';
+import { participantChallenge } from '../../api/challengeApi';
 
 export default function ChallengeCardButton({
   inProgress,
+  gatheringId,
   challengeId,
   participantStatus,
   verificationStatus,
   className,
 }: {
   inProgress: boolean;
+  gatheringId: number;
   challengeId: number;
   participantStatus: boolean;
   verificationStatus: boolean;
@@ -28,7 +32,16 @@ export default function ChallengeCardButton({
     setOpenModal(true);
   };
 
+  const { isLogin } = useMemberStore();
+  const router = useRouter();
+
   const handleParticipantChallengeButtonClick = async () => {
+    if (!isLogin) {
+      showToast('챌린지에 참여하려면 로그인 해주세요.', 'caution');
+      router.push('/login');
+      return;
+    }
+
     try {
       await participantChallenge(challengeId);
       showToast('챌린지에 참가하였습니다.', 'check');
@@ -68,7 +81,7 @@ export default function ChallengeCardButton({
     return (
       <>
         <Button
-          style="custom"
+          style="cancel"
           name="인증하기"
           className={`w-full h-[42px] md:w-[120px] md:h-9 lg:w-40 lg:h-10 font-semibold text-base ${className}`}
           handleButtonClick={() => handleGatheringButtonClick()}
@@ -77,6 +90,7 @@ export default function ChallengeCardButton({
           {openModal && (
             <Modal title="챌린지 인증" onClose={() => setOpenModal(false)}>
               <ChallengeCertificationModal
+                gatheringId={gatheringId}
                 challengeId={challengeId}
                 setOpenModal={setOpenModal}
                 setIsVerificated={setIsVerificated}

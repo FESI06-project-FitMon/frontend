@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react';
 import { GuestbookItem } from '@/types';
 import SubTag from '@/components/tag/SubTag';
 import GuestbookModal from './GuestbookModal';
@@ -10,6 +9,7 @@ import { useGuestbooks, useCreateGuestbook, useUpdateGuestbook, useAvailableGues
 import { useParticipatingGatherings } from '../../service/myGathering';;
 import { StateData } from '@/components/common/StateData';
 import { Metadata } from '@/components/common/Metadata';
+import { useState } from 'react';
 
 export default function Guestbook() {
   const [modalState, setModalState] = useState<{
@@ -31,23 +31,23 @@ export default function Guestbook() {
   const updateGuestbookMutation = useUpdateGuestbook();
   const [showWritten, setShowWritten] = useState(false);
 
-  const handleWriteClick = useCallback((gatheringId: number) => {
+  const handleWriteClick = (gatheringId: number) => {
     setModalState({
       isOpen: true,
       isEditMode: false,
       gatheringId,
     });
-  }, []);
+  };
 
-  const handleEditClick = useCallback((guestbook: GuestbookItem) => {
+  const handleEditClick = (guestbook: GuestbookItem) => {
     setModalState({
       isOpen: true,
       isEditMode: true,
       guestbook,
     });
-  }, []);
+  };
 
-  const handleModalSubmit = useCallback(async (data: { content: string; rating: number }) => {
+  const handleModalSubmit = async (data: { content: string; rating: number }) => {
     try {
       if (modalState.isEditMode && modalState.guestbook) {
         await updateGuestbookMutation.mutateAsync({
@@ -68,7 +68,7 @@ export default function Guestbook() {
       console.error('Submit error:', error);
       showToast('오류가 발생했습니다.', 'error');
     }
-  }, [modalState, updateGuestbookMutation, createGuestbookMutation, showToast]);
+  };
 
   const handleTabChange = (id: string) => {
     setShowWritten(id === 'written');

@@ -1,18 +1,10 @@
-import { MainType } from '@/constants/MainList';
-import Score from './Score';
 import useGuestbookRating from '../api/getRating';
 import Heart from '@/components/common/Heart';
+import { GuestbooksListProps } from '../api/getGuestBooks';
+import Score from './Score';
 
-interface ReviewScoreProps {
-  mainType: MainType;
-  subType: string;
-}
-
-export default function ReviewScore({ mainType, subType }: ReviewScoreProps) {
-  const { isLoading, isError, data } = useGuestbookRating({
-    mainType,
-    subType,
-  });
+export default function ReviewScore(filters: GuestbooksListProps) {
+  const { isLoading, isError, data } = useGuestbookRating(filters);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -31,11 +23,16 @@ export default function ReviewScore({ mainType, subType }: ReviewScoreProps) {
           </p>
           <p className="text-2xl font-semibold text-dark-600">{'/5'}</p>
         </div>
-        <Heart rating={data?.averageRating || 0} />
+        <Heart rating={data?.averageRating || 0} type="guestbook" />
       </div>
       <div className="flex flex-col justify-center items-center mt-8 md:mt-0 gap-1">
         {Object.entries(data?.ratingCounts || {}).map(([rating, count]) => (
-          <Score key={rating} rating={rating} rating_count={count} />
+          <Score
+            key={rating}
+            rating={rating}
+            rating_count={count}
+            totalCounts={data?.totalCounts || 0}
+          />
         ))}
       </div>
     </div>

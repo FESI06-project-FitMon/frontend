@@ -140,35 +140,31 @@ export default function Home({ dehydratedState }: HomeProps) {
               </div>
             }
           />
-
-          {/* 모바일/태블릿용 고정 버튼 */}
-          <div className="lg:hidden fixed right-6 bottom-10 z-50">
-            <Button
-              style="custom"
-              name="모임 만들기"
-              className="text-base h-9 w-[126px]"
-              handleButtonClick={() =>
-                isLogin ? setShowCreateModal(true) : setShowAlert(true)
-              }
-            />
-          </div>
         </div>
-
-        <div className="flex justify-end items-center my-5 lg:my-[35px] ">
-          {filters.mainType !== '전체' && (
-            <SubTag
-              tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
-              currentTag={filters.subType ?? ''}
-              onTagChange={(newTag) =>
-                setFilters((prev) => ({ ...prev, subType: newTag }))
-              }
-              className="flex w-full justify-start"
-            />
-          )}
+        {/* 두 컴포넌트 사이 간격을 제어하는 div 추가 */}
+        <div className="h-5 lg:h-[35px]" />
+        {/* 필터 영역 */}
+        <div className="flex justify-end items-center mb-5 lg:mb-[35px]">
+          {/* 전체 탭일 때도 같은 높이의 빈 div 유지 */}
+          <div className="flex w-full">
+            {filters.mainType !== '전체' ? (
+              <SubTag
+                tags={LISTPAGE_SUBTYPE[filters.mainType as MainType] ?? []}
+                currentTag={filters.subType ?? ''}
+                onTagChange={(newTag) =>
+                  setFilters((prev) => ({ ...prev, subType: newTag }))
+                }
+                className="flex w-full justify-start"
+              />
+            ) : (
+              // SubTag 버튼의 py-1 md:py-2 패딩값을 고려한 높이 설정
+              <div className="h-[28px] md:h-[40px]" /> // 모바일: py-1(8px) * 2 + 텍스트(12px), 데스크톱: py-2(16px) * 2 + 텍스트(16px)
+            )}
+          </div>
 
           {isFilterChanged && (
             <button
-              className="flex items-center gap-1 text-sm text-dark-700 transition-all whitespace-pre mr-6 "
+              className="flex items-center gap-1 text-sm text-dark-700 transition-all whitespace-pre mr-6"
               onClick={resetFilters}
             >
               초기화
@@ -196,7 +192,6 @@ export default function Home({ dehydratedState }: HomeProps) {
             />
           </div>
         </div>
-
         {/* 필터 모달 */}
         {showFilterModal && (
           <FilterModal

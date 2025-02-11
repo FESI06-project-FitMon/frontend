@@ -1,27 +1,44 @@
 import Image from 'next/image';
-import TagList from './tag';
+import TagList from '../challenge/GatheringTag';
 import Popover from '@/components/common/Popover';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@/components/dialog/Alert';
 import Modal from '@/components/dialog/Modal';
 import GatheringEditModal from './GatheringEditModal';
 import getDatePart from '@/utils/getDatePart';
 import useToastStore from '@/stores/useToastStore';
 import { AxiosError } from 'axios';
-import { GatheringDetailType } from '@/types';
-import { useGatheringDelete } from '../service/gatheringService';
-import { useQueryClient } from '@tanstack/react-query';
+import { useGatheringDelete } from '../../service/gatheringService';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { StateData } from '@/components/common/StateData';
+import GatheringState from './GatheringState';
+import GatheringDetailTab from './GatheringDetailTab';
+import { GatheringQueries } from '../../service/gatheringQueries';
+import { useDetailStore } from '@/stores/useDetailStore';
 
 export default function GatheringInformation({
-  gathering,
+  gatheringId,
 }: {
-  gathering: GatheringDetailType;
+  gatheringId: number;
 }) {
   const showToast = useToastStore((state) => state.show);
   const [showSelectAlert, setShowSelectAlert] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const { mutate } = useGatheringDelete(gathering.gatheringId, queryClient);
+
+  const {
+    data: gathering,
+    error,
+    isLoading,
+  } = useQuery(GatheringQueries.getGatheringQuery(gatheringId));
+  const { setCaptainStatus, setGatheringGuestbookCount } = useDetailStore();
+
+  useEffect(() => {
+    setCaptainStatus(gathering ? gathering.captainStatus : false);
+    setGatheringGuestbookCount(gathering ? gathering.guestBookCount : 0);
+  }, []);
+  const { mutate } = useGatheringDelete(gatheringId, queryClient);
+
   const popoverItems = [
     {
       id: 'edit',
@@ -55,11 +72,9 @@ export default function GatheringInformation({
     setShowSelectAlert(false);
   };
 
-  if (!gathering) {
+  if (!gathering || error) {
     return (
-      <div className="h-[480px]">
-        <p>Loading..</p>
-      </div>
+      <StateData emptyMessage="모임 정보가 없습니다." isLoading={isLoading} />
     );
   }
 
@@ -87,7 +102,9 @@ export default function GatheringInformation({
           height={300}
           alt="gathering-image"
           src={
-            gathering.imageUrl ? gathering.imageUrl : '/assets/image/fitmon.png'
+            gathering.imageUrl
+              ? gathering.imageUrl
+              : 'https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png'
           }
           className="w-full h-[186px] rounded-[20px] object-cover md:w-[280px] md:h-[260px] lg:h-[300px] md:mr-5 lg:mr-[50px] mb-5 md:mb-0"
         />
@@ -163,6 +180,15 @@ export default function GatheringInformation({
           </div>
         </div>
       </div>
+
+      <GatheringState
+        participantStatus={gathering.participantStatus}
+        gatheringId={gathering.gatheringId}
+      />
+      <GatheringDetailTab
+        gathering={gathering}
+        captainStatus={gathering.captainStatus}
+      />
     </div>
   );
 }

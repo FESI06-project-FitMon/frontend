@@ -6,27 +6,21 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { useRouter } from 'next/router';
 import FullCalendar from '@fullcalendar/react';
 import { EventContentArg, DayCellContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import {
-  useCalendarGatherings,
-  EVENT_TYPES,
-  getEventColor,
-} from '../../service/myCalendar';
 import { StateData } from '@/components/common/StateData';
-import { ColorLegend } from './ColorLegend';
 import { EventContent } from './EventContent';
 import { DayCell, DayHeader } from './CalendarCell';
 import { calendarStyles } from './calendarStyles';
 import { Metadata } from '@/components/common/Metadata';
+import { useCalendarChallenges } from '../../service/gatheringService';
+import Image from 'next/image';
 
-export default function CalendarTab() {
-  const { data: calendarData, isLoading } = useCalendarGatherings();
+export default function CalendarTab({ gatheringId }: { gatheringId: number }) {
+  const { data: calendarData, isLoading } = useCalendarChallenges(gatheringId);
   const calendarRef = useRef<FullCalendar | null>(null);
   const [currentTitle, setCurrentTitle] = useState('');
-  const router = useRouter();
 
   const updateTitle = useCallback(() => {
     if (calendarRef.current) {
@@ -51,16 +45,6 @@ export default function CalendarTab() {
     }
   }, []);
 
-  const handleEventClick = useCallback(
-    (arg: { event: { id: string } }) => {
-      const gatheringId = arg.event.id;
-      if (gatheringId) {
-        router.push(`/detail/${gatheringId}`);
-      }
-    },
-    [router],
-  );
-
   const renderEventContent = useCallback((arg: EventContentArg) => {
     return <EventContent event={arg.event} />;
   }, []);
@@ -73,30 +57,30 @@ export default function CalendarTab() {
     return <DayHeader date={arg.date} />;
   }, []);
 
+  const renderMoreLinkContent = useCallback((arg: DayCellContentArg) => {
+    return <div>{arg.dayNumberText}</div>;
+  }, []);
   // 이벤트 데이터 메모이제이션
   const events = useMemo(() => {
-    return calendarData?.events ?? [];
-  }, [calendarData?.events]);
+    return calendarData ?? [];
+  }, [calendarData]);
 
   useEffect(() => {
     updateTitle();
   }, [updateTitle]);
 
-  if (!calendarData?.content || calendarData.content.length === 0) {
+  if (!calendarData) {
     return <StateData isLoading={isLoading} emptyMessage="일정이 없습니다." />;
   }
 
-  console.log(calendarData);
   return (
     <>
       <Metadata
-        title="모임 캘린더"
-        description="fitmon에서 참여 중인 모든 모임 일정을 캘린더로 한눈에 확인하세요."
+        title="챌린지 캘린더"
+        description="해당 모임의 챌린지들을 캘린더로 한눈에 확인하세요."
       />
       <div className="space-y-6 pb-[50px]">
         <div className="bg-dark-300 rounded-lg p-4">
-          <ColorLegend eventTypes={EVENT_TYPES} getColor={getEventColor} />
-
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={handlePrev}
@@ -104,10 +88,12 @@ export default function CalendarTab() {
               type="button"
               aria-label="Previous month"
             >
-              <img
+              <Image
                 src="/assets/image/toggle.svg"
                 alt="prev"
                 className="w-6 h-6 rotate-180"
+                width={24}
+                height={24}
               />
             </button>
             <h2 className="text-white text-lg font-bold">{currentTitle}</h2>
@@ -117,10 +103,12 @@ export default function CalendarTab() {
               type="button"
               aria-label="Next month"
             >
-              <img
+              <Image
                 src="/assets/image/toggle.svg"
                 alt="next"
                 className="w-6 h-6"
+                width={24}
+                height={24}
               />
             </button>
           </div>
@@ -132,7 +120,7 @@ export default function CalendarTab() {
               initialView="dayGridMonth"
               events={events}
               locale="en"
-              dayMaxEvents={false} // "more" 링크 대신 모든 이벤트 표시
+              dayMaxEvents={5} // "more" 링크 대신 모든 이벤트 표시
               height="auto"
               eventDisplay="block"
               editable={false}
@@ -146,7 +134,7 @@ export default function CalendarTab() {
                 `calendar-cell ${isToday ? 'today' : ''}`
               }
               datesSet={updateTitle}
-              eventClick={handleEventClick}
+              moreLinkContent={renderMoreLinkContent}
             />
           </div>
 

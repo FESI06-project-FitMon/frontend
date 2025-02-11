@@ -4,21 +4,32 @@ import BarChart from '@/components/chart/BarChart';
 import { ChallengeProps } from '@/types';
 import ChallengeCardButton from './ChallengeCardButton';
 import useToastStore from '@/stores/useToastStore';
-import { deleteChallenge } from '../api/challengeApi';
 import { AxiosError } from 'axios';
+import { useChallengeDelete } from '../../service/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function GatheringChallengeCard({
+  gatheringId,
   challenge,
   inProgress,
 }: {
+  gatheringId: number;
   challenge: ChallengeProps;
   inProgress: boolean;
 }) {
   const showToast = useToastStore((state) => state.show);
 
+  const queryClient = useQueryClient();
+  const { mutate } = useChallengeDelete(
+    gatheringId,
+    challenge.challengeId,
+    queryClient,
+    inProgress,
+  );
+
   const handleChallengeDeleteButtonClick = async () => {
     try {
-      await deleteChallenge(challenge.challengeId);
+      mutate();
       showToast('챌린지 삭제를 완료했습니다.', 'check');
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -29,7 +40,6 @@ export default function GatheringChallengeCard({
   };
 
   if (!challenge) return;
-
   return (
     <div className="w-full h-[463px] md:h-[188px] lg:h-[250px] bg-dark-200 rounded-[10px]">
       <div className="w-full flex flex-col md:flex-row ">
@@ -109,6 +119,7 @@ export default function GatheringChallengeCard({
             {/* 참여했다면 인증하기 버튼, 참여하지 않았다면 참여하기 버튼 */}
             <ChallengeCardButton
               inProgress={inProgress}
+              gatheringId={gatheringId}
               challengeId={challenge.challengeId}
               participantStatus={challenge.participantStatus}
               verificationStatus={challenge.verificationStatus}

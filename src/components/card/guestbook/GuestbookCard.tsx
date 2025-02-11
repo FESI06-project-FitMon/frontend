@@ -31,9 +31,10 @@ export default function GuestbookCard({
     e.stopPropagation(); // 이벤트 버블링 방지
   };
 
-  const gatheringLink = 'gatheringId' in guestbook
-    ? `/detail/${guestbook.gatheringId}`
-    : `/detail/${gathering?.gatheringId}`;
+  const gatheringLink =
+    'gatheringId' in guestbook
+      ? `/detail/${guestbook.gatheringId}`
+      : `/detail/${gathering?.gatheringId}`;
 
   return (
     <Link href={gatheringLink}>
@@ -61,7 +62,7 @@ export default function GuestbookCard({
           <div className="flex flex-col h-full">
             {/* flex container 추가 */}
             <div className="flex justify-between items-start mb-4">
-              <Heart rating={guestbook.rating} />
+              <Heart rating={guestbook.rating} type="guestbook" />
               {showActions &&
                 onEdit &&
                 onDelete &&
