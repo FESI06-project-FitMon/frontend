@@ -50,11 +50,15 @@ export default function GatheringChallenge({
       />
       <div className="mt-5 lg:mt-[43px] ">
         <div className="flex items-center justify-between">
-          <SubTag
-            tags={challengeSubTagItems}
-            currentTag={currentTag}
-            onTagChange={(newTag) => handleTagChange(newTag)}
-          />
+          {currentInquiryState === 'list' ? (
+            <SubTag
+              tags={challengeSubTagItems}
+              currentTag={currentTag}
+              onTagChange={(newTag) => handleTagChange(newTag)}
+            />
+          ) : (
+            <div></div>
+          )}
 
           <div className="md:hidden flex">
             <div
