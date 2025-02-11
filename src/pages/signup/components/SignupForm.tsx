@@ -111,7 +111,7 @@ export default function SignupForm() {
         formError={signupFormError}
         setFormError={setSignupFormError}
         hasError={signupFormError.password}
-        errorMessage="비밀번호는 최소 8자 이상이어야 합니다."
+        errorMessage="8자 이상의 영문 대/소문자, 숫자와 특수기호를 포함해야 합니다."
       />
       <FormField
         label="비밀번호 확인"
