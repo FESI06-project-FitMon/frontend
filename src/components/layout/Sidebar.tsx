@@ -65,7 +65,12 @@ export default function SideBar() {
                 href="/"
                 className="text-red-500 font-bold text-[1.75rem] mb-[30px]"
               >
-                FitMon
+                <Image
+                  src={'/assets/image/logo.png'}
+                  width={93}
+                  height={38}
+                  alt="로고"
+                />
               </Link>
               {/* 네비게이션 요소 */}
               <ul className="flex flex-col gap-y-4 justify-center">
