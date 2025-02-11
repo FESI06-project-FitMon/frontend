@@ -72,7 +72,6 @@ export default function Card({ data }: CardProps) {
           <ZzimHeart gatheringId={gatheringId} />
         </div>
         <div className="relative min-w-[130px] h-[136px] md:min-w-[266px] lg:min-w-[220px] md:h-[220px]">
-          {/* 나머지 코드는 동일 */}
           <Image
             src={imageUrl}
             fill
