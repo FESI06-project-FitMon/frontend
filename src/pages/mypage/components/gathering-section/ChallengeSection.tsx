@@ -22,7 +22,7 @@ export default function ChallengeSection({
   isOpen,
   onToggle,
 }: ChallengeSectionProps) {
-  
+
   // 단순 이벤트 핸들러는 useCallback 불필요
   const handleChallengeClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -107,8 +107,8 @@ export default function ChallengeSection({
                               : challenge.imageUrl
                           }
                           alt={challenge.title}
-                          width={61}
-                          height={61}
+                          fill
+                          sizes="61px"
                           className="object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
