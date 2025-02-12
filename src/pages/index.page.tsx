@@ -138,6 +138,7 @@ export default function Home({ dehydratedState }: HomeProps) {
                   }
                 />
               </div>
+
             }
           />
         </div>
@@ -240,6 +241,15 @@ export default function Home({ dehydratedState }: HomeProps) {
             onCancel={() => setShowAlert(false)}
           />
         )}
+      </div>
+      {/* 모바일/태블릿용 고정 버튼 - 메인 컨테이너 밖으로 이동 */}
+      <div className="lg:hidden fixed right-6 bottom-10 z-50">
+        <Button
+          style="custom"
+          name="모임 만들기"
+          className="text-base h-9 w-[126px]"
+          handleButtonClick={() => isLogin ? setShowCreateModal(true) : setShowAlert(true)}
+        />
       </div>
     </>
   );
