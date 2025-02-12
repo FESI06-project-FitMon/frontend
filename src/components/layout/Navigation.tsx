@@ -68,6 +68,7 @@ export default function Navigation() {
         onConfirm={() => {
           setShowConfirmAlert(false);
           logoutMutation();
+          router.reload();
         }}
       />
     );
