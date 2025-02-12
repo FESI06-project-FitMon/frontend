@@ -51,15 +51,20 @@ export default function FormField<
     const { name, value } = e.target;
     const formType = 'nickName' in form ? 'signup' : 'login';
 
-    setFormError((prev) => ({
-      ...prev,
-      [name]: formValidation({
+    setFormError((prev) => {
+      const validationResult = formValidation({
         name,
         value: value.trim(),
         password: form.password,
+        passwordCheck: form.passwordCheck,
         formType,
-      }),
-    }));
+      });
+
+      return {
+        ...prev,
+        ...validationResult,
+      };
+    });
   };
 
   // 포커스 후 1초 이상 입력 없으면 값 저장
@@ -68,15 +73,20 @@ export default function FormField<
   // 포커스 후 1초 이상 입력 없으면 유효성 검사
   useEffect(() => {
     const formType = 'nickName' in form ? 'signup' : 'login';
-    setFormError((prev) => ({
-      ...prev,
-      [name]: formValidation({
-        name: name,
-        value: debouncedFormValue.trim(),
+    setFormError((prev) => {
+      const validationResult = formValidation({
+        name,
+        value: value.trim(),
         password: form.password,
+        passwordCheck: form.passwordCheck,
         formType,
-      }),
-    }));
+      });
+
+      return {
+        ...prev,
+        ...validationResult,
+      };
+    });
   }, [debouncedFormValue]);
 
   return (
