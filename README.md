@@ -1,40 +1,244 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+![image](https://github.com/user-attachments/assets/94c5aa61-7d13-42cb-b9a3-2d3de5edbbd8)
+![image](https://github.com/user-attachments/assets/9424c005-41ab-49dd-a887-89c010f42e89)
 
-## Getting Started
 
-First, run the development server:
+## 🚀 프로젝트 소개
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+FitMon은 운동을 더욱 재미있고 지속 가능하게 만들기 위해 기획된 플랫폼입니다. 운동 모임을 통해 함께 목표를 설정하고, 챌린지를 수행하며 동기 부여를 받을 수 있도록 설계되었습니다.
+
+## 🌟 배경
+
+다가오는 새해, 많은 사람들이 새로운 결심으로 운동을 계획하지만 혼자서는 지속하기 어렵습니다.
+FitMon은 **팀 챌린지를 통한 책임감 증가**, **소외감 없는 운동 모임**, **지속적인 운동 습관 형성**을 목표로 합니다.
+
+## 🎯 주요 기능
+
+- **운동 챌린지 시스템**: 목표 달성을 위한 다양한 운동 미션 제공
+- **모임 초대 및 참여**: 링크를 공유하여 손쉽게 모임을 만들고 초대 가능
+- **리뷰 및 피드백**: 모임참석 후 방명록을 통해 리뷰 남기기
+- **달력 및 진행 현황 확인**: 참여한 모임 및 챌린지를 한눈에 보기
+- **검색 및 필터 기능**: 지역 및 운동 유형 별 모임 찾기
+
+## 🎨 UI & UX 추가 개선 사항
+
+### 📱 사용자 경험 향상(UX)
+
+1.  **운동 챌린지 흥미도 향상**
+    - **챌린지 진행 현황 적용**: 사용자 몰입도를 높이기 위해 동적 UI 제공
+    - **챌린지 인증 시스템**: 사용자가 사진을 업로드하여 챌린지 수행을 인증할 수 있도록 개선
+2. **모임 생성 프로세스 개선**
+    - **날짜 선택 기능**: 사용자 편의를 위해 **Date Picker** 추가
+    - **태그 입력 개선**: 태그 입력 후 **엔터 키 입력 시 자동 생성**되도록 개선
+3. **토스트 알림 시스템 적용**
+    - 모든 요청(가입, 로그인, 챌린지 참여 등)에 대해 **성공 및 실패 시 Toastify 알림 적용**
+        - 사용자 피드백을 즉각적으로 제공하여 UX 향상
+4. **페이지 간 연결성 강화**
+    - 마이페이지의 모든 모임 카드와 캘린더 일정 클릭 시 해당 모임 상세 페이지로 즉시 이동
+    - 방명록 목록(마이페이지/전체)에서 특정 방명록 클릭 시 해당 모임 상세 페이지로 이동
+    - 찜한 모임 클릭 시 관련 모임의 상세 정보로 바로 연결
+    - 세부 탭 상태를 세션 스토리지에 저장하여 새로고침해도 마지막 선택한 탭이 유지(마이페이지)
+
+### 📊 인터페이스 최적화(UI)
+
+1. **마이페이지 기능 강화**
+    - 내가 참여한 운동 일정을 풀캘린더에서 확인 가능하도록 UI 개편
+    - 운동 모임 유형별 색상 구분으로 직관적인 일정 파악 가능
+    - 챌린지 토글로 직관적인 챌린지 내역 파악 가능
+2. **모임 상세 페이지 개선**
+    - 리스트/캘린더 듀얼 뷰 시스템
+    - 직관적인 일정 관리 인터페이스
+    - 운동 유형별 차별화된 색상 표시
+    - 캘린더 확인 시 챌린지 상태 탭바 비활성화
+3. **404 페이지 이스터에그**
+    - **몰래 숨겨진 '핏몬이를 잡아라' 미니 게임 추가** 🎮
+    - 사용자가 404 페이지에서 게임을 통해 핏몬이를 잡는 재미 요소 제공
+
+
+## 📅 프로젝트 기간
+
+2024.12.30 (월) ~ 2025.02.13 (목)
+
+## 👥 팀원
+
+### Frontend
+
+- **심은주 (@nyaknya)**
+- **문지원(@moonjw0)**
+- **송연지 (@Songyeonji)**
+- **이수민(@sumin305)**
+
+### Backend
+
+- **이정우(@JWbase)**
+
+## 🔧 기술 스택
+
+### Frontend
+
+- **핵심 개발 도구**: Next.js, TypeScript, Tailwind CSS
+- **상태 관리**: Zustand
+- **기능 확장 라이브러리**: Full Calendar, React Datepicker, ESLint
+
+### Backend
+
+- **핵심 서버 환경**: Java 17, Spring Boot 3.4.1
+- **데이터 처리**: MySQL, JPA, QueryDSL
+- **서버 인프라**: AWS, Docker
+
+### 협업 도구
+
+- **프로젝트 관리 및 소통**: Notion, Swagger, Discord
+
+## 📦 폴더 구조
+
+```
+📦 프로젝트 루트
+├── 📂 .github            # GitHub 설정 및 워크플로우 관리
+├── 📂 public             # 정적 파일 (이미지, 아이콘, 폰트 등)
+├── 📂 src                # 소스 코드
+│   ├── 📂 components     # 공통 UI 컴포넌트 모음
+│   │   ├── 📂 card, chart, common, dialog, layout, tag ...  # 카드, 차트, 모달 등 UI 요소
+│   ├── 📂 constants      # 상수값 및 설정 관리 (API URL, 기본값 등)
+│   │   ├── 📄 MainList.ts, city.ts, imgConfig.ts ...
+│   ├── 📂 hooks          # 커스텀 훅 모음 (상태 관리, API 요청 등)
+│   ├── 📂 pages          # Next.js 페이지 디렉토리
+│   │   ├── 📂 detail     # 상세 페이지
+│   │   │   ├── 📂 api        # API 호출 (백엔드와 통신)
+│   │   │   ├── 📂 components  # 상세 페이지 UI (이미지, 설명 등)
+│   │   │   ├── 📂 service    # 비즈니스 로직 (데이터 가공, 필터링)
+│   │   │   ├── 📄 index.page.tsx  # 상세 페이지 엔트리
+│   │   ├── 📂 guestBooks, likes, login ...  # 기타 페이지
+│   │   ├── 📂 main       # 메인 페이지
+│   │   │   ├── 📂 api, components, hooks, service ...
+│   │   │   ├── 📄 index.page.tsx
+│   │   ├── 📂 mypage     # 마이페이지
+│   │   │   ├── 📂 api, components, hooks, service ...
+│   │   │   ├── 📄 index.page.tsx
+│   │   ├── 📂 signup     # 회원가입 페이지
+│   │   │   ├── 📂 api, components, service ...
+│   │   │   ├── 📄 index.page.tsx
+│   │   ├── 📄 404.page.tsx, _app.page.tsx, _document.page.tsx, index.page.tsx ...
+│   ├── 📂 stores         # 상태 관리 (Zustand 등)
+│   ├── 📂 styles         # 전역 스타일 (Tailwind 설정 포함)
+│   ├── 📂 types          # TypeScript 타입 정의
+│   ├── 📂 utils          # 공통 유틸리티 함수 (날짜 포맷, API 요청 등)
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏗️ 기능 상세
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### 1️⃣ 로그인 및 회원가입
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- 이메일, 닉네임, 비밀번호를 입력하여 가입 가능
+- 비밀번호 유효성 검사 적용 (8자 이상 + 특수문자 + 대/소문자 조합)
+- 회원가입 시 이메일 중복 확인 및 검증
+- 로그인 시 액세스 토큰 발급 및 관리
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### 2️⃣ 대시보드 및 모임 관리
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 사용자의 대시보드에서 모임 리스트 확인 가능
+- 새로운 모임 생성 가능
+- 모임별 운동 챌린지 생성 가능
 
-## Learn More
+### 3️⃣ 챌린지 기능
 
-To learn more about Next.js, take a look at the following resources:
+- 유산소/무산소/경기형 챌린지 분류
+- 챌린지 성공 조건 설정 가능
+- 모임원의 80% 이상 참여 시 자동 완료 처리
+- 운동 인증 기능 (사진 첨부 가능)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### 4️⃣ 방명록 및 리뷰 시스템
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 모임참여 후 시작되거나 종료되었을 경우 리뷰 작성 가능
+- 별점 및 후기 남기기
+- 특정 유저의 방명록 확인 및 수정 가능
 
-## Deploy on Vercel
+### 5️⃣ 검색 및 필터 기능
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 지역, 운동 유형, 챌린지 상태별 필터링
+- 참여 인원순 및 마감 임박 순 정렬 가능
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+### 6️⃣ 프로필 및 마이페이지
+
+- 사용자 프로필 관리 (닉네임, 프로필 이미지 변경 가능)
+- 참여했던 모임 및 챌린지, 방명록 히스토리 확인
+- 달력을 통한 활동 이력 관리
+
+## 🔗 배포
+
+https://fitmon-mauve.vercel.app/
+
+## 🔥 문제 & 해결 (트러블 슈팅)
+
+### ✅ 상태 관리: 내부 vs 외부
+
+**문제**: 특정 상태를 컴포넌트 내부에서 관리해야 할지, 글로벌 상태로 관리해야 할지 고민됨.
+
+**해결**:
+
+- 짧은 생명주기를 가지는 상태(모달, 토스트)는 로컬 상태로 관리
+- 전역적으로 공유해야 하는 데이터(사용자 정보, 로그인 상태)는 store로 관리
+- useCallback과 useMemo는 **남용하지 않고**, 상태 변화가 빈번하고 성능 최적화가 필요한 경우에만 적용
+
+### ✅ 초기 데이터 로딩 최적화 (이니셜 데이터 & 프리패치)
+
+**문제**: SSR 적용시 초기 데이터를 단순히 이니셜 데이터로 넣었다가, 캐싱 문제가 발생해 이전 데이터가 보이는 문제 발생
+
+**해결**:
+
+- 이니셜 데이터는 캐시에 저장해놓고 데이터를 불러오기 전 보여주는 값이므로 깜빡임 문제가 생길수밖에 없었음.
+- 원인 파악 후 SSR + 리액트 쿼리 사용 예시 및 공식문서를 더 연구해 이니셜 데이터 방식이 아닌 프리패치(`prefetchInfiniteQuery`)를 활용하여 쿼리키, 캐싱된 값도 함께 내려줌으로써 캐싱 문제 & 깜빡임 현상 해결
+
+### ✅ 성능 최적화: Lighthouse 개선
+
+**문제:**
+
+- Lighthouse 성능 평가에서 낮은 점수가 나왔으며, 특히 **페이지 로딩 속도와 불필요한 리소스 로딩이 문제**였음.
+- 불필요한 자바스크립트, 이미지 크기 최적화 부족, 텍스트 압축 미적용으로 **First Contentful Paint (FCP)**, **Largest Contentful Paint (LCP)** 시간이 길었음.
+
+**해결**:
+
+- **이미지 최적화**: `next/image`를 사용하고 WebP 포맷을 적용하여 **로딩 속도 개선**.
+- **Lazy Loading 적용**: `React.lazy`, `dynamic import()` 활용해 **초기 로딩 시간 단축**.
+- **접근성 개선**: ARIA 속성 추가 및 대비 색상 수정으로 **Lighthouse 접근성 점수 향상**.
+- **Next.js 자동 콘솔 제거 설정 추가**: `next.config.js`에서 `compiler.removeConsole: true` 설정
+- 자주 사용하는 웹 폰트를 미리 로드하여 페이지 로딩 성능을 최적화
+
+### ✅ SEO 최적화:  Lighthouse 개선
+
+**문제**:
+
+- 기존 페이지에 **메타 태그가 없어서** 검색 엔진 색인(크롤링) 최적화가 부족함.
+- **소셜 미디어 공유 시 제목과 설명이 자동 생성되지 않음.**
+
+**해**
+
+- `Metadata` 컴포넌트를 만들어 **페이지별 SEO 설정**을 쉽게 적용할 수 있도록 개선.
+- `title`, `description`을 동적으로 설정하여 **검색 엔진과 SNS에서 올바르게 표시되도록 함.**
+- `og:title`, `og:description`을 추가하여 **소셜 미디어 공유 최적화.**
+
+### ✅ 모임 상세 페이지 렌더링 전략
+
+**문제**: 페이지에 표시할 데이터가 많아 SSR과 CSR 중 어떤 방식이 적절한지 고민됨.
+
+**해결**:
+
+- 자주 변경되지 않는 모임 기본 정보는 SSR로 프리로드
+- 챌린지 진행 현황, 리뷰 등 실시간성이 중요한 데이터는 CSR로 가져와 최신 상태 유지
+
+### ✅ 로그인 전략
+
+**문제**: 로그인 후 인증 정보를 어떻게 저장하고 관리할 것인지 고민됨.
+
+- 엑세스 토큰을 헤더, 리프레시 토큰을 쿠키에 저장
+    - 프론트엔드에서 웹스토리지로 관리하면 SSR 환경에서 접근이 불가능함
+- 엑세스 토큰, 리프레시 토큰 모두 쿠키에 저장
+    - 기본 쿠키를 사용하면 document.cookie로 접근이 가능해 XSS 공격에 취약함
+    - SameSite(None), Secure 쿠키는 HTTPS에서만 전송이 가능해 개발 환경에서 테스트가 어려움
+    - SameSite(Lax) 쿠키는 GET 요청에서는 쿠키가 포함되지만 POST, PUT, DELETE 요청에서는 자동으로 포함되지 않음
+
+**해결**:
+
+- 엑세스 토큰, 리프레시 토큰 모두 쿠키에 저장
+- HttpOnly, Secure, SameSite(None) 설정을 통해 브라우저가 자동으로 쿠키를 담아 요청을 보내도록 함
+- localhost 개발 환경을 HTTPS 환경으로 변경
