@@ -6,10 +6,9 @@ interface MetadataProps {
 }
 
 export function Metadata({ title, description }: MetadataProps) {
-
   return (
     <Head>
-      <title>{title} | Fitmon</title>
+      <title>{`${title} | Fitmon`}</title>
       <meta name="description" content={description} />
       <meta property="og:title" content={`${title} | Fitmon`} />
       <meta property="og:description" content={description} />
