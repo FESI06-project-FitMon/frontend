@@ -26,7 +26,7 @@ export default function Button({
       'w-full h-16 rounded-[10px] bg-primary text-[1.125rem] font-semibold',
     register: 'w-40 h-10 rounded-[10px] bg-primary text-base',
     cancel:
-      'w-40 h-10 rounded-[10px] opacity-100 outline outline-1 outline-primary text-[1rem]',
+      'w-40 h-10 rounded-[10px] opacity-100 outline outline-1 outline-primary text-primary text-[1rem]',
     custom: `rounded-[10px] bg-primary text-[1.125rem] font-semibold`,
     disabled: `rounded-[10px] bg-dark-700 text-[1.125rem] font-semibold`,
   };

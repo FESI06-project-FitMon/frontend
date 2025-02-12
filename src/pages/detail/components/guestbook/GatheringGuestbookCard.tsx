@@ -1,4 +1,5 @@
 import Heart from '@/components/common/Heart';
+import { DEFAULT_IMAGE } from '@/constants/imgConfig';
 import Image from 'next/image';
 
 interface GuestbookProps {
@@ -31,7 +32,11 @@ export default function Guestbook({ guestbook }: GuestbookProps) {
       <div className="flex justify-between">
         <div className="flex gap-3 items-center justify-center">
           <Image
-            src="https://fitmon-bucket.s3.amazonaws.com/gatherings/06389c8f-340c-4864-86fb-7d9a88a632d5_default.png"
+            src={
+              guestbook.writer.profileImageUrl === null
+                ? DEFAULT_IMAGE
+                : guestbook.writer.profileImageUrl
+            }
             width={32}
             height={32}
             alt="guestbook-profile"

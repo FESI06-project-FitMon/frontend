@@ -34,7 +34,7 @@ export default function ChallengeCard({ data }: ChallengeCardProps) {
       <div className="flex justify-between relative z-10">
         <div className="flex items-center font-normal gap-2 text-white">
           <span className="text-sm md:text-base font-semibold">
-            {participantCount} / {successParticipantCount}
+            {successParticipantCount} / {participantCount}
           </span>
           <Image
             src="/assets/image/person.svg"
@@ -44,7 +44,9 @@ export default function ChallengeCard({ data }: ChallengeCardProps) {
             height={26}
           />
         </div>
-        <div className="text-sm md:text-base font-semibold">챌린지 참여하기 →</div>
+        <div className="text-sm md:text-base font-semibold">
+          챌린지 참여하기 →
+        </div>
       </div>
       <div
         style={{ backgroundImage: `url(${imageUrl})` }}
