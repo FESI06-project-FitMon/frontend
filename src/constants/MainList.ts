@@ -14,6 +14,7 @@ export const LISTPAGE_SUBTYPE: { [key in MainType]: TabItem[] } = {
   유산소형: [
     { id: '전체', label: '전체' },
     { id: '런닝', label: '런닝' },
+    { id: '수영', label: '수영' },   
     { id: '자전거', label: '자전거' },
     { id: '유산소_기타', label: '기타' },
   ],
@@ -24,6 +25,7 @@ export const LISTPAGE_SUBTYPE: { [key in MainType]: TabItem[] } = {
   ],
   경기형: [
     { id: '전체', label: '전체' },
+    { id: '축구', label: '축구' },  
     { id: '배드민턴', label: '배드민턴' },
     { id: '풋살', label: '풋살' },
     { id: '경기_기타', label: '기타' },
