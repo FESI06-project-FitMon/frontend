@@ -73,6 +73,7 @@ export default function CreateGathering({
       }
     } else if (currentStep === 3) {
       setShowCreateModal();
+      window.location.reload();
     } else {
       setCurrentStep((prev) => calculateNextStep(prev));
     }
