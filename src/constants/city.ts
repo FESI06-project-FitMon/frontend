@@ -8,7 +8,7 @@ interface CityData {
 }
 
 const cityData: CityData = {
-  서울시: [
+  서울특별시: [
     { value: '종로구', label: '종로구' },
     { value: '중구', label: '중구' },
     { value: '용산구', label: '용산구' },
@@ -35,7 +35,7 @@ const cityData: CityData = {
     { value: '송파구', label: '송파구' },
     { value: '강동구', label: '강동구' },
   ],
-  부산시: [
+  부산광역시: [
     { value: '중구', label: '중구' },
     { value: '서구', label: '서구' },
     { value: '동구', label: '동구' },
@@ -53,7 +53,7 @@ const cityData: CityData = {
     { value: '사상구', label: '사상구' },
     { value: '기장군', label: '기장군' },
   ],
-  대구시: [
+  대구광역시: [
     { value: '중구', label: '중구' },
     { value: '동구', label: '동구' },
     { value: '서구', label: '서구' },
@@ -64,7 +64,7 @@ const cityData: CityData = {
     { value: '달성군', label: '달성군' },
     { value: '군위군', label: '군위군' },
   ],
-  인천시: [
+  인천광역시: [
     { value: '중구', label: '중구' },
     { value: '동구', label: '동구' },
     { value: '미추홀구', label: '미추홀구' },
@@ -76,14 +76,14 @@ const cityData: CityData = {
     { value: '강화군', label: '강화군' },
     { value: '옹진군', label: '옹진군' },
   ],
-  광주시: [
+  광주광역시: [
     { value: '동구', label: '동구' },
     { value: '서구', label: '서구' },
     { value: '남구', label: '남구' },
     { value: '북구', label: '북구' },
     { value: '광산구', label: '광산구' },
   ],
-  대전시: [
+  대전광역시: [
     { value: '동구', label: '동구' },
     { value: '중구', label: '중구' },
     { value: '서구', label: '서구' },
@@ -97,7 +97,7 @@ const cityData: CityData = {
     { value: '북구', label: '북구' },
     { value: '울주군', label: '울주군' },
   ],
-  세종시: [],
+  세종특별자치시: [],
   경기도: [
     { value: '수원시', label: '수원시' },
     { value: '성남시', label: '성남시' },
