@@ -105,9 +105,13 @@ export default function GatheringChallengeCard({
                   챌린지 성공률&nbsp;
                   {challenge.successParticipantCount === 0
                     ? 0
-                    : (challenge.successParticipantCount /
-                        challenge.participantCount) *
-                      100}
+                    : parseFloat(
+                        (
+                          (challenge.successParticipantCount /
+                            challenge.participantCount) *
+                          100
+                        ).toFixed(2),
+                      )}
                   %
                 </p>
               </div>
