@@ -234,3 +234,4 @@ export interface GatheringDetailType {
   averageRating: number;
   guestBookCount: number;
 }
+

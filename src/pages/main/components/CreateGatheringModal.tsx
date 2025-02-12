@@ -99,7 +99,7 @@ export default function CreateGathering({
         {/* 이전 버튼 */}
         {currentStep > 0 && (
           <div
-            className="fixed left-4 top-9 md:absolute md:-top-10 md:-left-1 cursor-pointer"
+            className="absolute -top-14 md:-top-10 md:-left-1 cursor-pointer"
             onClick={handlePreviousStep}
           >
             <Image
