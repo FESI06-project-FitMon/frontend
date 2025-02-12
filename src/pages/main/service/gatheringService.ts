@@ -41,6 +41,10 @@ export const useGatheringListQuery = (filters: GatheringListParams) => {
 
 export const createGathering = async (formData: CreateGatheringForm) => {
   try {
+    if (formData.subType === '기타') {
+      const subTypeValue = formData.mainType.slice(0, -1) + '_기타';
+      formData.subType = subTypeValue;
+    }
     return await postGathering(formData);
   } catch (error) {
     throw error;

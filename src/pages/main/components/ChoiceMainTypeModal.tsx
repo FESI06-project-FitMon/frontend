@@ -9,9 +9,9 @@ const IMAGES: Record<string, string> = {
 };
 
 const SUB_TYPES: Record<string, string[]> = {
-  유산소형: ['런닝', '수영', '자전거', '유산소_기타'],
-  헬스형: ['헬스', '헬스_기타'],
-  경기형: ['축구', '배드민턴', '풋살', '경기_기타'],
+  유산소형: ['런닝', '수영', '자전거', '기타'],
+  헬스형: ['헬스', '기타'],
+  경기형: ['축구', '배드민턴', '풋살', '기타'],
 };
 
 interface ChoiceMainTypeModalProps {
