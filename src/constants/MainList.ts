@@ -31,3 +31,4 @@ export const LISTPAGE_SUBTYPE: { [key in MainType]: TabItem[] } = {
     { id: '경기_기타', label: '기타' },
   ],
 };
+
