@@ -196,3 +196,4 @@ const cityData: CityData = {
 };
 
 export default cityData;
+
