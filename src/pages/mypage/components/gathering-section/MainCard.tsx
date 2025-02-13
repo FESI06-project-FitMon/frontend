@@ -132,7 +132,7 @@ export default memo(function MainCard({
               ${gathering.captainStatus
                 ? ''
                 : (hasGuestbook
-                  ? 'text-dark-700 !outline-dark-700 cursor-not-allowed'
+                  ? '!text-dark-700 !outline-dark-700 cursor-not-allowed'
                   : 'text-primary font-semibold')
               }
             `}
