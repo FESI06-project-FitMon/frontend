@@ -2,6 +2,15 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination:
+          'http://ec2-3-35-52-7.ap-northeast-2.compute.amazonaws.com/api/:path*',
+      },
+    ];
+  },
   reactStrictMode: true,
   images: {
     remotePatterns: [
